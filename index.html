@@ -1,1209 +1,1943 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CLEAR.ADV – Adventure Community</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Raleway:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --bg-dark: #0a0f0a;
-    --bg-mid: #0f1a0e;
-    --bg-card: rgba(20,35,18,0.85);
-    --green-deep: #1a3a1a;
-    --green-mid: #2d6b2d;
-    --green-bright: #4caf50;
-    --green-accent: #6fcf6f;
-    --green-glow: rgba(76,175,80,0.25);
-    --gold: #c9a84c;
-    --white-soft: #e8f0e8;
-    --white-dim: #b0c4b0;
-    --text-primary: #e8f0e8;
-    --text-secondary: #9ab89a;
-    --border: rgba(76,175,80,0.18);
-    --shadow: 0 8px 40px rgba(0,0,0,0.6);
-    --transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
-  }
-  .light-mode {
-    --bg-dark: #f0f4f0;
-    --bg-mid: #e0ece0;
-    --bg-card: rgba(255,255,255,0.92);
-    --green-deep: #2d6b2d;
-    --text-primary: #1a2e1a;
-    --text-secondary: #3d6b3d;
-    --border: rgba(45,107,45,0.22);
-    --shadow: 0 8px 40px rgba(0,0,0,0.13);
-  }
-  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-  html { scroll-behavior: smooth; }
-  body {
-    font-family: 'Raleway', sans-serif;
-    background: var(--bg-dark);
-    color: var(--text-primary);
-    min-height: 100vh;
-    overflow-x: hidden;
-    line-height: 1.7;
-    transition: background 0.4s, color 0.4s;
-  }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLEAR.ADV - Mountain Exploration Community</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  /* ─── GLOBAL NAVBAR ─────────────────────────────────── */
-  #global-nav {
-    position: fixed;
-    top: 0; left: 0; right: 0;
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    padding: 14px 28px;
-    background: rgba(10,15,10,0.82);
-    backdrop-filter: blur(18px);
-    border-bottom: 1px solid var(--border);
-    gap: 14px;
-    min-height: 64px;
-    transition: var(--transition);
-  }
-  .light-mode #global-nav { background: rgba(230,240,230,0.88); }
-  #logo-wrap { display:flex; align-items:center; gap:10px; text-decoration:none; cursor:pointer; }
-  #logo-wrap img { height:42px; width:42px; object-fit:contain; border-radius:8px; }
-  #logo-text { font-family:'Cinzel',serif; font-size:1.1rem; font-weight:700; color:var(--green-accent); letter-spacing:.12em; }
+        :root {
+            --primary-dark: #1a3a2a;
+            --primary-light: #2d5a47;
+            --accent-green: #8BC34A;
+            --accent-green-light: #A3D977;
+            --text-light: #FAFAFA;
+            --text-dark: #1a1a1a;
+            --border-color: rgba(139, 195, 74, 0.2);
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-  #theme-toggle {
-    margin-left:auto;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    color: var(--green-accent);
-    width: 38px; height: 38px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 1.1rem;
-    display: flex; align-items:center; justify-content:center;
-    transition: var(--transition);
-  }
-  #theme-toggle:hover { background: var(--green-mid); color:#fff; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
 
-  #menu-trigger {
-    display: none;
-    background: none;
-    border: none;
-    cursor: pointer;
-    flex-direction: column;
-    gap: 5px;
-    padding: 4px;
-  }
-  #menu-trigger span {
-    display:block; width:24px; height:2.5px;
-    background: var(--green-accent);
-    border-radius: 2px;
-    transition: var(--transition);
-  }
-  #menu-trigger.active span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
-  #menu-trigger.active span:nth-child(2) { opacity:0; }
-  #menu-trigger.active span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
+        body.dark-mode {
+            background: linear-gradient(135deg, #1a3a2a 0%, #0f1f1a 100%);
+            color: var(--text-light);
+        }
 
-  /* ─── SIDEBAR MENU ───────────────────────────────────── */
-  #sidebar {
-    position: fixed;
-    top: 64px; left: -280px;
-    width: 260px;
-    height: calc(100vh - 64px);
-    background: rgba(10,20,10,0.97);
-    backdrop-filter: blur(24px);
-    border-right: 1px solid var(--border);
-    z-index: 999;
-    transition: left 0.38s cubic-bezier(0.4,0,0.2,1);
-    overflow-y: auto;
-    padding: 24px 0;
-  }
-  .light-mode #sidebar { background: rgba(220,235,220,0.97); }
-  #sidebar.open { left: 0; }
-  .sidebar-item {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 14px 28px;
-    cursor: pointer;
-    color: var(--text-secondary);
-    font-family:'Raleway',sans-serif;
-    font-weight:600;
-    font-size:.93rem;
-    letter-spacing:.06em;
-    text-transform:uppercase;
-    transition: var(--transition);
-    border-left: 3px solid transparent;
-  }
-  .sidebar-item:hover, .sidebar-item.active {
-    color: var(--green-accent);
-    border-left-color: var(--green-accent);
-    background: rgba(76,175,80,0.08);
-    padding-left:32px;
-  }
-  .sidebar-item img { width:22px; height:22px; object-fit:contain; opacity:.75; filter: drop-shadow(0 0 4px var(--green-bright)); }
-  .sidebar-item:hover img { opacity:1; }
+        body.light-mode {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            color: var(--text-dark);
+        }
 
-  /* ─── PAGES ──────────────────────────────────────────── */
-  .page { display:none; min-height:100vh; padding-top:64px; }
-  .page.active { display:block; animation: fadeUp 0.5s ease both; }
-  @keyframes fadeUp {
-    from { opacity:0; transform:translateY(22px); }
-    to   { opacity:1; transform:translateY(0); }
-  }
+        /* Header & Logo */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            background: rgba(26, 58, 42, 0.7);
+        }
 
-  /* ─── COVER / HOME ───────────────────────────────────── */
-  #page-cover {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-  }
-  .cover-hero {
-    position: relative;
-    flex:1;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    min-height: calc(100vh - 64px);
-    overflow: hidden;
-  }
-  .cover-bg {
-    position:absolute; inset:0;
-    background-image: url('sampul1.jpg');
-    background-size:cover;
-    background-position:center;
-    transform:scale(1.05);
-    transition: transform 8s ease;
-  }
-  .cover-bg::after {
-    content:'';
-    position:absolute; inset:0;
-    background: linear-gradient(160deg, rgba(10,15,10,0.62) 0%, rgba(10,20,10,0.78) 60%, rgba(5,10,5,0.92) 100%);
-  }
-  .cover-hero:hover .cover-bg { transform:scale(1); }
-  .cover-content {
-    position:relative; z-index:2;
-    text-align:center;
-    padding: 40px 24px;
-    max-width: 760px;
-  }
-  .cover-eyebrow {
-    font-family:'Cinzel',serif;
-    font-size:.78rem;
-    letter-spacing:.38em;
-    color:var(--green-accent);
-    text-transform:uppercase;
-    margin-bottom:20px;
-    opacity:.9;
-  }
-  .cover-title {
-    font-family:'Cinzel',serif;
-    font-size: clamp(2.4rem, 7vw, 5.2rem);
-    font-weight:900;
-    line-height:1.08;
-    color:#fff;
-    text-shadow: 0 4px 32px rgba(0,0,0,0.7);
-    margin-bottom:18px;
-    word-break:break-word;
-  }
-  .cover-title span { color: var(--green-accent); }
-  .cover-tagline {
-    font-family:'Playfair Display',serif;
-    font-style:italic;
-    font-size: clamp(1rem, 2.5vw, 1.35rem);
-    color:rgba(200,230,200,0.88);
-    margin-bottom:10px;
-    line-height:1.55;
-  }
-  .cover-sub {
-    font-size:.9rem;
-    color:rgba(160,200,160,0.7);
-    letter-spacing:.07em;
-    margin-bottom:44px;
-    text-transform:uppercase;
-  }
-  .cover-btns {
-    display:flex;
-    gap:18px;
-    justify-content:center;
-    flex-wrap:wrap;
-  }
-  .btn-explore {
-    position:relative;
-    padding: 15px 38px;
-    background: linear-gradient(135deg, #2d6b2d 0%, #1a4a1a 100%);
-    color:#e8f0e8;
-    font-family:'Cinzel',serif;
-    font-size:.88rem;
-    font-weight:700;
-    letter-spacing:.12em;
-    text-transform:uppercase;
-    border: 1.5px solid var(--green-mid);
-    border-radius: 3px;
-    cursor:pointer;
-    overflow:hidden;
-    transition: var(--transition);
-    box-shadow: 0 4px 24px rgba(45,107,45,0.35);
-  }
-  .btn-explore::before {
-    content:'';
-    position:absolute;
-    inset:0;
-    background: linear-gradient(135deg, var(--green-mid), var(--green-bright));
-    opacity:0;
-    transition:opacity .3s;
-  }
-  .btn-explore:hover::before { opacity:1; }
-  .btn-explore:hover { transform:translateY(-3px); box-shadow:0 8px 32px rgba(76,175,80,0.45); }
-  .btn-explore span { position:relative; z-index:1; }
-  .btn-learn {
-    padding: 15px 38px;
-    background: transparent;
-    color: var(--green-accent);
-    font-family:'Cinzel',serif;
-    font-size:.88rem;
-    font-weight:700;
-    letter-spacing:.12em;
-    text-transform:uppercase;
-    border: 1.5px solid var(--green-accent);
-    border-radius: 3px;
-    cursor:pointer;
-    transition: var(--transition);
-  }
-  .btn-learn:hover {
-    background: rgba(76,175,80,0.12);
-    transform:translateY(-3px);
-    box-shadow: 0 0 28px rgba(76,175,80,0.28);
-  }
+        .logo img {
+            height: 50px;
+            width: auto;
+            object-fit: contain;
+        }
 
-  /* ─── STATS BAR (shown after Explore) ───────────────── */
-  #stats-bar {
-    display: none;
-    background: rgba(15,26,14,0.94);
-    border-top: 1px solid var(--border);
-    padding: 22px 24px;
-  }
-  #stats-bar.visible { display:flex; flex-wrap:wrap; justify-content:center; gap:0; animation: fadeUp .5s ease; }
-  .stat-item {
-    flex:1; min-width:140px;
-    text-align:center;
-    padding:16px 20px;
-    border-right: 1px solid var(--border);
-  }
-  .stat-item:last-child { border-right:none; }
-  .stat-num {
-    font-family:'Cinzel',serif;
-    font-size: clamp(1.6rem, 4vw, 2.4rem);
-    font-weight:900;
-    color:var(--green-accent);
-    display:block;
-  }
-  .stat-label { font-size:.72rem; letter-spacing:.18em; text-transform:uppercase; color:var(--text-secondary); }
+        .theme-toggle {
+            background: var(--accent-green);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: var(--transition);
+        }
 
-  /* ─── FOOTER SOCIAL ─────────────────────────────────── */
-  .social-footer {
-    background: rgba(8,14,8,0.92);
-    border-top: 1px solid var(--border);
-    padding: 20px 24px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:28px;
-    flex-wrap:wrap;
-  }
-  .light-mode .social-footer { background: rgba(200,220,200,0.9); }
-  .social-footer span { font-size:.72rem; letter-spacing:.18em; text-transform:uppercase; color:var(--text-secondary); }
-  .social-link {
-    font-family:'Cinzel',serif;
-    font-size:.82rem;
-    font-weight:700;
-    letter-spacing:.1em;
-    text-decoration:none;
-    padding:6px 14px;
-    border-radius:3px;
-    transition: var(--transition);
-    border: 1px solid transparent;
-  }
-  .social-link.instagram { color:#E1306C; border-color:rgba(225,48,108,0.25); }
-  .social-link.instagram:hover { background:rgba(225,48,108,0.12); transform:translateY(-2px); }
-  .social-link.tiktok { color:#69C9D0; border-color:rgba(105,201,208,0.25); }
-  .social-link.tiktok:hover { background:rgba(105,201,208,0.12); transform:translateY(-2px); }
-  .social-link.facebook { color:#1877F2; border-color:rgba(24,119,242,0.25); }
-  .social-link.facebook:hover { background:rgba(24,119,242,0.12); transform:translateY(-2px); }
+        .theme-toggle:hover {
+            background: var(--accent-green-light);
+            transform: scale(1.1);
+        }
 
-  /* ─── OUR JOURNEY ────────────────────────────────────── */
-  #page-journey {
-    background: linear-gradient(160deg, #0a1a0a 0%, #0f2a0f 30%, #050a05 100%);
-    min-height:100vh;
-  }
-  .journey-hero {
-    padding: clamp(60px,10vw,100px) 24px 50px;
-    text-align:center;
-    max-width:700px;
-    margin:0 auto;
-  }
-  .eyebrow { font-family:'Cinzel',serif; font-size:.72rem; letter-spacing:.4em; text-transform:uppercase; color:var(--green-accent); margin-bottom:14px; opacity:.85; }
-  .section-title { font-family:'Cinzel',serif; font-size:clamp(2rem,6vw,3.8rem); font-weight:900; color:#fff; line-height:1.1; margin-bottom:16px; word-break:break-word; }
-  .title-divider { width:60px; height:1.5px; background:var(--green-accent); margin:20px auto; opacity:.6; }
-  .subtitle { font-family:'Playfair Display',serif; font-style:italic; font-size:clamp(.95rem,2vw,1.15rem); color:var(--text-secondary); line-height:1.6; }
+        .menu-toggle {
+            background: transparent;
+            border: 2px solid var(--accent-green);
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            transition: var(--transition);
+        }
 
-  /* Stats grid */
-  .bynumbers { padding: 50px 24px; max-width:1100px; margin:0 auto; }
-  .bynumbers h2 { font-family:'Cinzel',serif; text-align:center; font-size:clamp(1.2rem,3vw,1.8rem); color:var(--green-accent); letter-spacing:.2em; text-transform:uppercase; margin-bottom:36px; }
-  .stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; }
-  @media(max-width:768px) { .stats-grid { grid-template-columns:repeat(2,1fr); } }
-  @media(max-width:400px) { .stats-grid { grid-template-columns:1fr; } }
-  .stat-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius:14px;
-    padding:28px 18px;
-    text-align:center;
-    box-shadow: var(--shadow);
-    animation: fadeUp .5s ease both;
-    transition:var(--transition);
-  }
-  .stat-card:hover { transform:translateY(-5px); border-color:var(--green-accent); box-shadow:0 12px 40px var(--green-glow); }
-  .stat-card .num { font-family:'Cinzel',serif; font-size:clamp(2.2rem,5vw,3rem); font-weight:900; color:var(--green-accent); display:block; line-height:1; }
-  .stat-card .desc { font-size:.78rem; letter-spacing:.14em; text-transform:uppercase; color:var(--text-secondary); margin-top:8px; }
+        .menu-toggle span {
+            width: 25px;
+            height: 2px;
+            background: var(--accent-green);
+            transition: var(--transition);
+        }
 
-  /* Mountains */
-  .mountains-sec { padding:50px 0; }
-  .mountains-header { text-align:center; margin-bottom:36px; padding:0 24px; max-width:700px; margin-left:auto; margin-right:auto; }
-  .swipe-hint { font-size:.78rem; letter-spacing:.1em; color:var(--green-accent); opacity:.7; margin-top:10px; }
-  .mountains-scroll-wrap { padding: 0 24px; }
-  .mountains-scroll {
-    display:flex;
-    gap:22px;
-    overflow-x:auto;
-    scroll-snap-type:x mandatory;
-    -webkit-overflow-scrolling:touch;
-    padding-bottom:16px;
-    scrollbar-width:thin;
-    scrollbar-color:var(--green-mid) transparent;
-  }
-  .mountains-scroll::-webkit-scrollbar { height:4px; }
-  .mountains-scroll::-webkit-scrollbar-track { background:transparent; }
-  .mountains-scroll::-webkit-scrollbar-thumb { background:var(--green-mid); border-radius:2px; }
-  .mountain-card {
-    flex:0 0 clamp(260px, 36vw, 320px);
-    scroll-snap-align:start;
-    background: var(--bg-card);
-    border:1px solid var(--border);
-    border-radius:16px;
-    overflow:hidden;
-    cursor:pointer;
-    transition:var(--transition);
-    box-shadow:var(--shadow);
-  }
-  .mountain-card:hover { transform:scale(1.03); border-color:var(--green-accent); box-shadow:0 12px 40px var(--green-glow); }
-  .mountain-img {
-    width:100%; aspect-ratio:16/9;
-    object-fit:cover;
-    background: linear-gradient(135deg,#1a3a1a,#0a1a0a);
-    display:flex; align-items:center; justify-content:center;
-    color:var(--green-accent); font-size:.8rem; letter-spacing:.1em;
-  }
-  .mountain-img img { width:100%; height:100%; object-fit:cover; display:block; }
-  .mountain-info { padding:18px; }
-  .mountain-name { font-family:'Cinzel',serif; font-size:1.1rem; font-weight:700; color:#fff; margin-bottom:6px; }
-  .light-mode .mountain-name { color:var(--green-deep); }
-  .mountain-meta { display:flex; gap:12px; flex-wrap:wrap; }
-  .mountain-meta span { font-size:.75rem; letter-spacing:.08em; color:var(--text-secondary); text-transform:uppercase; }
-  .mountain-meta .year { color:var(--green-accent); }
+        .menu-toggle:hover {
+            background: rgba(139, 195, 74, 0.1);
+        }
 
-  /* Detail section */
-  #journey-detail {
-    display:none;
-    max-width:900px;
-    margin:0 auto;
-    padding:40px 24px 60px;
-    animation:fadeUp .4s ease;
-  }
-  #journey-detail.visible { display:block; }
-  .detail-header { margin-bottom:30px; }
-  .detail-back {
-    background:none; border:none; color:var(--green-accent); cursor:pointer;
-    font-family:'Raleway',sans-serif; font-size:.85rem; letter-spacing:.1em;
-    text-transform:uppercase; margin-bottom:18px; display:flex; align-items:center; gap:6px;
-    padding:0; transition:var(--transition);
-  }
-  .detail-back:hover { color:#fff; }
-  .detail-title { font-family:'Cinzel',serif; font-size:clamp(1.8rem,5vw,3rem); font-weight:900; color:#fff; margin-bottom:8px; word-break:break-word; }
-  .light-mode .detail-title { color:var(--green-deep); }
-  .detail-meta-row { display:flex; gap:20px; flex-wrap:wrap; margin-bottom:28px; }
-  .detail-meta-row span { font-size:.8rem; letter-spacing:.1em; color:var(--text-secondary); text-transform:uppercase; padding:5px 12px; border:1px solid var(--border); border-radius:20px; }
-  .gallery-slider { position:relative; border-radius:14px; overflow:hidden; margin-bottom:28px; background:#0a1a0a; }
-  .gallery-img { width:100%; height:clamp(220px,40vw,400px); object-fit:cover; display:none; }
-  .gallery-img.active { display:block; animation:fadeUp .3s ease; }
-  .gallery-img-placeholder { width:100%; height:clamp(220px,40vw,400px); background:linear-gradient(135deg,#1a3a1a,#0a1a0a); display:flex; align-items:center; justify-content:center; color:var(--green-accent); font-size:.8rem; letter-spacing:.1em; text-align:center; padding:20px; }
-  .gallery-controls { display:flex; justify-content:space-between; align-items:center; padding:12px 18px; background:rgba(0,0,0,0.5); }
-  .gallery-btn { background:rgba(76,175,80,0.15); border:1px solid var(--border); color:var(--green-accent); padding:7px 18px; border-radius:5px; cursor:pointer; font-family:'Cinzel',serif; font-size:.78rem; letter-spacing:.1em; transition:var(--transition); }
-  .gallery-btn:hover { background:var(--green-mid); color:#fff; }
-  .gallery-counter { font-size:.78rem; color:var(--text-secondary); }
-  .detail-story { font-size:.95rem; line-height:1.85; color:var(--text-secondary); margin-bottom:24px; }
-  .light-mode .detail-story { color:var(--green-deep); }
-  .highlight-box { background:rgba(76,175,80,0.07); border-left:3px solid var(--green-accent); padding:18px 20px; border-radius:0 8px 8px 0; }
-  .highlight-box h4 { font-family:'Cinzel',serif; font-size:.88rem; letter-spacing:.12em; color:var(--green-accent); text-transform:uppercase; margin-bottom:10px; }
-  .highlight-box ul { list-style:none; }
-  .highlight-box ul li { padding:4px 0; font-size:.88rem; color:var(--text-secondary); }
-  .highlight-box ul li::before { content:'→ '; color:var(--green-accent); }
+        .menu-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translateY(10px);
+        }
 
-  /* ─── ABOUT US ───────────────────────────────────────── */
-  #page-about {
-    background:linear-gradient(160deg,#0a1a0a 0%,#0f2a0f 40%,#060d06 100%);
-    min-height:100vh;
-  }
-  .about-inner { max-width:900px; margin:0 auto; padding:clamp(50px,8vw,90px) 24px 60px; }
-  .about-inner .section-title { margin-bottom:24px; }
-  .about-desc { font-size:clamp(.95rem,2vw,1.08rem); color:var(--text-secondary); line-height:1.85; margin-bottom:48px; max-width:680px; }
-  .light-mode .about-desc { color:var(--green-deep); }
-  .about-desc p { margin-bottom:12px; }
-  .values-label { font-family:'Cinzel',serif; font-size:.78rem; letter-spacing:.3em; text-transform:uppercase; color:var(--green-accent); margin-bottom:24px; }
-  .values-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:50px; }
-  @media(max-width:700px) { .values-grid { grid-template-columns:repeat(2,1fr); } }
-  @media(max-width:380px) { .values-grid { grid-template-columns:1fr; } }
-  .value-card {
-    background:var(--bg-card);
-    border:1px solid var(--border);
-    border-radius:12px;
-    padding:28px 16px;
-    text-align:center;
-    transition:var(--transition);
-    cursor:default;
-  }
-  .value-card:hover { transform:translateY(-6px); border-color:var(--green-accent); box-shadow:0 10px 30px var(--green-glow); }
-  .value-icon { font-size:2rem; margin-bottom:12px; display:block; }
-  .value-name { font-family:'Cinzel',serif; font-size:.95rem; font-weight:700; color:var(--green-accent); letter-spacing:.1em; text-transform:uppercase; }
+        .menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
 
-  /* ─── CONTACT US ─────────────────────────────────────── */
-  #page-contact {
-    background:linear-gradient(160deg,#0a1a0a 0%,#0f2a0f 40%,#050d05 100%);
-    min-height:100vh;
-  }
-  .contact-inner { max-width:1060px; margin:0 auto; padding:clamp(50px,8vw,90px) 24px 60px; }
-  .contact-grid { display:grid; grid-template-columns:1fr 1fr; gap:44px; margin-top:44px; }
-  @media(max-width:760px) { .contact-grid { grid-template-columns:1fr; gap:32px; } }
-  .contact-form-side { display:flex; flex-direction:column; gap:16px; }
-  .form-group { display:flex; flex-direction:column; gap:7px; }
-  .form-label { font-size:.8rem; letter-spacing:.12em; text-transform:uppercase; color:var(--text-secondary); font-weight:600; }
-  .form-input, .form-textarea {
-    background:rgba(20,40,20,0.6);
-    border:1px solid var(--border);
-    border-radius:8px;
-    padding:13px 16px;
-    color:var(--text-primary);
-    font-family:'Raleway',sans-serif;
-    font-size:.93rem;
-    transition:var(--transition);
-    resize:vertical;
-    width:100%;
-  }
-  .light-mode .form-input, .light-mode .form-textarea { background:rgba(200,225,200,0.5); color:#1a2e1a; }
-  .form-input:focus, .form-textarea:focus { outline:none; border-color:var(--green-bright); box-shadow:0 0 0 3px rgba(76,175,80,0.15); }
-  .form-textarea { min-height:130px; }
-  .form-btns { display:flex; gap:13px; flex-wrap:wrap; margin-top:6px; }
-  .btn-contact {
-    flex:1; min-width:160px;
-    display:flex; align-items:center; justify-content:center; gap:9px;
-    padding:13px 20px;
-    background:linear-gradient(135deg,#2d6b2d,#1a4a1a);
-    border:1.5px solid var(--green-mid);
-    border-radius:8px;
-    color:#e8f0e8;
-    font-family:'Cinzel',serif;
-    font-size:.8rem;
-    font-weight:700;
-    letter-spacing:.08em;
-    text-transform:uppercase;
-    cursor:pointer;
-    text-decoration:none;
-    transition:var(--transition);
-  }
-  .btn-contact:hover { background:linear-gradient(135deg,#3d8a3d,#2d5a2d); transform:translateY(-2px); box-shadow:0 8px 24px rgba(76,175,80,0.35); }
-  .btn-contact img { width:20px; height:20px; object-fit:contain; }
-  .contact-info-side { display:flex; flex-direction:column; gap:22px; }
-  .info-block { display:flex; gap:14px; align-items:flex-start; }
-  .info-icon { width:38px; height:38px; border-radius:8px; background:rgba(76,175,80,0.12); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; }
-  .info-content .info-label { font-size:.72rem; letter-spacing:.18em; text-transform:uppercase; color:var(--green-accent); margin-bottom:3px; }
-  .info-content .info-val { font-size:.9rem; color:var(--text-secondary); word-break:break-word; }
-  .light-mode .info-val { color:var(--green-deep); }
-  .mini-map {
-    height:130px;
-    background:linear-gradient(135deg,#0a1a0a,#1a3a1a);
-    border-radius:12px;
-    border:1px solid var(--border);
-    display:flex; align-items:center; justify-content:center;
-    color:var(--text-secondary); font-size:.85rem; letter-spacing:.1em; text-align:center; padding:20px;
-  }
-  .contact-quote { font-family:'Playfair Display',serif; font-style:italic; text-align:center; font-size:clamp(.95rem,2.2vw,1.1rem); color:var(--text-secondary); padding:30px 0 0; opacity:.8; }
+        .menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translateY(-10px);
+        }
 
-  /* ─── INFORMATION ────────────────────────────────────── */
-  #page-info {
-    background:linear-gradient(160deg,#0a1a0a 0%,#0f2a0f 40%,#050d05 100%);
-    min-height:100vh;
-  }
-  .info-inner { max-width:700px; margin:0 auto; padding:clamp(50px,8vw,90px) 24px 60px; text-align:center; }
-  .info-card {
-    background:var(--bg-card);
-    border:1px solid var(--border);
-    border-radius:18px;
-    padding:38px 30px;
-    margin:36px 0;
-    box-shadow:var(--shadow);
-  }
-  .info-card-desc { font-size:.95rem; color:var(--text-secondary); line-height:1.75; margin-bottom:32px; }
-  .info-btns { display:flex; flex-direction:column; gap:14px; }
-  .btn-channel {
-    display:flex; align-items:center; justify-content:center; gap:12px;
-    padding:16px 24px;
-    border-radius:12px;
-    font-family:'Cinzel',serif;
-    font-size:.88rem;
-    font-weight:700;
-    letter-spacing:.1em;
-    text-transform:uppercase;
-    cursor:pointer;
-    text-decoration:none;
-    border:none;
-    transition:all .3s cubic-bezier(.4,0,.2,1);
-    color:#fff;
-  }
-  .btn-channel:hover { transform:translateY(-3px); }
-  .btn-wa-channel { background:linear-gradient(135deg,#25D366,#128C7E); box-shadow:0 4px 20px rgba(37,211,102,0.28); }
-  .btn-wa-channel:hover { box-shadow:0 10px 32px rgba(37,211,102,0.45); }
-  .btn-wa-group { background:transparent; border:2px solid #25D366; color:#25D366; }
-  .btn-wa-group:hover { background:rgba(37,211,102,0.1); box-shadow:0 8px 24px rgba(37,211,102,0.25); }
-  .btn-ig-broadcast { background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045); box-shadow:0 4px 20px rgba(253,29,29,0.28); }
-  .btn-ig-broadcast:hover { box-shadow:0 10px 32px rgba(253,29,29,0.4); }
-  .btn-channel img { width:22px; height:22px; object-fit:contain; }
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
 
-  /* ─── LEARN ABOUT US ─────────────────────────────────── */
-  #page-learn {
-    background:linear-gradient(160deg,#0a1a0a 0%,#0f2a0f 40%,#060d06 100%);
-    min-height:100vh;
-  }
-  .learn-inner { max-width:820px; margin:0 auto; padding:clamp(60px,10vw,100px) 24px 60px; text-align:center; }
-  .learn-title { font-family:'Cinzel',serif; font-size:clamp(1.8rem,6vw,4rem); font-weight:900; color:#fff; letter-spacing:.1em; text-transform:uppercase; line-height:1.08; margin-bottom:12px; word-break:break-word; }
-  .learn-subtitle { font-family:'Playfair Display',serif; font-style:italic; font-size:clamp(1rem,2.5vw,1.3rem); color:var(--green-accent); margin-bottom:36px; }
-  .learn-desc { font-size:clamp(.93rem,2vw,1.05rem); color:var(--text-secondary); line-height:1.9; max-width:600px; margin:0 auto 48px; }
-  .light-mode .learn-desc { color:var(--green-deep); }
-  .core-values { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:44px; }
-  @media(max-width:600px) { .core-values { grid-template-columns:1fr; } }
-  .core-card {
-    background:var(--bg-card);
-    border:1px solid var(--border);
-    border-radius:12px;
-    padding:26px 18px;
-    transition:var(--transition);
-    cursor:default;
-  }
-  .core-card:hover { transform:scale(1.04); border-color:var(--green-accent); box-shadow:0 10px 30px var(--green-glow); }
-  .core-card-title { font-family:'Cinzel',serif; font-size:.95rem; font-weight:700; color:var(--green-accent); text-transform:uppercase; letter-spacing:.1em; margin-bottom:8px; }
-  .core-card-body { font-size:.85rem; color:var(--text-secondary); line-height:1.6; }
-  .light-mode .core-card-body { color:var(--green-deep); }
-  .btn-cta {
-    display:inline-block;
-    padding:15px 42px;
-    background:linear-gradient(135deg,#5a7a2a,#3a5a1a);
-    color:#e8f0e8;
-    font-family:'Cinzel',serif;
-    font-size:.9rem;
-    font-weight:700;
-    letter-spacing:.14em;
-    text-transform:uppercase;
-    border:none;
-    border-radius:4px;
-    cursor:pointer;
-    margin-bottom:30px;
-    transition:var(--transition);
-    text-decoration:none;
-    box-shadow:0 4px 20px rgba(90,122,42,0.35);
-  }
-  .btn-cta:hover { transform:translateY(-3px); box-shadow:0 10px 32px rgba(90,122,42,0.5); filter:brightness(1.1); }
-  .btn-back-home {
-    display:inline-flex; align-items:center; gap:7px;
-    padding:11px 28px;
-    background:transparent;
-    color:var(--text-secondary);
-    font-family:'Cinzel',serif;
-    font-size:.8rem;
-    font-weight:600;
-    letter-spacing:.1em;
-    text-transform:uppercase;
-    border:1.5px solid var(--border);
-    border-radius:4px;
-    cursor:pointer;
-    transition:var(--transition);
-  }
-  .btn-back-home:hover { border-color:var(--green-accent); color:var(--green-accent); transform:translateY(-2px); }
+        /* Cover/Home Page */
+        .cover-section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-image: url('sampul1.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            position: relative;
+            padding-top: 80px;
+            overflow: hidden;
+        }
 
-  /* ─── OVERLAY / FADE ─────────────────────────────────── */
-  #overlay { position:fixed; inset:0; background:rgba(0,0,0,0); pointer-events:none; z-index:998; transition:background .3s; }
-  #overlay.dim { background:rgba(0,0,0,0.45); pointer-events:all; }
+        .cover-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(26, 58, 42, 0.6);
+            z-index: 1;
+        }
 
-  /* ─── AUDIO ──────────────────────────────────────────── */
-  #bg-audio { display:none; }
+        .cover-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            width: 100%;
+            padding: 2rem;
+        }
 
-  /* ─── UTILS ──────────────────────────────────────────── */
-  .hidden { display:none !important; }
-  @media(max-width:500px) {
-    .cover-btns { flex-direction:column; align-items:stretch; }
-    .btn-explore, .btn-learn { text-align:center; }
-    .form-btns { flex-direction:column; }
-    .btn-contact { min-width:unset; }
-  }
-</style>
+        .cover-content h1 {
+            font-size: clamp(2rem, 5vw, 4rem);
+            color: var(--text-light);
+            margin-bottom: 1rem;
+            line-height: 1.3;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .cover-content p {
+            font-size: clamp(1rem, 2vw, 1.3rem);
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .cover-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            padding: 1rem 2.5rem;
+            font-size: clamp(0.9rem, 1.2vw, 1.1rem);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-primary {
+            background: var(--accent-green);
+            color: #1a1a1a;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-green-light);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(139, 195, 74, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--text-light);
+            border: 2px solid var(--text-light);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(255, 255, 255, 0.2);
+        }
+
+        /* Side Menu */
+        .side-menu {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background: rgba(26, 58, 42, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 99;
+            transform: translateX(-100%);
+            transition: var(--transition);
+            padding-top: 100px;
+            overflow-y: auto;
+        }
+
+        .side-menu.active {
+            transform: translateX(0);
+        }
+
+        .menu-items {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .menu-item {
+            padding: 1rem 1.5rem;
+            color: var(--text-light);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: var(--transition);
+            border-left: 3px solid transparent;
+        }
+
+        .menu-item:hover {
+            background: rgba(139, 195, 74, 0.1);
+            border-left-color: var(--accent-green);
+            padding-left: 2rem;
+        }
+
+        .menu-item img {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+        }
+
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 98;
+            display: none;
+        }
+
+        .menu-overlay.active {
+            display: block;
+        }
+
+        /* Page Sections */
+        .page-section {
+            display: none;
+            min-height: 100vh;
+            padding: 100px 0 0;
+        }
+
+        .page-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Exploration Page */
+        .exploration-section {
+            background: linear-gradient(135deg, #1a3a2a 0%, #0f1f1a 100%);
+            color: var(--text-light);
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            padding: 3rem 0;
+            margin-top: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(139, 195, 74, 0.1);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            background: rgba(139, 195, 74, 0.15);
+            transform: translateY(-10px);
+        }
+
+        .stat-number {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 900;
+            color: var(--accent-green-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        /* Our Journey Section */
+        .journey-header {
+            text-align: center;
+            padding: 3rem 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .journey-header .small-label {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent-green);
+            margin-bottom: 1rem;
+        }
+
+        .journey-header h2 {
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            margin-bottom: 1rem;
+            color: var(--text-light);
+        }
+
+        .journey-header .divider {
+            width: 60px;
+            height: 2px;
+            background: var(--accent-green);
+            margin: 1rem auto;
+        }
+
+        .journey-header .subtitle {
+            font-size: 1.1rem;
+            color: rgba(250, 250, 250, 0.8);
+            margin-top: 1rem;
+        }
+
+        /* By the Numbers Section */
+        .by-numbers {
+            padding: 3rem 2rem;
+            background: rgba(26, 58, 42, 0.5);
+            border-radius: 16px;
+            margin-bottom: 4rem;
+        }
+
+        .by-numbers h3 {
+            text-align: center;
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--accent-green);
+        }
+
+        .numbers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .number-card {
+            background: rgba(139, 195, 74, 0.08);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .number-card:hover {
+            background: rgba(139, 195, 74, 0.12);
+            transform: scale(1.05);
+        }
+
+        .number-card-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--accent-green-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .number-card-text {
+            font-size: 0.95rem;
+            color: rgba(250, 250, 250, 0.8);
+        }
+
+        /* Mountains Section */
+        .mountains-header {
+            text-align: center;
+            margin: 4rem 2rem 2rem;
+        }
+
+        .mountains-header h3 {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--accent-green);
+            margin-bottom: 0.5rem;
+        }
+
+        .mountains-header h2 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            margin-bottom: 1rem;
+            color: var(--text-light);
+        }
+
+        .mountains-header .divider {
+            width: 60px;
+            height: 2px;
+            background: var(--accent-green);
+            margin: 1rem auto;
+        }
+
+        .swipe-hint {
+            font-size: 0.9rem;
+            color: rgba(250, 250, 250, 0.6);
+            margin-top: 1rem;
+            font-style: italic;
+        }
+
+        /* Mountains Carousel */
+        .mountains-carousel {
+            display: flex;
+            overflow-x: auto;
+            gap: 2rem;
+            padding: 2rem;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            margin-bottom: 2rem;
+        }
+
+        .mountains-carousel::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .mountains-carousel::-webkit-scrollbar-track {
+            background: rgba(139, 195, 74, 0.1);
+            border-radius: 10px;
+        }
+
+        .mountains-carousel::-webkit-scrollbar-thumb {
+            background: var(--accent-green);
+            border-radius: 10px;
+        }
+
+        .mountain-card {
+            flex: 0 0 calc(33.333% - 1.5rem);
+            min-width: 300px;
+            scroll-snap-align: start;
+            background: rgba(26, 58, 42, 0.8);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: var(--transition);
+            cursor: pointer;
+            box-shadow: var(--card-shadow);
+        }
+
+        .mountain-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 15px 40px rgba(139, 195, 74, 0.3);
+        }
+
+        .mountain-image {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .mountain-card:hover .mountain-image {
+            transform: scale(1.05);
+        }
+
+        .mountain-info {
+            padding: 1.5rem;
+        }
+
+        .mountain-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--accent-green-light);
+        }
+
+        .mountain-location {
+            font-size: 0.9rem;
+            color: rgba(250, 250, 250, 0.7);
+            margin-bottom: 0.5rem;
+        }
+
+        .mountain-details {
+            font-size: 0.85rem;
+            color: rgba(250, 250, 250, 0.6);
+            display: flex;
+            gap: 1rem;
+        }
+
+        /* Mountain Detail Section */
+        .mountain-detail {
+            display: none;
+            background: rgba(26, 58, 42, 0.5);
+            border-radius: 16px;
+            padding: 3rem 2rem;
+            margin: 2rem 0;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        .mountain-detail.active {
+            display: block;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .detail-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .detail-header h3 {
+            font-size: clamp(2rem, 4vw, 2.5rem);
+            margin-bottom: 0.5rem;
+            color: var(--accent-green-light);
+        }
+
+        .detail-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .detail-info-item {
+            background: rgba(139, 195, 74, 0.08);
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 3px solid var(--accent-green);
+        }
+
+        .detail-info-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: var(--accent-green);
+            margin-bottom: 0.3rem;
+        }
+
+        .detail-info-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        /* Gallery Slider */
+        .gallery-container {
+            margin: 2rem 0;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .gallery-image {
+            width: 100%;
+            max-height: 500px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .gallery-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: rgba(26, 58, 42, 0.3);
+        }
+
+        .gallery-btn {
+            background: var(--accent-green);
+            color: #1a1a1a;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .gallery-btn:hover {
+            background: var(--accent-green-light);
+            transform: translateY(-2px);
+        }
+
+        .gallery-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .gallery-counter {
+            color: rgba(250, 250, 250, 0.8);
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .detail-story {
+            background: rgba(139, 195, 74, 0.08);
+            padding: 2rem;
+            border-radius: 12px;
+            border-left: 4px solid var(--accent-green);
+            margin: 2rem 0;
+        }
+
+        .detail-story h4 {
+            margin-bottom: 1rem;
+            color: var(--accent-green-light);
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        .detail-story p {
+            line-height: 1.8;
+            color: rgba(250, 250, 250, 0.9);
+        }
+
+        /* About Us Page */
+        .about-section {
+            background: linear-gradient(135deg, #1a3a2a 0%, #0f1f1a 100%);
+            color: var(--text-light);
+            padding: 120px 2rem 3rem;
+        }
+
+        .about-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .about-header h1 {
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            margin-bottom: 1rem;
+        }
+
+        .about-description {
+            max-width: 800px;
+            margin: 0 auto 3rem;
+            font-size: clamp(1rem, 1.2vw, 1.1rem);
+            line-height: 1.8;
+            text-align: center;
+            color: rgba(250, 250, 250, 0.9);
+        }
+
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .value-card {
+            background: rgba(139, 195, 74, 0.1);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            border-radius: 16px;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .value-card:hover {
+            background: rgba(139, 195, 74, 0.15);
+            transform: scale(1.05);
+        }
+
+        .value-card h3 {
+            color: var(--accent-green-light);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        /* Contact Us Page */
+        .contact-section {
+            background: linear-gradient(135deg, #1a3a2a 0%, #0f1f1a 100%);
+            color: var(--text-light);
+            padding: 120px 2rem 3rem;
+        }
+
+        .contact-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .contact-header h1 {
+            font-size: clamp(2rem, 4vw, 2.8rem);
+            margin-bottom: 1rem;
+        }
+
+        .contact-header p {
+            font-size: 1rem;
+            color: rgba(250, 250, 250, 0.8);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .contact-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 768px) {
+            .contact-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .contact-form {
+            background: rgba(26, 58, 42, 0.5);
+            padding: 2rem;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+            color: var(--text-light);
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-light);
+            font-family: inherit;
+            transition: var(--transition);
+            resize: vertical;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-green);
+            background: rgba(139, 195, 74, 0.05);
+            box-shadow: 0 0 0 3px rgba(139, 195, 74, 0.1);
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-email,
+        .btn-whatsapp {
+            flex: 1;
+            min-width: 150px;
+            padding: 1rem 1.5rem;
+            background: var(--accent-green);
+            color: #1a1a1a;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .btn-email:hover,
+        .btn-whatsapp:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(139, 195, 74, 0.4);
+        }
+
+        .btn-email img,
+        .btn-whatsapp img {
+            width: 20px;
+            height: 20px;
+            object-fit: contain;
+        }
+
+        .contact-info {
+            background: rgba(26, 58, 42, 0.5);
+            padding: 2rem;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+        }
+
+        .contact-info-item {
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .contact-info-icon {
+            width: 30px;
+            height: 30px;
+            flex-shrink: 0;
+        }
+
+        .contact-info-content h4 {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            color: var(--accent-green);
+            margin-bottom: 0.3rem;
+        }
+
+        .contact-info-content p {
+            color: rgba(250, 250, 250, 0.9);
+        }
+
+        .map-placeholder {
+            width: 100%;
+            height: 300px;
+            background: rgba(139, 195, 74, 0.1);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 2rem;
+            font-size: 0.95rem;
+            color: rgba(250, 250, 250, 0.6);
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .contact-quote {
+            text-align: center;
+            margin-top: 3rem;
+            font-style: italic;
+            color: rgba(250, 250, 250, 0.7);
+            font-size: 1rem;
+        }
+
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        /* Information Page */
+        .information-section {
+            background: linear-gradient(135deg, #1a3a2a 0%, #0f1f1a 100%);
+            color: var(--text-light);
+            padding: 120px 2rem 3rem;
+        }
+
+        .information-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .information-header h1 {
+            font-size: clamp(2rem, 4vw, 2.8rem);
+            margin-bottom: 1rem;
+        }
+
+        .information-header p {
+            font-size: 1rem;
+            color: rgba(250, 250, 250, 0.8);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .information-card {
+            background: rgba(26, 58, 42, 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2.5rem;
+            max-width: 800px;
+            margin: 0 auto 3rem;
+            text-align: center;
+        }
+
+        .information-card p {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: rgba(250, 250, 250, 0.9);
+            margin-bottom: 2rem;
+        }
+
+        .info-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .info-btn {
+            padding: 1.2rem 2rem;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+        }
+
+        .info-btn img {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+        }
+
+        .btn-wa-channel {
+            background: #25D366;
+            color: white;
+        }
+
+        .btn-wa-channel:hover {
+            background: #20BA5A;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
+        }
+
+        .btn-wa-group {
+            background: #20BA5A;
+            color: white;
+        }
+
+        .btn-wa-group:hover {
+            background: #1e9d4b;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(32, 186, 90, 0.4);
+        }
+
+        .btn-instagram {
+            background: linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            color: white;
+        }
+
+        .btn-instagram:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(188, 24, 136, 0.4);
+        }
+
+        /* Learn About Us Page */
+        .learn-section {
+            background: linear-gradient(135deg, #1a3a2a 0%, #0f1f1a 100%);
+            color: var(--text-light);
+            padding: 120px 2rem 3rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .learn-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .learn-header h1 {
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            margin-bottom: 0.5rem;
+            letter-spacing: 1px;
+        }
+
+        .learn-header p {
+            font-size: 1.1rem;
+            color: rgba(250, 250, 250, 0.8);
+        }
+
+        .learn-description {
+            max-width: 700px;
+            margin: 0 auto 3rem;
+            font-size: clamp(1rem, 1.2vw, 1.1rem);
+            line-height: 1.8;
+            text-align: center;
+            color: rgba(250, 250, 250, 0.9);
+        }
+
+        .learn-values {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .learn-value-card {
+            background: rgba(139, 195, 74, 0.1);
+            border: 1px solid var(--border-color);
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .learn-value-card:hover {
+            background: rgba(139, 195, 74, 0.15);
+            transform: scale(1.05);
+        }
+
+        .learn-value-card h3 {
+            color: var(--accent-green-light);
+            margin-bottom: 0.8rem;
+            font-size: 1.2rem;
+        }
+
+        .learn-value-card p {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: rgba(250, 250, 250, 0.8);
+        }
+
+        .learn-cta {
+            text-align: center;
+            margin: 3rem 0;
+        }
+
+        .btn-cta {
+            background: linear-gradient(135deg, #8BC34A 0%, #A3D977 100%);
+            color: #1a1a1a;
+            padding: 1.2rem 2.5rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            transition: var(--transition);
+            box-shadow: 0 8px 25px rgba(139, 195, 74, 0.3);
+        }
+
+        .btn-cta:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(139, 195, 74, 0.5);
+        }
+
+        .btn-back-home {
+            background: transparent;
+            color: var(--accent-green);
+            border: 2px solid var(--accent-green);
+            padding: 0.9rem 2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            margin-top: auto;
+        }
+
+        .btn-back-home:hover {
+            background: rgba(139, 195, 74, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Footer */
+        footer {
+            padding: 2rem;
+            text-align: center;
+            background: rgba(26, 58, 42, 0.8);
+            border-top: 1px solid var(--border-color);
+            margin-top: auto;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .social-link {
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 0.95rem;
+        }
+
+        .social-link.instagram {
+            color: #E4405F;
+        }
+
+        .social-link.instagram:hover {
+            color: #f09433;
+        }
+
+        .social-link.tiktok {
+            color: #000000;
+        }
+
+        .social-link.tiktok:hover {
+            color: #25F4EE;
+        }
+
+        .social-link.facebook {
+            color: #1877F2;
+        }
+
+        .social-link.facebook:hover {
+            color: #E7F3FF;
+        }
+
+        body.light-mode .social-link.tiktok {
+            color: #25F4EE;
+        }
+
+        body.light-mode .social-link.tiktok:hover {
+            color: #000000;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            header {
+                padding: 0.8rem 1rem;
+            }
+
+            .logo img {
+                height: 40px;
+            }
+
+            .theme-toggle,
+            .menu-toggle {
+                width: 45px;
+                height: 45px;
+            }
+
+            .cover-buttons {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .mountain-card {
+                flex: 0 0 calc(100% - 2rem);
+                min-width: 280px;
+            }
+
+            .contact-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .form-buttons {
+                flex-direction: column;
+            }
+
+            .form-buttons button {
+                width: 100%;
+            }
+
+            .values-grid,
+            .learn-values {
+                grid-template-columns: 1fr;
+            }
+
+            .numbers-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .detail-info {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .cover-content {
+                padding: 1rem;
+            }
+
+            .cover-content h1 {
+                font-size: 1.8rem;
+            }
+
+            .cover-content p {
+                font-size: 1rem;
+            }
+
+            .stats-container {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                padding: 1.5rem 0;
+            }
+
+            .mountain-card {
+                flex: 0 0 100%;
+                min-width: 100%;
+            }
+
+            .info-buttons {
+                grid-template-columns: 1fr;
+            }
+
+            .numbers-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
-<body>
-
-<!-- AUDIO -->
-<audio id="bg-audio" loop>
-  <source src="musik1.mp3" type="audio/mpeg">
-</audio>
-
-<!-- OVERLAY -->
-<div id="overlay"></div>
-
-<!-- GLOBAL NAV -->
-<nav id="global-nav">
-  <div id="logo-wrap" onclick="goHome()">
-    <img src="logo.png" alt="CLEAR.ADV Logo" onerror="this.style.display='none'">
-    <span id="logo-text">CLEAR.ADV</span>
-  </div>
-  <button id="menu-trigger" onclick="toggleMenu()" aria-label="Menu">
-    <span></span><span></span><span></span>
-  </button>
-  <button id="theme-toggle" onclick="toggleTheme()" title="Toggle Dark/Light Mode">☾</button>
-</nav>
-
-<!-- SIDEBAR -->
-<div id="sidebar">
-  <div class="sidebar-item" onclick="goHome(); closeMenu();" id="nav-home">
-    <img src="iconhome.png" alt="Home" onerror="this.innerHTML='🏠'; this.style.fontSize='1.2rem'">
-    <span>Home</span>
-  </div>
-  <div class="sidebar-item" onclick="showPage('journey'); closeMenu();" id="nav-journey">
-    <img src="iconourjourney.png" alt="Our Journey" onerror="this.innerHTML='🗺️'; this.style.fontSize='1.2rem'">
-    <span>Our Journey</span>
-  </div>
-  <div class="sidebar-item" onclick="showPage('about'); closeMenu();" id="nav-about">
-    <img src="iconaboutus.png" alt="About Us" onerror="this.innerHTML='👥'; this.style.fontSize='1.2rem'">
-    <span>About Us</span>
-  </div>
-  <div class="sidebar-item" onclick="showPage('contact'); closeMenu();" id="nav-contact">
-    <img src="iconcontact.png" alt="Contact Us" onerror="this.innerHTML='📬'; this.style.fontSize='1.2rem'">
-    <span>Contact Us</span>
-  </div>
-  <div class="sidebar-item" onclick="showPage('info'); closeMenu();" id="nav-info">
-    <img src="iconinfo.png" alt="Information" onerror="this.innerHTML='ℹ️'; this.style.fontSize='1.2rem'">
-    <span>Information</span>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════════
-     PAGE: COVER / HOME
-════════════════════════════════════════════════ -->
-<div id="page-cover" class="page active">
-  <div class="cover-hero">
-    <div class="cover-bg"></div>
-    <div class="cover-content">
-      <p class="cover-eyebrow">Where Every Peak Becomes a Promise</p>
-      <h1 class="cover-title">Step Into The <span>Wild.</span></h1>
-      <p class="cover-tagline">
-        Between the ridgelines and the morning mist,<br>
-        we find who we truly are.
-      </p>
-      <p class="cover-sub">Adventure · Integrity · Brotherhood</p>
-      <div class="cover-btns">
-        <button class="btn-explore" onclick="enterExplore()"><span>Explore Our Journey</span></button>
-        <button class="btn-learn" onclick="showLearnPage()">Learn About Us</button>
-      </div>
-    </div>
-  </div>
-  <div id="stats-bar">
-    <div class="stat-item"><span class="stat-num">4</span><span class="stat-label">Summits Reached</span></div>
-    <div class="stat-item"><span class="stat-num">20</span><span class="stat-label">Active Members</span></div>
-    <div class="stat-item"><span class="stat-num">48km</span><span class="stat-label">Total Distance</span></div>
-    <div class="stat-item"><span class="stat-num">2024</span><span class="stat-label">Year Founded</span></div>
-  </div>
-  <footer class="social-footer">
-    <span>Follow Us</span>
-    <a href="https://instagram.com/clearadv" target="_blank" class="social-link instagram">Instagram</a>
-    <a href="https://tiktok.com/@clearadv" target="_blank" class="social-link tiktok">TikTok</a>
-    <a href="https://facebook.com/clearadv" target="_blank" class="social-link facebook">Facebook</a>
-  </footer>
-</div>
-
-<!-- ══════════════════════════════════════════════
-     PAGE: OUR JOURNEY
-════════════════════════════════════════════════ -->
-<div id="page-journey" class="page">
-  <div class="journey-hero">
-    <p class="eyebrow">Expedition Log</p>
-    <h1 class="section-title">Our Journey</h1>
-    <div class="title-divider"></div>
-    <p class="subtitle">Every Step Tells a Story</p>
-  </div>
-
-  <div class="bynumbers">
-    <h2>By the Numbers</h2>
-    <div class="stats-grid">
-      <div class="stat-card" style="animation-delay:.05s"><span class="num">4</span><span class="desc">Mountains Explored</span></div>
-      <div class="stat-card" style="animation-delay:.12s"><span class="num">12</span><span class="desc">Expedition Days</span></div>
-      <div class="stat-card" style="animation-delay:.19s"><span class="num">48km</span><span class="desc">KM Traveled</span></div>
-      <div class="stat-card" style="animation-delay:.26s"><span class="num">20</span><span class="desc">Members Involved</span></div>
-    </div>
-  </div>
-
-  <div class="mountains-sec">
-    <div class="mountains-header">
-      <p class="eyebrow">Expeditions</p>
-      <h2 class="section-title" style="font-size:clamp(1.6rem,4.5vw,3rem)">Mountains We've Conquered</h2>
-      <div class="title-divider"></div>
-      <p class="swipe-hint">← Swipe to explore →</p>
-    </div>
-    <div class="mountains-scroll-wrap">
-      <div class="mountains-scroll" id="mountains-scroll">
-        <!-- Cards injected by JS -->
-      </div>
-    </div>
-  </div>
-
-  <!-- DETAIL SECTION -->
-  <div id="journey-detail">
-    <button class="detail-back" onclick="closeDetail()">← Back to Mountains</button>
-    <div class="detail-header">
-      <h2 class="detail-title" id="detail-name">Mountain Name</h2>
-      <div class="detail-meta-row">
-        <span id="detail-location">Location</span>
-        <span id="detail-elev">Elevation</span>
-        <span id="detail-year">Year</span>
-      </div>
-    </div>
-    <div class="gallery-slider">
-      <div id="gallery-images"></div>
-      <div class="gallery-controls">
-        <button class="gallery-btn" onclick="prevGallery()">← Prev</button>
-        <span class="gallery-counter" id="gallery-counter">1 / 1</span>
-        <button class="gallery-btn" onclick="nextGallery()">Next →</button>
-      </div>
-    </div>
-    <p class="detail-story" id="detail-story"></p>
-    <div class="highlight-box">
-      <h4>Highlight Moments</h4>
-      <ul id="detail-highlights"></ul>
-    </div>
-  </div>
-
-  <footer class="social-footer">
-    <span>Follow Us</span>
-    <a href="https://instagram.com/clearadv" target="_blank" class="social-link instagram">Instagram</a>
-    <a href="https://tiktok.com/@clearadv" target="_blank" class="social-link tiktok">TikTok</a>
-    <a href="https://facebook.com/clearadv" target="_blank" class="social-link facebook">Facebook</a>
-  </footer>
-</div>
-
-<!-- ══════════════════════════════════════════════
-     PAGE: ABOUT US
-════════════════════════════════════════════════ -->
-<div id="page-about" class="page">
-  <div class="about-inner">
-    <p class="eyebrow">Who We Are</p>
-    <h1 class="section-title">About CLEAR.ADV</h1>
-    <div class="title-divider" style="margin:20px 0 28px"></div>
-    <div class="about-desc">
-      <p>CLEAR.ADV is a community driven by a shared love for mountains, forests, and wild landscapes.</p>
-      <p>We are explorers who value responsibility as much as adventure.</p>
-      <p>Every expedition we organize is built on teamwork, preparation, and environmental awareness.</p>
-    </div>
-
-    <p class="values-label">Our Values</p>
-    <div class="values-grid">
-      <div class="value-card"><span class="value-icon">⚖️</span><span class="value-name">Integrity</span></div>
-      <div class="value-card"><span class="value-icon">🌿</span><span class="value-name">Responsibility</span></div>
-      <div class="value-card"><span class="value-icon">🤝</span><span class="value-name">Brotherhood</span></div>
-      <div class="value-card"><span class="value-icon">♻️</span><span class="value-name">Sustainability</span></div>
-    </div>
-  </div>
-  <footer class="social-footer">
-    <span>Follow Us</span>
-    <a href="https://instagram.com/clearadv" target="_blank" class="social-link instagram">Instagram</a>
-    <a href="https://tiktok.com/@clearadv" target="_blank" class="social-link tiktok">TikTok</a>
-    <a href="https://facebook.com/clearadv" target="_blank" class="social-link facebook">Facebook</a>
-  </footer>
-</div>
-
-<!-- ══════════════════════════════════════════════
-     PAGE: CONTACT US
-════════════════════════════════════════════════ -->
-<div id="page-contact" class="page">
-  <div class="contact-inner">
-    <p class="eyebrow">Reach Out</p>
-    <h1 class="section-title">Let's Connect &amp;<br>Explore Together</h1>
-    <div class="title-divider" style="margin:20px 0 10px"></div>
-    <p class="subtitle" style="font-size:.95rem">We're open to collaboration, questions, and new adventures.</p>
-
-    <div class="contact-grid">
-      <!-- Form -->
-      <div class="contact-form-side">
-        <div class="form-group">
-          <label class="form-label">Name</label>
-          <input class="form-input" id="cf-name" type="text" placeholder="Your name">
+<body class="dark-mode">
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <img src="logo.png" alt="CLEAR.ADV Logo">
         </div>
-        <div class="form-group">
-          <label class="form-label">Subject</label>
-          <input class="form-input" id="cf-subject" type="text" placeholder="What's this about?">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Message</label>
-          <textarea class="form-textarea" id="cf-message" placeholder="Tell us about your inquiry..."></textarea>
-        </div>
-        <div class="form-btns">
-          <button class="btn-contact" onclick="sendEmail()">
-            <img src="iconemail.png" alt="Email" onerror="this.outerHTML='📧'">
-            Send via Email
-          </button>
-          <button class="btn-contact" onclick="chatWA()">
-            <img src="iconwhatsapp.png" alt="WA" onerror="this.outerHTML='💬'">
-            Chat via WhatsApp
-          </button>
-        </div>
-      </div>
+        <button class="theme-toggle" id="themeToggle" title="Toggle Dark/Light Mode">🌙</button>
+    </header>
 
-      <!-- Info -->
-      <div class="contact-info-side">
-        <div class="info-block">
-          <div class="info-icon">📍</div>
-          <div class="info-content">
-            <div class="info-label">Location</div>
-            <div class="info-val">Sulawesi Selatan, Indonesia</div>
-          </div>
+    <!-- Main Container -->
+    <div class="container">
+        <!-- COVER PAGE -->
+        <section id="coverPage" class="page-section active">
+            <div class="cover-section">
+                <div class="cover-content">
+                    <h1>Explore the Wild. Climb Higher. Connect Deeper.</h1>
+                    <p>Journey into pristine mountain landscapes where every expedition tells a story of courage, unity, and environmental stewardship.</p>
+                    <div class="cover-buttons">
+                        <button class="btn btn-primary" onclick="goToExploration()">Explore Our Journey</button>
+                        <button class="btn btn-secondary" onclick="goToLearn()">Learn About Us</button>
+                    </div>
+                </div>
+                <div class="menu-toggle" id="menuToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- SIDE MENU -->
+        <div class="side-menu" id="sideMenu">
+            <div class="menu-items">
+                <div class="menu-item" onclick="goToHome()">
+                    <img src="iconhome.png" alt="Home">
+                    <span>HOME</span>
+                </div>
+                <div class="menu-item" onclick="goToJourney()">
+                    <img src="iconourjourney.png" alt="Journey">
+                    <span>OUR JOURNEY</span>
+                </div>
+                <div class="menu-item" onclick="goToAbout()">
+                    <img src="iconaboutus.png" alt="About">
+                    <span>ABOUT US</span>
+                </div>
+                <div class="menu-item" onclick="goToContact()">
+                    <img src="iconcontactus.png" alt="Contact">
+                    <span>CONTACT US</span>
+                </div>
+                <div class="menu-item" onclick="goToInformation()">
+                    <img src="iconinformation.png" alt="Info">
+                    <span>INFORMATION</span>
+                </div>
+            </div>
         </div>
-        <div class="info-block">
-          <div class="info-icon">✉️</div>
-          <div class="info-content">
-            <div class="info-label">Email</div>
-            <div class="info-val">adventureclear@gmail.com</div>
-          </div>
-        </div>
-        <div class="info-block">
-          <div class="info-icon">📱</div>
-          <div class="info-content">
-            <div class="info-label">WhatsApp</div>
-            <div class="info-val">0856 7890 207</div>
-          </div>
-        </div>
-        <div class="mini-map">🗺 Map Location – Indonesia<br><small style="opacity:.6;margin-top:5px;display:block">Sulawesi Selatan Region</small></div>
-        <p class="contact-quote" style="font-size:.9rem;padding:0;">"Every great journey begins with a single message."</p>
-      </div>
+        <div class="menu-overlay" id="menuOverlay"></div>
+
+        <!-- EXPLORATION PAGE -->
+        <section id="explorationPage" class="page-section exploration-section">
+            <div style="padding: 2rem;">
+                <div style="text-align: center; margin-bottom: 3rem;">
+                    <h2 style="font-size: clamp(2.5rem, 5vw, 3.5rem); margin-bottom: 1rem;">CLEAR.ADV Expeditions</h2>
+                    <p style="font-size: 1.1rem; color: rgba(250, 250, 250, 0.8);">Discover our mountain conquests</p>
+                </div>
+
+                <!-- Stats -->
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <div class="stat-number">4</div>
+                        <div class="stat-label">Summits Reached</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">20</div>
+                        <div class="stat-label">Active Members</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">48km</div>
+                        <div class="stat-label">Total Distance</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">2024</div>
+                        <div class="stat-label">Year Founded</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- OUR JOURNEY PAGE -->
+        <section id="journeyPage" class="page-section exploration-section">
+            <div style="padding: 2rem;">
+                <div class="journey-header">
+                    <div class="small-label">Expedition Log</div>
+                    <h2>Our Journey</h2>
+                    <div class="divider"></div>
+                    <div class="subtitle">Every Step Tells a Story</div>
+                </div>
+
+                <!-- By the Numbers -->
+                <div class="by-numbers">
+                    <h3>By the Numbers</h3>
+                    <div class="numbers-grid">
+                        <div class="number-card">
+                            <div class="number-card-value">4</div>
+                            <div class="number-card-text">Mountains Explored</div>
+                        </div>
+                        <div class="number-card">
+                            <div class="number-card-value">12</div>
+                            <div class="number-card-text">Expedition Days</div>
+                        </div>
+                        <div class="number-card">
+                            <div class="number-card-value">48</div>
+                            <div class="number-card-text">KM Traveled</div>
+                        </div>
+                        <div class="number-card">
+                            <div class="number-card-value">20</div>
+                            <div class="number-card-text">Members Involved</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mountains Section -->
+                <div style="padding: 2rem;">
+                    <div class="mountains-header">
+                        <h3>Expeditions</h3>
+                        <h2>Mountains We've Conquered</h2>
+                        <div class="divider"></div>
+                        <p class="swipe-hint">← Swipe to explore →</p>
+                    </div>
+
+                    <!-- Mountain Carousel -->
+                    <div class="mountains-carousel" id="mountainsCarousel">
+                        <div class="mountain-card" onclick="showMountainDetail('latimojong')">
+                            <img src="latimojong01.jpg" alt="Latimojong" class="mountain-image">
+                            <div class="mountain-info">
+                                <div class="mountain-name">Latimojong</div>
+                                <div class="mountain-location">Sulawesi Selatan</div>
+                                <div class="mountain-details">
+                                    <span>2024</span>
+                                    <span>3,478m</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mountain-card" onclick="showMountainDetail('lompobattang')">
+                            <img src="lompobattang01.jpg" alt="Lompobattang" class="mountain-image">
+                            <div class="mountain-info">
+                                <div class="mountain-name">Lompobattang</div>
+                                <div class="mountain-location">Sulawesi Selatan</div>
+                                <div class="mountain-details">
+                                    <span>2024</span>
+                                    <span>2,914m</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mountain-card" onclick="showMountainDetail('baria')">
+                            <img src="baria01.jpg" alt="Bulu Baria" class="mountain-image">
+                            <div class="mountain-info">
+                                <div class="mountain-name">Bulu Baria</div>
+                                <div class="mountain-location">Sulawesi Selatan</div>
+                                <div class="mountain-details">
+                                    <span>2024</span>
+                                    <span>2,450m</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mountain-card" onclick="showMountainDetail('bawakaraeng')">
+                            <img src="bawakaraeng01.jpg" alt="Bawakaraeng" class="mountain-image">
+                            <div class="mountain-info">
+                                <div class="mountain-name">Bawakaraeng</div>
+                                <div class="mountain-location">Sulawesi Selatan</div>
+                                <div class="mountain-details">
+                                    <span>2024</span>
+                                    <span>2,833m</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mountain Details -->
+                    <div id="mountainDetails"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ABOUT US PAGE -->
+        <section id="aboutPage" class="page-section about-section">
+            <div style="max-width: 1000px; margin: 0 auto;">
+                <div class="about-header">
+                    <h1>About CLEAR.ADV</h1>
+                </div>
+
+                <div class="about-description">
+                    CLEAR.ADV is a community driven by a shared love for mountains, forests, and wild landscapes.
+                    We are explorers who value responsibility as much as adventure.
+                    Every expedition we organize is built on teamwork, preparation, and environmental awareness.
+                </div>
+
+                <h3 style="text-align: center; font-size: 1.3rem; margin-bottom: 2rem; color: var(--accent-green);">Our Values</h3>
+
+                <div class="values-grid">
+                    <div class="value-card">
+                        <h3>Integrity</h3>
+                        <p>We honor our commitments with honesty and transparency in every expedition and interaction.</p>
+                    </div>
+                    <div class="value-card">
+                        <h3>Responsibility</h3>
+                        <p>We protect the mountains and communities we visit through sustainable and ethical practices.</p>
+                    </div>
+                    <div class="value-card">
+                        <h3>Brotherhood</h3>
+                        <p>We unite adventurers from diverse backgrounds in a supportive community built on trust.</p>
+                    </div>
+                    <div class="value-card">
+                        <h3>Sustainability</h3>
+                        <p>We leave no trace and promote conservation for future generations of explorers.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONTACT US PAGE -->
+        <section id="contactPage" class="page-section contact-section">
+            <div style="max-width: 1200px; margin: 0 auto;">
+                <div class="contact-header">
+                    <h1>Let's Connect & Explore Together</h1>
+                    <p>We'd love to hear from you. Reach out anytime!</p>
+                </div>
+
+                <div class="contact-content">
+                    <!-- Form -->
+                    <div class="contact-form">
+                        <form id="contactForm">
+                            <div class="form-group">
+                                <label for="name">Name</label>
+                                <input type="text" id="name" name="name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="subject">Subject</label>
+                                <input type="text" id="subject" name="subject" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="message">Message</label>
+                                <textarea id="message" name="message" rows="5" required></textarea>
+                            </div>
+                            <div class="form-buttons">
+                                <button type="button" class="btn-email" onclick="sendEmail()">
+                                    <img src="iconemail.png" alt="Email">
+                                    Send via Email
+                                </button>
+                                <button type="button" class="btn-whatsapp" onclick="sendWhatsApp()">
+                                    <img src="iconwhatsapp.png" alt="WhatsApp">
+                                    Chat via WhatsApp
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Contact Info -->
+                    <div class="contact-info">
+                        <div class="contact-info-item">
+                            <div class="contact-info-content">
+                                <h4>Location</h4>
+                                <p>Sulawesi Selatan, Indonesia</p>
+                            </div>
+                        </div>
+                        <div class="contact-info-item">
+                            <div class="contact-info-content">
+                                <h4>Email</h4>
+                                <p><a href="mailto:adventureclear@gmail.com" style="color: var(--accent-green); text-decoration: none;">adventureclear@gmail.com</a></p>
+                            </div>
+                        </div>
+                        <div class="contact-info-item">
+                            <div class="contact-info-content">
+                                <h4>Phone</h4>
+                                <p><a href="tel:08567890207" style="color: var(--accent-green); text-decoration: none;">+62 856 789 0207</a></p>
+                            </div>
+                        </div>
+                        <div class="map-placeholder">Map Location – Indonesia</div>
+                        <div class="contact-quote">"Every great journey begins with a single message."</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- INFORMATION PAGE -->
+        <section id="informationPage" class="page-section information-section">
+            <div style="max-width: 1000px; margin: 0 auto;">
+                <div class="information-header">
+                    <h1>Stay Connected With CLEAR.ADV</h1>
+                    <p>Join our official channels for real-time updates, expedition schedules, and exclusive community insights.</p>
+                </div>
+
+                <div class="information-card">
+                    <p>Get real-time updates, expedition schedules, and exclusive community insights by joining our official channels.</p>
+                </div>
+
+                <div class="info-buttons">
+                    <button class="info-btn btn-wa-channel" onclick="openWhatsAppChannel()">
+                        <img src="iconsaluranwhatsapp.png" alt="WhatsApp Channel">
+                        Join WhatsApp Channel
+                    </button>
+                    <button class="info-btn btn-wa-group" onclick="openWhatsAppGroup()">
+                        <img src="icongrupwhatsapp.png" alt="WhatsApp Group">
+                        Join WhatsApp Group
+                    </button>
+                    <button class="info-btn btn-instagram" onclick="openInstagramBroadcast()">
+                        <img src="iconsaluraninstagram.png" alt="Instagram">
+                        Follow Instagram Broadcast
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- LEARN ABOUT US PAGE -->
+        <section id="learnPage" class="page-section learn-section">
+            <div style="max-width: 900px; margin: 0 auto; flex: 1; display: flex; flex-direction: column;">
+                <div class="learn-header">
+                    <h1>LEARN ABOUT US</h1>
+                    <p>More than just exploration.</p>
+                </div>
+
+                <div class="learn-description">
+                    CLEAR.ADV represents a community committed to responsible exploration, where every member contributes to a shared mission: to climb higher, explore deeper, and protect the natural world we cherish.
+                </div>
+
+                <div class="learn-values">
+                    <div class="learn-value-card">
+                        <h3>Responsibility</h3>
+                        <p>Every expedition is planned with care for the environment and respect for local communities.</p>
+                    </div>
+                    <div class="learn-value-card">
+                        <h3>Integrity</h3>
+                        <p>We lead with honesty, transparency, and commitment to our values in every endeavor.</p>
+                    </div>
+                    <div class="learn-value-card">
+                        <h3>Unity</h3>
+                        <p>Together, we are stronger—united by passion for mountains and conservation.</p>
+                    </div>
+                </div>
+
+                <div class="learn-cta">
+                    <button class="btn-cta" onclick="alert('Thank you for your interest!')">Be Part of CLEAR.ADV</button>
+                </div>
+
+                <button class="btn-back-home" onclick="goToHome()" style="align-self: center;">← Back to Home</button>
+            </div>
+        </section>
     </div>
-  </div>
-  <footer class="social-footer">
-    <span>Follow Us</span>
-    <a href="https://instagram.com/clearadv" target="_blank" class="social-link instagram">Instagram</a>
-    <a href="https://tiktok.com/@clearadv" target="_blank" class="social-link tiktok">TikTok</a>
-    <a href="https://facebook.com/clearadv" target="_blank" class="social-link facebook">Facebook</a>
-  </footer>
-</div>
 
-<!-- ══════════════════════════════════════════════
-     PAGE: INFORMATION
-════════════════════════════════════════════════ -->
-<div id="page-info" class="page">
-  <div class="info-inner">
-    <p class="eyebrow">Stay Updated</p>
-    <h1 class="section-title">Stay Connected With<br>CLEAR.ADV</h1>
-    <div class="title-divider"></div>
-    <p class="subtitle">Get real-time updates on our expeditions, announcements, and community activities through our official channels.</p>
-
-    <div class="info-card">
-      <p class="info-card-desc">Get real-time updates, expedition schedules, and exclusive community insights by joining our official channels. Stay connected with every step of our journey — from pre-expedition briefings to post-summit stories.</p>
-      <div class="info-btns">
-        <a href="https://whatsapp.com/channel/clearadv" target="_blank" class="btn-channel btn-wa-channel">
-          <img src="iconsaluranwhatsapp.png" alt="WA Channel" onerror="this.outerHTML='📢'">
-          Join WhatsApp Channel
-        </a>
-        <a href="https://chat.whatsapp.com/clearadvgroup" target="_blank" class="btn-channel btn-wa-group">
-          <img src="icongroupwhatsapp.png" alt="WA Group" onerror="this.outerHTML='👥'">
-          Join WhatsApp Group
-        </a>
-        <a href="https://instagram.com/clearadv" target="_blank" class="btn-channel btn-ig-broadcast">
-          <img src="iconsaluraninstagram.png" alt="IG" onerror="this.outerHTML='📸'">
-          Follow Instagram Broadcast
-        </a>
-      </div>
-    </div>
-  </div>
-  <footer class="social-footer">
-    <span>Follow Us</span>
-    <a href="https://instagram.com/clearadv" target="_blank" class="social-link instagram">Instagram</a>
-    <a href="https://tiktok.com/@clearadv" target="_blank" class="social-link tiktok">TikTok</a>
-    <a href="https://facebook.com/clearadv" target="_blank" class="social-link facebook">Facebook</a>
-  </footer>
-</div>
-
-<!-- ══════════════════════════════════════════════
-     PAGE: LEARN ABOUT US
-════════════════════════════════════════════════ -->
-<div id="page-learn" class="page">
-  <div class="learn-inner">
-    <h1 class="learn-title">Learn About Us</h1>
-    <p class="learn-subtitle">More than just exploration.</p>
-    <div class="title-divider"></div>
-    <p class="learn-desc">
-      CLEAR.ADV is built on the foundation of responsible exploration, deep camaraderie, and a belief that every journey—however tough—shapes who we become. We don't just climb mountains; we carry their lessons back with us.
-    </p>
-
-    <div class="core-values">
-      <div class="core-card">
-        <p class="core-card-title">Responsibility</p>
-        <p class="core-card-body">We protect every trail we walk, leaving no trace behind.</p>
-      </div>
-      <div class="core-card">
-        <p class="core-card-title">Integrity</p>
-        <p class="core-card-body">We act with honesty in every decision, on summit or off.</p>
-      </div>
-      <div class="core-card">
-        <p class="core-card-title">Unity</p>
-        <p class="core-card-body">Together, no ridge is too sharp and no distance too far.</p>
-      </div>
-    </div>
-
-    <button class="btn-cta" onclick="showPage('contact'); closeMenu();">Be Part of CLEAR.ADV</button>
-    <br>
-    <button class="btn-back-home" onclick="goHome()">← Back to Home</button>
-  </div>
-  <footer class="social-footer">
-    <span>Follow Us</span>
-    <a href="https://instagram.com/clearadv" target="_blank" class="social-link instagram">Instagram</a>
-    <a href="https://tiktok.com/@clearadv" target="_blank" class="social-link tiktok">TikTok</a>
-    <a href="https://facebook.com/clearadv" target="_blank" class="social-link facebook">Facebook</a>
-  </footer>
-</div>
-
-<!-- ══════════════════════════════════════════════
-     JAVASCRIPT
-════════════════════════════════════════════════ -->
-<script>
-  // ── DATA ─────────────────────────────────────────────
-  const MOUNTAINS = [
-    {
-      id: 'latimojong',
-      name: 'Gunung Latimojong',
-      location: 'Sulawesi Selatan',
-      elevation: '3,478 m',
-      year: '2024',
-      images: ['latimojong01.jpg','latimojong02.jpg','latimojong03.jpg'],
-      story: 'The ascent of Latimojong stood as our most demanding expedition yet. Through dense forest canopies and shifting fog, our team pushed forward across steep ridgelines. The summit rewarded every aching step with a panorama stretching far beyond the clouds.',
-      highlights: ['Summit reached at dawn after a 14-hour push','Crossed 4 base camps in total','Temperature dropped to 5°C near the peak','Witnessed a rare cloud inversion from the summit']
-    },
-    {
-      id: 'lompobattang',
-      name: 'Gunung Lompobattang',
-      location: 'Sulawesi Selatan',
-      elevation: '2,871 m',
-      year: '2024',
-      images: ['lompobattang01.jpg','lompobattang02.jpg'],
-      story: 'Lompobattang welcomed us with challenging terrain but rewarded us with spectacular views over the southern Sulawesi coastline. The journey strengthened bonds and reminded us why we explore together.',
-      highlights: ['Sunrise from the ridge was unforgettable','Team completed climb in record time','Spotted rare flora unique to Sulawesi','Camped under a sky full of stars']
-    },
-    {
-      id: 'baria',
-      name: 'Gunung Bulu Baria',
-      location: 'Sulawesi Selatan',
-      elevation: '2,035 m',
-      year: '2024',
-      images: ['baria01.jpg','baria02.jpg'],
-      story: 'Bulu Baria was our first team expedition, a true baptism of fire that forged our identity as CLEAR.ADV. Despite the rain and slippery trails, every member made it to the top—together.',
-      highlights: ['The founding expedition of CLEAR.ADV','Completed in challenging wet season','Built team trust and coordination','Established our base camp traditions']
-    },
-    {
-      id: 'bawakaraeng',
-      name: 'Gunung Bawakaraeng',
-      location: 'Sulawesi Selatan',
-      elevation: '2,833 m',
-      year: '2024',
-      images: ['bawakaraeng01.jpg','bawakaraeng02.jpg'],
-      story: 'Bawakaraeng, locally revered as a sacred mountain, offered a spiritual as much as physical challenge. The crater lake at high elevation is a sight that stays with you long after you descend.',
-      highlights: ['Visited the legendary crater lake','Met local guides with deep cultural knowledge','Navigation tested in heavy fog','All 20 members reached the summit']
-    }
-  ];
-
-  // ── STATE ─────────────────────────────────────────────
-  let currentPage     = 'cover';
-  let menuOpen        = false;
-  let lightMode       = false;
-  let exploredBefore  = false;
-  let currentGallery  = [];
-  let currentGalleryIdx = 0;
-  const audio = document.getElementById('bg-audio');
-
-  // ── INIT ──────────────────────────────────────────────
-  window.addEventListener('DOMContentLoaded', () => {
-    buildMountainCards();
-    showCoverOnly();
-  });
-
-  // ── NAVIGATION ────────────────────────────────────────
-  function showCoverOnly() {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById('page-cover').classList.add('active');
-    document.getElementById('menu-trigger').style.display = 'none';
-    setActiveNav(null);
-    currentPage = 'cover';
-  }
-
-  function goHome() {
-    audio.pause(); audio.currentTime = 0;
-    showCoverOnly();
-    document.getElementById('stats-bar').classList.remove('visible');
-    window.scrollTo({top:0, behavior:'smooth'});
-  }
-
-  function enterExplore() {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    const cover = document.getElementById('page-cover');
-    cover.classList.add('active');
-    document.getElementById('stats-bar').classList.add('visible');
-    document.getElementById('menu-trigger').style.display = 'flex';
-    setActiveNav('home');
-    currentPage = 'cover-explored';
-    // Play music
-    audio.play().catch(() => {});
-    exploredBefore = true;
-    setTimeout(() => cover.querySelector('.cover-hero').scrollIntoView({behavior:'smooth'}), 50);
-  }
-
-  function showLearnPage() {
-    showPage('learn');
-  }
-
-  function showPage(name) {
-    const map = {
-      journey:'page-journey', about:'page-about',
-      contact:'page-contact', info:'page-info',
-      learn:'page-learn', home:'cover'
-    };
-    if (name === 'home') { goHome(); return; }
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    const target = document.getElementById(map[name]);
-    if (target) { target.classList.add('active'); currentPage = name; }
-    document.getElementById('menu-trigger').style.display = (name==='learn') ? 'none' : 'flex';
-    setActiveNav(name);
-    window.scrollTo({top:0, behavior:'smooth'});
-  }
-
-  function setActiveNav(name) {
-    document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
-    const map = {home:'nav-home',journey:'nav-journey',about:'nav-about',contact:'nav-contact',info:'nav-info'};
-    if(map[name]) document.getElementById(map[name]).classList.add('active');
-  }
-
-  // ── MENU ──────────────────────────────────────────────
-  function toggleMenu() {
-    menuOpen = !menuOpen;
-    document.getElementById('sidebar').classList.toggle('open', menuOpen);
-    document.getElementById('menu-trigger').classList.toggle('active', menuOpen);
-    document.getElementById('overlay').classList.toggle('dim', menuOpen);
-  }
-  function closeMenu() {
-    menuOpen = false;
-    document.getElementById('sidebar').classList.remove('open');
-    document.getElementById('menu-trigger').classList.remove('active');
-    document.getElementById('overlay').classList.remove('dim');
-  }
-  document.getElementById('overlay').addEventListener('click', closeMenu);
-
-  // ── THEME ─────────────────────────────────────────────
-  function toggleTheme() {
-    lightMode = !lightMode;
-    document.body.classList.toggle('light-mode', lightMode);
-    document.getElementById('theme-toggle').textContent = lightMode ? '☀' : '☾';
-  }
-
-  // ── MOUNTAIN CARDS ────────────────────────────────────
-  function buildMountainCards() {
-    const container = document.getElementById('mountains-scroll');
-    container.innerHTML = '';
-    MOUNTAINS.forEach((m, i) => {
-      const card = document.createElement('div');
-      card.className = 'mountain-card';
-      card.style.animationDelay = (i * 0.08)+'s';
-      card.innerHTML = `
-        <div class="mountain-img">
-          <img src="${m.images[0]}" alt="${m.name}"
-            onerror="this.parentElement.innerHTML='<div style=\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:.78rem;letter-spacing:.08em;color:var(--green-accent);padding:12px;text-align:center;\'>${m.name}<br><small style=\'opacity:.5;font-size:.7rem\'>Image Coming Soon</small></div>'">
+    <!-- Footer -->
+    <footer>
+        <div class="social-links">
+            <a class="social-link instagram" onclick="openInstagram()" href="javascript:void(0);">Instagram</a>
+            <a class="social-link tiktok" onclick="openTikTok()" href="javascript:void(0);">TikTok</a>
+            <a class="social-link facebook" onclick="openFacebook()" href="javascript:void(0);">Facebook</a>
         </div>
-        <div class="mountain-info">
-          <div class="mountain-name">${m.name}</div>
-          <div class="mountain-meta">
-            <span>${m.location}</span>
-            <span class="year">${m.year}</span>
-            <span>${m.elevation}</span>
-          </div>
-        </div>`;
-      card.addEventListener('click', () => openDetail(m.id));
-      container.appendChild(card);
-    });
-  }
+        <p style="margin-top: 1rem; font-size: 0.85rem; color: rgba(250, 250, 250, 0.6);">© 2024 CLEAR.ADV. All rights reserved.</p>
+    </footer>
 
-  // ── DETAIL ────────────────────────────────────────────
-  function openDetail(id) {
-    const m = MOUNTAINS.find(x => x.id === id);
-    if (!m) return;
-    document.getElementById('detail-name').textContent = m.name;
-    document.getElementById('detail-location').textContent = m.location;
-    document.getElementById('detail-elev').textContent = m.elevation;
-    document.getElementById('detail-year').textContent = m.year;
-    document.getElementById('detail-story').textContent = m.story;
-    const ul = document.getElementById('detail-highlights');
-    ul.innerHTML = m.highlights.map(h => `<li>${h}</li>`).join('');
-    currentGallery = m.images;
-    currentGalleryIdx = 0;
-    renderGallery();
-    const detail = document.getElementById('journey-detail');
-    detail.classList.add('visible');
-    setTimeout(() => detail.scrollIntoView({behavior:'smooth', block:'start'}), 60);
-  }
+    <script>
+        // Mountain Data
+        const mountainsData = {
+            latimojong: {
+                name: 'Latimojong',
+                location: 'Sulawesi Selatan',
+                elevation: '3,478m',
+                year: '2024',
+                images: ['latimojong01.jpg', 'latimojong02.jpg', 'latimojong03.jpg'],
+                story: 'Latimojong, the highest peak in South Sulawesi, was our gateway to understanding the raw power of nature. The journey tested our endurance and bonded us as explorers.',
+                highlight: 'Standing at 3,478 meters, the summit offered views that spanned across entire valleys—a humbling reminder of why we climb.'
+            },
+            lompobattang: {
+                name: 'Lompobattang',
+                location: 'Sulawesi Selatan',
+                elevation: '2,914m',
+                year: '2024',
+                images: ['lompobattang01.jpg', 'lompobattang02.jpg'],
+                story: 'Lompobattang is a sacred mountain that holds deep cultural significance for local communities. We climbed with respect and gratitude.',
+                highlight: 'The misty summit and pristine forests showcased why environmental protection is central to our mission.'
+            },
+            baria: {
+                name: 'Bulu Baria',
+                location: 'Sulawesi Selatan',
+                elevation: '2,450m',
+                year: '2024',
+                images: ['baria01.jpg', 'baria02.jpg'],
+                story: 'Bulu Baria offered challenging terrain that pushed our technical climbing skills and strengthened our brotherhood.',
+                highlight: 'Navigating rocky ridges and dense vegetation, we discovered why teamwork is essential in any expedition.'
+            },
+            bawakaraeng: {
+                name: 'Bawakaraeng',
+                location: 'Sulawesi Selatan',
+                elevation: '2,833m',
+                year: '2024',
+                images: ['bawakaraeng01.jpg', 'bawakaraeng02.jpg'],
+                story: 'Our final summit of the season was Bawakaraeng, where we celebrated our collective achievements and planned future expeditions.',
+                highlight: 'As the sun set behind distant peaks, we reflected on how far we've come as a community.'
+            }
+        };
 
-  function closeDetail() {
-    document.getElementById('journey-detail').classList.remove('visible');
-    document.getElementById('mountains-scroll').scrollIntoView({behavior:'smooth', block:'start'});
-  }
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
 
-  function renderGallery() {
-    const wrap = document.getElementById('gallery-images');
-    const total = currentGallery.length;
-    const idx = currentGalleryIdx;
-    wrap.innerHTML = currentGallery.map((src, i) => {
-      const cls = i === idx ? 'gallery-img active' : 'gallery-img';
-      return `<img src="${src}" alt="Gallery ${i+1}" class="${cls}"
-        onerror="this.outerHTML='<div class=\'gallery-img-placeholder\'>${src}<br><small style=\'opacity:.5\'>Image Coming Soon</small></div>'">`;
-    }).join('');
-    document.getElementById('gallery-counter').textContent = `${idx+1} / ${total}`;
-  }
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            body.classList.toggle('light-mode');
+            themeToggle.textContent = body.classList.contains('dark-mode') ? '🌙' : '☀️';
+            localStorage.setItem('theme', body.classList.contains('dark-mode') ? 'dark' : 'light');
+        });
 
-  function prevGallery() {
-    currentGalleryIdx = (currentGalleryIdx - 1 + currentGallery.length) % currentGallery.length;
-    renderGallery();
-  }
-  function nextGallery() {
-    currentGalleryIdx = (currentGalleryIdx + 1) % currentGallery.length;
-    renderGallery();
-  }
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        if (savedTheme === 'light') {
+            body.classList.remove('dark-mode');
+            body.classList.add('light-mode');
+            themeToggle.textContent = '☀️';
+        }
 
-  // ── CONTACT ───────────────────────────────────────────
-  function sendEmail() {
-    const name    = document.getElementById('cf-name').value.trim()    || 'Visitor';
-    const subject = document.getElementById('cf-subject').value.trim() || 'Inquiry from CLEAR.ADV Website';
-    const msg     = document.getElementById('cf-message').value.trim() || '';
-    const body    = `Hello CLEAR.ADV Team,\n\nMy name is ${name}.\n\n${msg}\n\nBest regards,\n${name}`;
-    const mailURL = `mailto:adventureclear@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    window.location.href = mailURL;
-  }
+        // Menu Toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const sideMenu = document.getElementById('sideMenu');
+        const menuOverlay = document.getElementById('menuOverlay');
 
-  function chatWA() {
-    const name = document.getElementById('cf-name').value.trim() || 'a visitor';
-    const msg  = `Hello CLEAR.ADV Team, I'm ${name} and I'm interested in your expedition.`;
-    window.open(`https://wa.me/628567890207?text=${encodeURIComponent(msg)}`, '_blank');
-  }
-</script>
+        menuToggle.addEventListener('click', () => {
+            menuToggle.classList.toggle('active');
+            sideMenu.classList.toggle('active');
+            menuOverlay.classList.toggle('active');
+        });
+
+        menuOverlay.addEventListener('click', () => {
+            menuToggle.classList.remove('active');
+            sideMenu.classList.remove('active');
+            menuOverlay.classList.remove('active');
+        });
+
+        // Navigation Functions
+        function showPage(pageId) {
+            document.querySelectorAll('.page-section').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+            window.scrollTo(0, 0);
+            closeMenu();
+        }
+
+        function closeMenu() {
+            menuToggle.classList.remove('active');
+            sideMenu.classList.remove('active');
+            menuOverlay.classList.remove('active');
+        }
+
+        function goToHome() {
+            showPage('coverPage');
+            document.getElementById('menuToggle').style.display = 'none';
+        }
+
+        function goToExploration() {
+            showPage('explorationPage');
+            document.getElementById('menuToggle').style.display = 'flex';
+            playBackgroundMusic();
+        }
+
+        function goToJourney() {
+            showPage('journeyPage');
+            playBackgroundMusic();
+        }
+
+        function goToAbout() {
+            showPage('aboutPage');
+        }
+
+        function goToContact() {
+            showPage('contactPage');
+        }
+
+        function goToInformation() {
+            showPage('informationPage');
+        }
+
+        function goToLearn() {
+            showPage('learnPage');
+        }
+
+        // Background Music
+        let audioPlayer;
+
+        function playBackgroundMusic() {
+            if (!audioPlayer) {
+                audioPlayer = new Audio('musik1.mp3');
+                audioPlayer.loop = true;
+                audioPlayer.volume = 0.3;
+            }
+            if (audioPlayer.paused) {
+                audioPlayer.play().catch(e => console.log('Audio play failed:', e));
+            }
+        }
+
+        // Mountain Details
+        function showMountainDetail(mountainId) {
+            const mountain = mountainsData[mountainId];
+            const detailsContainer = document.getElementById('mountainDetails');
+
+            let imagesHTML = mountain.images.map((img, idx) => 
+                `<img src="${img}" alt="Mountain view ${idx + 1}" class="gallery-image" style="display: ${idx === 0 ? 'block' : 'none'};" id="galleryImg_${idx}">`
+            ).join('');
+
+            let html = `
+                <div class="mountain-detail active" id="detail_${mountainId}">
+                    <div class="detail-header">
+                        <h3>${mountain.name}</h3>
+                    </div>
+                    
+                    <div class="detail-info">
+                        <div class="detail-info-item">
+                            <div class="detail-info-label">Location</div>
+                            <div class="detail-info-value">${mountain.location}</div>
+                        </div>
+                        <div class="detail-info-item">
+                            <div class="detail-info-label">Elevation</div>
+                            <div class="detail-info-value">${mountain.elevation}</div>
+                        </div>
+                        <div class="detail-info-item">
+                            <div class="detail-info-label">Year Explored</div>
+                            <div class="detail-info-value">${mountain.year}</div>
+                        </div>
+                    </div>
+
+                    <div class="gallery-container">
+                        ${imagesHTML}
+                        <div class="gallery-controls">
+                            <button class="gallery-btn" onclick="previousGalleryImage('${mountainId}')" id="prevBtn_${mountainId}">← Prev</button>
+                            <span class="gallery-counter"><span id="currentImg_${mountainId}">1</span> / ${mountain.images.length}</span>
+                            <button class="gallery-btn" onclick="nextGalleryImage('${mountainId}')" id="nextBtn_${mountainId}">Next →</button>
+                        </div>
+                    </div>
+
+                    <div class="detail-story">
+                        <h4>Expedition Story</h4>
+                        <p>${mountain.story}</p>
+                    </div>
+
+                    <div class="detail-story">
+                        <h4>Highlight Moment</h4>
+                        <p>${mountain.highlight}</p>
+                    </div>
+                </div>
+            `;
+
+            detailsContainer.innerHTML = html;
+            detailsContainer.scrollIntoView({ behavior: 'smooth' });
+            updateGalleryButtons(mountainId);
+        }
+
+        let galleryIndex = {};
+
+        function nextGalleryImage(mountainId) {
+            const mountain = mountainsData[mountainId];
+            if (!galleryIndex[mountainId]) galleryIndex[mountainId] = 0;
+            
+            galleryIndex[mountainId]++;
+            if (galleryIndex[mountainId] >= mountain.images.length) {
+                galleryIndex[mountainId] = mountain.images.length - 1;
+            }
+            updateGalleryDisplay(mountainId);
+        }
+
+        function previousGalleryImage(mountainId) {
+            if (!galleryIndex[mountainId]) galleryIndex[mountainId] = 0;
+            
+            galleryIndex[mountainId]--;
+            if (galleryIndex[mountainId] < 0) {
+                galleryIndex[mountainId] = 0;
+            }
+            updateGalleryDisplay(mountainId);
+        }
+
+        function updateGalleryDisplay(mountainId) {
+            const mountain = mountainsData[mountainId];
+            const currentIdx = galleryIndex[mountainId];
+
+            mountain.images.forEach((_, idx) => {
+                const img = document.getElementById(`galleryImg_${idx}`);
+                if (img) img.style.display = idx === currentIdx ? 'block' : 'none';
+            });
+
+            document.getElementById(`currentImg_${mountainId}`).textContent = currentIdx + 1;
+            updateGalleryButtons(mountainId);
+        }
+
+        function updateGalleryButtons(mountainId) {
+            const mountain = mountainsData[mountainId];
+            const currentIdx = galleryIndex[mountainId] || 0;
+
+            document.getElementById(`prevBtn_${mountainId}`).disabled = currentIdx === 0;
+            document.getElementById(`nextBtn_${mountainId}`).disabled = currentIdx === mountain.images.length - 1;
+        }
+
+        // Contact Form Functions
+        function sendEmail() {
+            const name = document.getElementById('name').value;
+            const subject = document.getElementById('subject').value;
+            const message = document.getElementById('message').value;
+
+            if (!name || !subject || !message) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            const mailtoLink = `mailto:adventureclear@gmail.com?subject=${encodeURIComponent('Inquiry from CLEAR.ADV Website - ' + subject)}&body=${encodeURIComponent(`Name: ${name}\n\nMessage:\n${message}`)}`;
+            window.location.href = mailtoLink;
+        }
+
+        function sendWhatsApp() {
+            const name = document.getElementById('name').value;
+            const subject = document.getElementById('subject').value;
+            const message = document.getElementById('message').value;
+
+            if (!name || !subject || !message) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            const whatsappMessage = `Hello CLEAR.ADV Team, I'm interested in your expedition.\n\nName: ${name}\nSubject: ${subject}\n\nMessage: ${message}`;
+            const whatsappLink = `https://wa.me/628567890207?text=${encodeURIComponent(whatsappMessage)}`;
+            window.open(whatsappLink, '_blank');
+        }
+
+        // Information Page Functions
+        function openWhatsAppChannel() {
+            window.open('https://www.whatsapp.com/channel/YOUR_CHANNEL_ID', '_blank');
+        }
+
+        function openWhatsAppGroup() {
+            window.open('https://chat.whatsapp.com/YOUR_GROUP_LINK', '_blank');
+        }
+
+        function openInstagramBroadcast() {
+            window.open('https://instagram.com/clear.adv', '_blank');
+        }
+
+        // Footer Social Links
+        function openInstagram() {
+            window.open('https://instagram.com/clear.adv', '_blank');
+        }
+
+        function openTikTok() {
+            window.open('https://tiktok.com/@clear.adv', '_blank');
+        }
+
+        function openFacebook() {
+            window.open('https://facebook.com/clearadv', '_blank');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Menu toggle only shows on exploration pages
+            document.getElementById('menuToggle').style.display = 'none';
+        });
+    </script>
 </body>
 </html>
-
