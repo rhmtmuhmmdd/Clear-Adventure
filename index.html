@@ -1,2164 +1,1614 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CLEAR.ADV — Responsible Exploration</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-
-<style>
-/* ===================== RESET & ROOT ===================== */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-:root {
-  --forest:    #1a3a2a;
-  --moss:      #2d5a3d;
-  --fern:      #3d7a52;
-  --sage:      #5a9a6e;
-  --glow:      #4ade80;
-  --black:     #0a0c0b;
-  --charcoal:  #111614;
-  --graphite:  #1c2220;
-  --stone:     #2a302c;
-  --ash:       #4a5450;
-  --mist:      #8aa89a;
-  --ivory:     #f0ece4;
-  --white:     #ffffff;
-  --overlay:   rgba(0,0,0,0.62);
-  --font-display: 'Bebas Neue', sans-serif;
-  --font-serif:   'Crimson Pro', serif;
-  --font-body:    'DM Sans', sans-serif;
-  --radius:    12px;
-  --radius-lg: 20px;
-  --transition: 0.35s cubic-bezier(0.4,0,0.2,1);
-  --transition-slow: 0.6s cubic-bezier(0.4,0,0.2,1);
-  --shadow: 0 8px 32px rgba(0,0,0,0.45);
-  --shadow-green: 0 0 24px rgba(74,222,128,0.25);
-}
-
-[data-theme="light"] {
-  --black:    #f5f2ec;
-  --charcoal: #ece8df;
-  --graphite: #ddd8ce;
-  --stone:    #ccc6b8;
-  --ash:      #7a8075;
-  --mist:     #4a5450;
-  --ivory:    #1a1c1a;
-  --white:    #111614;
-  --overlay:  rgba(0,0,0,0.55);
-  --forest:   #0e2a1a;
-  --shadow: 0 8px 32px rgba(0,0,0,0.15);
-}
-
-html { scroll-behavior: smooth; }
-
-body {
-  font-family: var(--font-body);
-  background: var(--charcoal);
-  color: var(--ivory);
-  transition: background var(--transition-slow), color var(--transition-slow);
-  overflow-x: hidden;
-  min-height: 100vh;
-}
-
-/* ===================== SCROLLBAR ===================== */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--charcoal); }
-::-webkit-scrollbar-thumb { background: var(--fern); border-radius: 3px; }
-
-/* ===================== AUDIO ===================== */
-#bg-music { display: none; }
-
-/* ===================== PAGES ===================== */
-.page { display: none; min-height: 100vh; flex-direction: column; }
-.page.active { display: flex; }
-
-/* Landing page khusus pakai block agar position absolute bekerja dengan benar */
-#page-landing { display: none; }
-#page-landing.active { display: block; }
-
-/* ===================== LANDING PAGE ===================== */
-#page-landing {
-  position: relative;
-  min-height: 100vh;
-  overflow: hidden;
-  isolation: isolate;
-}
-
-.landing-bg {
-  position: absolute;
-  inset: 0;
-  background: url('sampul1.jpg') center/cover no-repeat;
-  z-index: 0;
-  pointer-events: none;
-}
-.landing-bg::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(160deg,rgba(0,0,0,0.75) 0%,rgba(10,20,14,0.65) 50%,rgba(0,0,0,0.8) 100%);
-  pointer-events: none;
-}
-
-/* Grain texture */
-.landing-bg::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-  opacity: 0.4;
-  z-index: 1;
-  pointer-events: none;
-}
-
-.landing-header {
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px 48px;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent);
-}
-
-.logo-wrap img {
-  height: 52px;
-  width: auto;
-  max-width: 160px;
-  object-fit: contain;
-  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
-  transition: transform var(--transition);
-  display: block;
-}
-.logo-wrap img:hover { transform: scale(1.04); }
-
-.nav-logo img {
-  height: 38px;
-  width: auto;
-  max-width: 130px;
-  object-fit: contain;
-  display: block;
-  filter: drop-shadow(0 1px 4px rgba(0,0,0,0.4));
-}
-
-.btn-darkmode {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--moss);
-  color: var(--glow);
-  border: 1.5px solid var(--fern);
-  border-radius: 30px;
-  padding: 9px 20px;
-  font-family: var(--font-body);
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  letter-spacing: 0.04em;
-  transition: all var(--transition);
-  white-space: nowrap;
-}
-.btn-darkmode:hover {
-  background: var(--fern);
-  box-shadow: var(--shadow-green);
-  transform: translateY(-1px);
-}
-.btn-darkmode .mode-icon { font-size: 15px; transition: transform 0.4s; }
-[data-theme="light"] .btn-darkmode .mode-icon { transform: rotate(180deg); }
-
-/* Landing center */
-.landing-center {
-  position: relative;
-  z-index: 10;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  text-align: center;
-  padding: 120px 24px 80px;
-  pointer-events: auto;
-}
-
-.landing-center * {
-  pointer-events: auto;
-}
-
-.landing-eyebrow {
-  font-family: var(--font-body);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.35em;
-  color: var(--sage);
-  text-transform: uppercase;
-  margin-bottom: 24px;
-  opacity: 0;
-  animation: fadeUp 0.8s 0.3s forwards;
-}
-
-.landing-title {
-  font-family: var(--font-display);
-  font-size: clamp(72px, 14vw, 180px);
-  line-height: 0.92;
-  color: var(--white);
-  letter-spacing: 0.04em;
-  text-shadow: 0 4px 40px rgba(0,0,0,0.5);
-  opacity: 0;
-  animation: fadeUp 0.9s 0.5s forwards;
-  margin-bottom: 20px;
-}
-
-.landing-subtitle {
-  font-family: var(--font-serif);
-  font-size: clamp(16px, 2.5vw, 22px);
-  font-style: italic;
-  color: var(--mist);
-  letter-spacing: 0.06em;
-  opacity: 0;
-  animation: fadeUp 0.9s 0.7s forwards;
-  margin-bottom: 56px;
-}
-
-.landing-divider {
-  width: 60px; height: 1.5px;
-  background: linear-gradient(90deg, transparent, var(--sage), transparent);
-  margin: 0 auto 48px;
-  opacity: 0;
-  animation: fadeUp 0.9s 0.65s forwards;
-}
-
-.landing-btns {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-  justify-content: center;
-  opacity: 0;
-  animation: fadeUp 0.9s 0.9s forwards;
-}
-
-.btn-primary {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  background: var(--fern);
-  color: #fff;
-  border: none;
-  border-radius: 40px;
-  padding: 16px 36px;
-  font-family: var(--font-body);
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all var(--transition);
-  box-shadow: 0 4px 24px rgba(61,122,82,0.4);
-}
-.btn-primary:hover {
-  background: var(--sage);
-  box-shadow: 0 0 32px rgba(74,222,128,0.4), 0 8px 32px rgba(0,0,0,0.3);
-  transform: translateY(-3px);
-}
-
-.btn-outline {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  background: transparent;
-  color: var(--glow);
-  border: 1.5px solid var(--fern);
-  border-radius: 40px;
-  padding: 16px 36px;
-  font-family: var(--font-body);
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all var(--transition);
-}
-.btn-outline:hover {
-  background: rgba(61,122,82,0.15);
-  border-color: var(--sage);
-  box-shadow: 0 0 20px rgba(74,222,128,0.2);
-  transform: translateY(-3px);
-}
-
-.landing-scroll-hint {
-  position: absolute;
-  bottom: 36px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  opacity: 0;
-  animation: fadeUp 1s 1.3s forwards;
-  z-index: 10;
-}
-.scroll-line {
-  width: 1px; height: 40px;
-  background: linear-gradient(to bottom, var(--sage), transparent);
-  animation: scrollPulse 2s infinite;
-}
-.scroll-text {
-  font-size: 9px;
-  letter-spacing: 0.3em;
-  color: var(--mist);
-  text-transform: uppercase;
-}
-
-/* ===================== MAIN APP ===================== */
-#page-app {
-  flex-direction: column;
-  background: var(--charcoal);
-  min-height: 100vh;
-}
-
-/* ===================== NAV BAR ===================== */
-.navbar {
-  position: sticky;
-  top: 0;
-  z-index: 200;
-  background: rgba(10,12,11,0.92);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(61,122,82,0.15);
-  padding: 0 32px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-height: 68px;
-  transition: background var(--transition-slow);
-}
-[data-theme="light"] .navbar {
-  background: rgba(236,232,223,0.92);
-  border-bottom-color: rgba(61,122,82,0.2);
-}
-
-.nav-logo img { height: 38px; width: auto; }
-
-.nav-links {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  list-style: none;
-}
-
-.nav-links li a,
-.nav-links li button {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding: 8px 14px;
-  border-radius: 8px;
-  font-family: var(--font-body);
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--mist);
-  text-decoration: none;
-  background: none;
-  border: none;
-  cursor: pointer;
-  transition: all var(--transition);
-  letter-spacing: 0.02em;
-  white-space: nowrap;
-}
-.nav-links li a:hover,
-.nav-links li button:hover {
-  color: var(--glow);
-  background: rgba(61,122,82,0.12);
-}
-.nav-links li a.active,
-.nav-links li button.active {
-  color: var(--glow);
-  background: rgba(61,122,82,0.18);
-}
-
-.nav-icon {
-  width: 18px; height: 18px;
-  object-fit: contain;
-  opacity: 0.7;
-  transition: opacity var(--transition), filter var(--transition);
-  filter: brightness(0.8) saturate(0.5);
-}
-.nav-links li a:hover .nav-icon,
-.nav-links li button:hover .nav-icon,
-.nav-links li a.active .nav-icon,
-.nav-links li button.active .nav-icon {
-  opacity: 1;
-  filter: none;
-}
-
-.nav-right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-/* ===================== HAMBURGER ===================== */
-.hamburger {
-  display: none;
-  flex-direction: column;
-  gap: 5px;
-  cursor: pointer;
-  padding: 8px;
-  background: none;
-  border: none;
-}
-.hamburger span {
-  display: block;
-  width: 22px; height: 2px;
-  background: var(--mist);
-  border-radius: 2px;
-  transition: all var(--transition);
-}
-.hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px,5px); }
-.hamburger.open span:nth-child(2) { opacity: 0; }
-.hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px,-5px); }
-
-.mobile-menu {
-  display: none;
-  position: fixed;
-  top: 68px; left: 0; right: 0;
-  background: rgba(10,12,11,0.97);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(61,122,82,0.15);
-  flex-direction: column;
-  gap: 0;
-  z-index: 199;
-  padding: 12px 0;
-  transform: translateY(-10px);
-  opacity: 0;
-  transition: all var(--transition);
-}
-.mobile-menu.visible {
-  display: flex;
-  opacity: 1;
-  transform: translateY(0);
-}
-.mobile-menu button {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 14px 24px;
-  font-family: var(--font-body);
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--mist);
-  background: none;
-  border: none;
-  cursor: pointer;
-  transition: all var(--transition);
-  text-align: left;
-  width: 100%;
-}
-.mobile-menu button:hover { color: var(--glow); background: rgba(61,122,82,0.1); }
-
-/* ===================== SECTION CONTENT ===================== */
-.section { display: none; }
-.section.active { display: block; }
-
-.section-inner {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 64px 32px;
-}
-
-/* ===================== SECTION TITLES ===================== */
-.section-eyebrow {
-  font-size: 10px;
-  letter-spacing: 0.4em;
-  color: var(--sage);
-  text-transform: uppercase;
-  margin-bottom: 12px;
-  font-weight: 500;
-}
-.section-title {
-  font-family: var(--font-display);
-  font-size: clamp(40px, 6vw, 76px);
-  line-height: 1;
-  color: var(--ivory);
-  letter-spacing: 0.03em;
-  margin-bottom: 32px;
-}
-.section-divider {
-  width: 48px; height: 2px;
-  background: var(--fern);
-  border-radius: 2px;
-  margin-bottom: 40px;
-}
-
-/* ===================== OUR MISSION PAGE ===================== */
-#page-mission {
-  background: var(--charcoal);
-  min-height: 100vh;
-  flex-direction: column;
-}
-
-.mission-header {
-  position: relative;
-  padding: 120px 48px 64px;
-  text-align: center;
-  background: linear-gradient(to bottom, var(--forest), var(--charcoal));
-}
-.mission-header::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at center top, rgba(61,122,82,0.15), transparent 70%);
-}
-
-.mission-body {
-  max-width: 780px;
-  margin: 0 auto;
-  padding: 0 32px 80px;
-}
-
-.mission-text {
-  font-family: var(--font-serif);
-  font-size: clamp(17px, 2.2vw, 21px);
-  line-height: 1.85;
-  color: var(--mist);
-  margin-bottom: 28px;
-  transition: all var(--transition);
-}
-
-.mission-text-id {
-  font-family: var(--font-serif);
-  font-size: clamp(17px, 2.2vw, 21px);
-  line-height: 1.85;
-  color: var(--mist);
-  margin-bottom: 28px;
-  display: none;
-  opacity: 0;
-  transition: opacity var(--transition);
-}
-.mission-text-id.visible {
-  display: block;
-  opacity: 1;
-}
-
-.translate-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: none;
-  border: none;
-  color: var(--sage);
-  font-family: var(--font-body);
-  font-size: 13px;
-  cursor: pointer;
-  padding: 0;
-  margin-bottom: 56px;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  transition: color var(--transition);
-}
-.translate-toggle:hover { color: var(--glow); }
-
-.mission-cards {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  margin-top: 24px;
-}
-
-.mission-card {
-  background: var(--graphite);
-  border: 1px solid rgba(61,122,82,0.15);
-  border-radius: var(--radius-lg);
-  padding: 32px 24px;
-  text-align: center;
-  transition: all var(--transition);
-  cursor: default;
-}
-.mission-card:hover {
-  border-color: rgba(74,222,128,0.3);
-  transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(0,0,0,0.3);
-}
-.mission-card-icon {
-  font-size: 36px;
-  margin-bottom: 16px;
-  display: block;
-}
-.mission-card h3 {
-  font-family: var(--font-display);
-  font-size: 22px;
-  color: var(--ivory);
-  letter-spacing: 0.05em;
-  margin-bottom: 8px;
-}
-.mission-card p {
-  font-size: 13px;
-  color: var(--ash);
-  line-height: 1.6;
-}
-
-.mission-back {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 40px;
-  padding: 10px 20px;
-  background: transparent;
-  border: 1px solid rgba(61,122,82,0.3);
-  border-radius: 30px;
-  color: var(--sage);
-  font-family: var(--font-body);
-  font-size: 13px;
-  cursor: pointer;
-  transition: all var(--transition);
-}
-.mission-back:hover { background: rgba(61,122,82,0.1); color: var(--glow); }
-
-/* ===================== HOME SECTION ===================== */
-.home-hero {
-  position: relative;
-  height: 420px;
-  background: url('sampul1.jpg') center/cover no-repeat;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
-}
-.home-hero::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(10,12,11,0.9));
-}
-.home-hero-content {
-  position: relative;
-  z-index: 2;
-  text-align: center;
-}
-.home-hero-content h2 {
-  font-family: var(--font-display);
-  font-size: clamp(48px, 8vw, 96px);
-  color: var(--white);
-  letter-spacing: 0.06em;
-}
-.home-hero-content p {
-  font-family: var(--font-serif);
-  font-style: italic;
-  color: var(--mist);
-  font-size: 18px;
-  margin-top: 8px;
-}
-
-.home-quick {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  max-width: 960px;
-  margin: -50px auto 0;
-  padding: 0 32px;
-  position: relative;
-  z-index: 10;
-}
-.home-quick-card {
-  background: var(--graphite);
-  border: 1px solid rgba(61,122,82,0.15);
-  border-radius: var(--radius-lg);
-  padding: 28px 22px;
-  transition: all var(--transition);
-  cursor: default;
-}
-.home-quick-card:hover {
-  border-color: rgba(74,222,128,0.3);
-  transform: translateY(-4px);
-  box-shadow: var(--shadow);
-}
-.home-quick-card .qc-icon { font-size: 28px; margin-bottom: 12px; display: block; }
-.home-quick-card h3 {
-  font-family: var(--font-display);
-  font-size: 20px;
-  color: var(--ivory);
-  margin-bottom: 6px;
-  letter-spacing: 0.04em;
-}
-.home-quick-card p { font-size: 13px; color: var(--ash); line-height: 1.55; }
-
-.home-more { max-width: 960px; margin: 48px auto 0; padding: 0 32px 80px; }
-.home-more h3 {
-  font-family: var(--font-display);
-  font-size: 32px;
-  color: var(--ivory);
-  letter-spacing: 0.04em;
-  margin-bottom: 16px;
-}
-.home-more p { color: var(--mist); line-height: 1.7; font-size: 15px; max-width: 620px; }
-
-/* ===================== ABOUT SECTION ===================== */
-.about-intro {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 64px;
-  align-items: start;
-  margin-bottom: 72px;
-}
-.about-text p {
-  font-family: var(--font-serif);
-  font-size: 19px;
-  line-height: 1.85;
-  color: var(--mist);
-}
-
-.values-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 18px;
-  margin-bottom: 64px;
-}
-.value-card {
-  background: var(--graphite);
-  border: 1px solid rgba(61,122,82,0.12);
-  border-radius: var(--radius);
-  padding: 28px 20px;
-  text-align: center;
-  transition: all var(--transition);
-}
-.value-card:hover {
-  border-color: rgba(74,222,128,0.3);
-  transform: translateY(-5px);
-  box-shadow: 0 12px 32px rgba(0,0,0,0.25);
-}
-.value-card .v-icon { font-size: 32px; margin-bottom: 12px; display: block; }
-.value-card h4 {
-  font-family: var(--font-display);
-  font-size: 19px;
-  letter-spacing: 0.06em;
-  color: var(--ivory);
-  margin-bottom: 6px;
-}
-.value-card p { font-size: 12px; color: var(--ash); line-height: 1.55; }
-
-.photo-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
-}
-.photo-placeholder {
-  aspect-ratio: 4/3;
-  background: var(--stone);
-  border-radius: var(--radius);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  color: var(--ash);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  overflow: hidden;
-  transition: transform var(--transition);
-  cursor: default;
-}
-.photo-placeholder:hover { transform: scale(1.02); }
-.photo-placeholder:nth-child(1) { grid-column: span 2; }
-.photo-placeholder:nth-child(4) { grid-column: span 2; }
-
-/* ===================== JOURNEY SECTION ===================== */
-.journey-hero {
-  background: linear-gradient(135deg, var(--forest) 0%, var(--graphite) 50%, var(--black) 100%);
-  padding: 64px 32px 48px;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-}
-.journey-hero::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -20%;
-  width: 140%;
-  height: 200%;
-  background: radial-gradient(ellipse, rgba(61,122,82,0.12), transparent 60%);
-  pointer-events: none;
-}
-.journey-hero h2 {
-  font-family: var(--font-display);
-  font-size: clamp(48px, 7vw, 88px);
-  color: var(--white);
-  letter-spacing: 0.04em;
-  position: relative;
-}
-.journey-hero p {
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-size: 19px;
-  color: var(--mist);
-  margin-top: 8px;
-  position: relative;
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-  max-width: 960px;
-  margin: 48px auto;
-  padding: 0 32px;
-}
-.stat-card {
-  background: var(--graphite);
-  border: 1px solid rgba(61,122,82,0.15);
-  border-radius: var(--radius);
-  padding: 32px 20px;
-  text-align: center;
-  transition: all var(--transition);
-}
-.stat-card:hover {
-  border-color: rgba(74,222,128,0.3);
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-green);
-}
-.stat-num {
-  font-family: var(--font-display);
-  font-size: clamp(40px, 5vw, 64px);
-  color: var(--glow);
-  line-height: 1;
-  letter-spacing: 0.02em;
-}
-.stat-label {
-  font-size: 12px;
-  color: var(--ash);
-  margin-top: 8px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-/* Horizontal scroll cards */
-.mountains-scroll-wrap {
-  padding: 0 32px 32px;
-  max-width: 960px;
-  margin: 0 auto;
-}
-.mountains-scroll-wrap h3 {
-  font-family: var(--font-display);
-  font-size: 26px;
-  color: var(--ivory);
-  letter-spacing: 0.05em;
-  margin-bottom: 20px;
-}
-
-.mountains-scroll {
-  display: flex;
-  gap: 20px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  padding-bottom: 12px;
-  -webkit-overflow-scrolling: touch;
-}
-.mountains-scroll::-webkit-scrollbar { height: 4px; }
-.mountains-scroll::-webkit-scrollbar-thumb { background: var(--fern); border-radius: 2px; }
-
-.mountain-card {
-  flex: 0 0 280px;
-  scroll-snap-align: start;
-  background: var(--graphite);
-  border: 1px solid rgba(61,122,82,0.15);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  cursor: pointer;
-  transition: all var(--transition);
-}
-.mountain-card:hover {
-  border-color: rgba(74,222,128,0.35);
-  transform: scale(1.03);
-  box-shadow: 0 16px 40px rgba(0,0,0,0.4);
-}
-.mountain-card.selected {
-  border-color: var(--glow);
-  box-shadow: var(--shadow-green);
-}
-
-.mc-img {
-  width: 100%;
-  aspect-ratio: 16/9;
-  background: var(--stone);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  color: var(--ash);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-.mc-body { padding: 18px 16px; }
-.mc-name {
-  font-family: var(--font-display);
-  font-size: 22px;
-  color: var(--ivory);
-  letter-spacing: 0.04em;
-  margin-bottom: 4px;
-}
-.mc-location { font-size: 12px; color: var(--sage); margin-bottom: 2px; }
-.mc-year { font-size: 11px; color: var(--ash); }
-
-/* Journey detail */
-.journey-detail-wrap {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 0 32px 80px;
-}
-
-#journey-detail {
-  display: none;
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
-}
-#journey-detail.visible {
-  display: block;
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.detail-header {
-  margin-bottom: 32px;
-  padding-bottom: 24px;
-  border-bottom: 1px solid rgba(61,122,82,0.15);
-}
-.detail-header h2 {
-  font-family: var(--font-display);
-  font-size: clamp(44px, 6vw, 72px);
-  color: var(--white);
-  letter-spacing: 0.03em;
-  line-height: 1;
-  margin-bottom: 10px;
-}
-.detail-meta {
-  display: flex;
-  gap: 24px;
-  flex-wrap: wrap;
-}
-.detail-meta span {
-  font-size: 13px;
-  color: var(--ash);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.detail-meta span strong { color: var(--sage); }
-
-/* Gallery slider */
-.gallery-slider {
-  position: relative;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  margin-bottom: 32px;
-  background: var(--stone);
-  aspect-ratio: 16/7;
-}
-.gallery-slide {
-  display: none;
-  width: 100%;
-  height: 100%;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  color: var(--ash);
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  background: linear-gradient(135deg, var(--stone), var(--graphite));
-}
-.gallery-slide.active { display: flex; }
-
-.gallery-controls {
-  position: absolute;
-  bottom: 16px;
-  left: 0; right: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-}
-.gallery-btn {
-  background: rgba(0,0,0,0.6);
-  border: 1px solid rgba(255,255,255,0.15);
-  color: #fff;
-  width: 36px; height: 36px;
-  border-radius: 50%;
-  cursor: pointer;
-  font-size: 16px;
-  transition: all var(--transition);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.gallery-btn:hover { background: var(--fern); border-color: var(--fern); }
-.gallery-dots { display: flex; gap: 6px; }
-.gallery-dot {
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.3);
-  cursor: pointer;
-  transition: all var(--transition);
-}
-.gallery-dot.active { background: var(--glow); width: 18px; border-radius: 3px; }
-
-/* Story section */
-.story-section { margin-bottom: 32px; }
-.story-section h3 {
-  font-family: var(--font-display);
-  font-size: 24px;
-  color: var(--ivory);
-  letter-spacing: 0.04em;
-  margin-bottom: 16px;
-}
-.story-text {
-  font-family: var(--font-serif);
-  font-size: 18px;
-  color: var(--mist);
-  line-height: 1.8;
-  margin-bottom: 12px;
-}
-.story-more {
-  overflow: hidden;
-  max-height: 0;
-  transition: max-height 0.6s ease, opacity 0.4s ease;
-  opacity: 0;
-}
-.story-more.open { max-height: 600px; opacity: 1; }
-.btn-read-more {
-  background: none;
-  border: 1px solid rgba(61,122,82,0.3);
-  color: var(--sage);
-  padding: 8px 20px;
-  border-radius: 20px;
-  font-family: var(--font-body);
-  font-size: 13px;
-  cursor: pointer;
-  transition: all var(--transition);
-  margin-top: 8px;
-}
-.btn-read-more:hover { background: rgba(61,122,82,0.12); color: var(--glow); }
-
-/* Highlight */
-.highlight-box {
-  background: linear-gradient(135deg, rgba(26,58,42,0.6), rgba(45,90,61,0.3));
-  border: 1px solid rgba(74,222,128,0.2);
-  border-radius: var(--radius-lg);
-  padding: 28px 32px;
-  margin-bottom: 28px;
-}
-.highlight-box h4 {
-  font-family: var(--font-display);
-  font-size: 16px;
-  letter-spacing: 0.15em;
-  color: var(--sage);
-  text-transform: uppercase;
-  margin-bottom: 12px;
-}
-.highlight-box p {
-  font-family: var(--font-serif);
-  font-size: 20px;
-  font-style: italic;
-  color: var(--ivory);
-  line-height: 1.6;
-}
-
-/* Mini map */
-.mini-map {
-  height: 200px;
-  background: linear-gradient(135deg, var(--stone), var(--graphite));
-  border-radius: var(--radius);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid rgba(61,122,82,0.15);
-  margin-bottom: 28px;
-  font-size: 13px;
-  color: var(--ash);
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  position: relative;
-  overflow: hidden;
-}
-.mini-map::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%233d7a52' fill-opacity='0.06'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-  opacity: 0.5;
-}
-
-/* Blockquote */
-.detail-blockquote {
-  text-align: center;
-  padding: 32px;
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-size: 19px;
-  color: var(--mist);
-  position: relative;
-}
-.detail-blockquote::before {
-  content: '"';
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 72px;
-  color: rgba(74,222,128,0.15);
-  font-family: Georgia, serif;
-  line-height: 1;
-}
-.detail-blockquote cite {
-  display: block;
-  margin-top: 12px;
-  font-size: 13px;
-  color: var(--ash);
-  font-style: normal;
-  letter-spacing: 0.06em;
-}
-
-/* ===================== CONTACT SECTION ===================== */
-.contact-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 60px;
-  align-items: start;
-}
-
-.contact-form {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-}
-.form-group label {
-  font-size: 11px;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--sage);
-  font-weight: 500;
-}
-.form-group input,
-.form-group textarea {
-  background: var(--graphite);
-  border: 1px solid rgba(61,122,82,0.2);
-  border-radius: 10px;
-  padding: 14px 16px;
-  color: var(--ivory);
-  font-family: var(--font-body);
-  font-size: 14px;
-  outline: none;
-  transition: all var(--transition);
-  resize: none;
-}
-.form-group input::placeholder,
-.form-group textarea::placeholder { color: var(--ash); }
-.form-group input:focus,
-.form-group textarea:focus {
-  border-color: var(--fern);
-  box-shadow: 0 0 0 3px rgba(61,122,82,0.12);
-}
-
-.btn-send {
-  background: var(--fern);
-  color: #fff;
-  border: none;
-  border-radius: 10px;
-  padding: 15px 28px;
-  font-family: var(--font-body);
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all var(--transition);
-  align-self: flex-start;
-}
-.btn-send:hover {
-  background: var(--sage);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-green);
-}
-
-.contact-info h3 {
-  font-family: var(--font-display);
-  font-size: 30px;
-  color: var(--ivory);
-  letter-spacing: 0.04em;
-  margin-bottom: 8px;
-}
-.contact-info .contact-tagline {
-  font-family: var(--font-serif);
-  font-style: italic;
-  color: var(--mist);
-  font-size: 16px;
-  margin-bottom: 36px;
-  line-height: 1.6;
-}
-.contact-detail {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-.contact-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-  padding: 18px;
-  background: var(--graphite);
-  border: 1px solid rgba(61,122,82,0.12);
-  border-radius: var(--radius);
-  transition: all var(--transition);
-}
-.contact-item:hover {
-  border-color: rgba(74,222,128,0.25);
-  transform: translateX(4px);
-}
-.contact-item-icon {
-  font-size: 20px;
-  flex-shrink: 0;
-  margin-top: 1px;
-}
-.contact-item-body h4 {
-  font-size: 11px;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--sage);
-  margin-bottom: 3px;
-}
-.contact-item-body p { font-size: 14px; color: var(--mist); }
-
-/* ===================== INFORMATION SECTION ===================== */
-.info-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-}
-.info-card {
-  background: var(--graphite);
-  border: 1px solid rgba(61,122,82,0.12);
-  border-radius: var(--radius-lg);
-  padding: 32px 24px;
-  transition: all var(--transition);
-}
-.info-card:hover {
-  border-color: rgba(74,222,128,0.25);
-  transform: translateY(-4px);
-  box-shadow: var(--shadow);
-}
-.info-card h3 {
-  font-family: var(--font-display);
-  font-size: 22px;
-  letter-spacing: 0.06em;
-  color: var(--ivory);
-  margin-bottom: 6px;
-}
-.info-card .info-card-icon { font-size: 30px; margin-bottom: 14px; display: block; }
-.info-list {
-  list-style: none;
-  margin-top: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.info-list li {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  font-size: 14px;
-  color: var(--mist);
-  line-height: 1.5;
-}
-.info-list li::before {
-  content: '▸';
-  color: var(--sage);
-  flex-shrink: 0;
-  margin-top: 1px;
-}
-
-.upcoming-card {
-  background: linear-gradient(135deg, rgba(26,58,42,0.6), rgba(45,90,61,0.2));
-  border: 1px solid rgba(74,222,128,0.2);
-  border-radius: var(--radius-lg);
-  padding: 32px 24px;
-}
-.upcoming-badge {
-  display: inline-block;
-  background: var(--fern);
-  color: #fff;
-  font-size: 10px;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  padding: 4px 12px;
-  border-radius: 20px;
-  margin-bottom: 14px;
-}
-.upcoming-card h3 {
-  font-family: var(--font-display);
-  font-size: 30px;
-  color: var(--white);
-  letter-spacing: 0.04em;
-  margin-bottom: 6px;
-}
-.upcoming-card p { font-size: 14px; color: var(--mist); line-height: 1.6; }
-
-/* ===================== FOOTER ===================== */
-footer {
-  background: var(--black);
-  border-top: 1px solid rgba(61,122,82,0.15);
-  padding: 48px 32px 32px;
-}
-.footer-inner {
-  max-width: 1100px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 40px;
-  align-items: start;
-  margin-bottom: 32px;
-}
-.footer-brand h3 {
-  font-family: var(--font-display);
-  font-size: 28px;
-  color: var(--ivory);
-  letter-spacing: 0.08em;
-  margin-bottom: 4px;
-}
-.footer-brand p { font-size: 12px; color: var(--ash); letter-spacing: 0.08em; }
-.footer-social {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-.footer-social a {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 38px; height: 38px;
-  border-radius: 50%;
-  border: 1px solid rgba(61,122,82,0.25);
-  color: var(--mist);
-  text-decoration: none;
-  font-size: 15px;
-  transition: all var(--transition);
-}
-.footer-social a:hover {
-  border-color: var(--fern);
-  color: var(--glow);
-  background: rgba(61,122,82,0.1);
-  transform: translateY(-2px);
-}
-.footer-copy {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding-top: 24px;
-  border-top: 1px solid rgba(255,255,255,0.06);
-  text-align: center;
-  font-size: 12px;
-  color: var(--ash);
-  letter-spacing: 0.06em;
-}
-
-/* ===================== ANIMATIONS ===================== */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(28px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-@keyframes scrollPulse {
-  0%,100% { opacity: 0.4; transform: scaleY(1); }
-  50%      { opacity: 1; transform: scaleY(1.15); }
-}
-
-.fade-in {
-  opacity: 0;
-  animation: fadeUp 0.7s ease forwards;
-}
-
-/* ===================== RESPONSIVE ===================== */
-@media (max-width: 1024px) {
-  .about-intro { grid-template-columns: 1fr; gap: 40px; }
-  .values-grid { grid-template-columns: repeat(2, 1fr); }
-  .photo-grid { grid-template-columns: repeat(2, 1fr); }
-  .photo-placeholder:nth-child(1),
-  .photo-placeholder:nth-child(4) { grid-column: span 1; }
-  .info-grid { grid-template-columns: 1fr 1fr; }
-  .contact-grid { grid-template-columns: 1fr; gap: 40px; }
-  .mission-cards { grid-template-columns: 1fr; gap: 14px; }
-  .stats-grid { grid-template-columns: repeat(2, 1fr); }
-  .footer-inner { grid-template-columns: 1fr; }
-}
-
-@media (max-width: 768px) {
-  .landing-header { padding: 16px 24px; }
-  .section-inner { padding: 48px 20px; }
-  .home-quick { grid-template-columns: 1fr; margin-top: -30px; padding: 0 20px; }
-  .values-grid { grid-template-columns: repeat(2, 1fr); }
-  .info-grid { grid-template-columns: 1fr; }
-  .stats-grid { grid-template-columns: repeat(2, 1fr); padding: 0 20px; }
-  .mountains-scroll-wrap { padding: 0 20px 32px; }
-  .journey-detail-wrap { padding: 0 20px 60px; }
-  .contact-grid { grid-template-columns: 1fr; }
-  .nav-links { display: none; }
-  .hamburger { display: flex; }
-  .navbar { padding: 0 20px; }
-  .photo-grid { grid-template-columns: 1fr; }
-  .photo-placeholder:nth-child(1),
-  .photo-placeholder:nth-child(4) { grid-column: span 1; }
-  .detail-meta { flex-direction: column; gap: 8px; }
-  .home-more { padding: 0 20px 60px; }
-  .mission-header { padding: 100px 24px 48px; }
-  .mission-body { padding: 0 24px 64px; }
-}
-
-@media (max-width: 480px) {
-  .values-grid { grid-template-columns: 1fr; }
-  .stats-grid { grid-template-columns: repeat(2, 1fr); }
-  .landing-btns { flex-direction: column; align-items: center; }
-  .btn-primary, .btn-outline { width: 100%; max-width: 280px; justify-content: center; }
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CLEAR.ADV — Responsible Exploration</title>
+  <link rel="preload" as="image" href="sampul1.jpg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── CSS VARIABLES ─────────────────────────────────────────── */
+    :root {
+      --c-bg:         #0d110f;
+      --c-surface:    #141a16;
+      --c-card:       #1a2219;
+      --c-border:     #2a3628;
+      --c-green:      #3d6b4f;
+      --c-green-lt:   #4e8a64;
+      --c-green-glow: rgba(61,107,79,.35);
+      --c-text:       #e8ede9;
+      --c-muted:      #8a9e8e;
+      --c-white:      #f4f7f4;
+      --font-display: 'Cormorant Garamond', serif;
+      --font-body:    'Outfit', sans-serif;
+      --nav-h:        64px;
+      --radius:       12px;
+      --transition:   0.35s ease;
+    }
+    .light-mode {
+      --c-bg:       #f0f4f1;
+      --c-surface:  #e4ebe5;
+      --c-card:     #d8e2d9;
+      --c-border:   #b8cabb;
+      --c-text:     #1a2a1e;
+      --c-muted:    #4a6352;
+      --c-white:    #1a2a1e;
+    }
+
+    /* ─── RESET ──────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; overflow-x: hidden; }
+    body {
+      background: var(--c-bg);
+      color: var(--c-text);
+      font-family: var(--font-body);
+      font-weight: 300;
+      line-height: 1.7;
+      overflow-x: hidden;
+      transition: background var(--transition), color var(--transition);
+    }
+    img { max-width: 100%; display: block; }
+    a { color: inherit; text-decoration: none; }
+    button { cursor: pointer; border: none; background: none; font-family: inherit; }
+    ul { list-style: none; }
+
+    /* ─── SCROLLBAR ──────────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--c-bg); }
+    ::-webkit-scrollbar-thumb { background: var(--c-green); border-radius: 3px; }
+
+    /* ─── UTILITY ────────────────────────────────────────────────── */
+    .container { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--c-white);
+      margin-bottom: 1rem;
+    }
+    .badge {
+      display: inline-block;
+      font-size: .7rem;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--c-green-lt);
+      border: 1px solid var(--c-green);
+      border-radius: 100px;
+      padding: 4px 14px;
+      margin-bottom: 1rem;
+    }
+    .green-line {
+      width: 48px; height: 2px;
+      background: var(--c-green-lt);
+      margin: 16px 0 28px;
+    }
+    .fade-in {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity .6s ease, transform .6s ease;
+    }
+    .fade-in.visible { opacity: 1; transform: none; }
+
+    /* ─── DARK MODE BUTTON ───────────────────────────────────────── */
+    #dm-btn {
+      position: fixed; top: 18px; right: 20px; z-index: 9999;
+      background: var(--c-green);
+      color: var(--c-white);
+      border: none; border-radius: 100px;
+      padding: 8px 18px;
+      font-family: var(--font-body);
+      font-size: .78rem; font-weight: 500;
+      letter-spacing: .06em;
+      cursor: pointer;
+      transition: background var(--transition), box-shadow var(--transition);
+    }
+    #dm-btn:hover { background: var(--c-green-lt); box-shadow: 0 0 14px var(--c-green-glow); }
+
+    /* ═══════════════════════════════════════════════════════════════
+       LANDING PAGE
+    ═══════════════════════════════════════════════════════════════ */
+    #landing { position: relative; }
+
+    /* ─── LANDING HEADER ─────────────────────────────────────────── */
+    .landing-header {
+      position: absolute; top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 32px;
+    }
+    .landing-header .logo img { height: 44px; width: auto; }
+    .landing-header .logo-text {
+      font-family: var(--font-display);
+      font-size: 1.5rem; font-weight: 700;
+      letter-spacing: .12em;
+      color: var(--c-white);
+    }
+
+    /* ─── HERO ───────────────────────────────────────────────────── */
+    .hero {
+      position: relative;
+      min-height: 100svh;
+      display: flex; align-items: center; justify-content: center;
+      background: url('sampul1.jpg') center center / cover no-repeat;
+      background-color: #0a0f0c; /* fallback */
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(160deg, rgba(0,0,0,.72) 0%, rgba(10,20,14,.85) 100%);
+      pointer-events: none;
+      z-index: 1;
+    }
+    .hero-content {
+      position: relative; z-index: 2;
+      text-align: center;
+      padding: 0 20px;
+    }
+    .hero-eyebrow {
+      font-size: .72rem;
+      letter-spacing: .25em;
+      text-transform: uppercase;
+      color: var(--c-green-lt);
+      margin-bottom: 16px;
+      opacity: .9;
+    }
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(3.5rem, 11vw, 8rem);
+      font-weight: 700;
+      letter-spacing: .08em;
+      line-height: 1;
+      color: var(--c-white);
+      text-shadow: 0 4px 40px rgba(0,0,0,.5);
+      margin-bottom: 20px;
+    }
+    .hero-sub {
+      font-size: clamp(.85rem, 2vw, 1.05rem);
+      letter-spacing: .08em;
+      color: rgba(232,237,233,.75);
+      margin-bottom: 44px;
+      font-weight: 300;
+    }
+    .hero-btns {
+      display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+      position: relative; z-index: 10;
+    }
+    .btn-primary {
+      background: var(--c-green);
+      color: var(--c-white);
+      padding: 14px 34px;
+      border-radius: 100px;
+      font-size: .88rem; font-weight: 500;
+      letter-spacing: .08em;
+      transition: background var(--transition), box-shadow var(--transition), transform .2s;
+      cursor: pointer;
+      border: 2px solid var(--c-green);
+      position: relative; z-index: 10;
+    }
+    .btn-primary:hover {
+      background: var(--c-green-lt);
+      border-color: var(--c-green-lt);
+      box-shadow: 0 0 30px var(--c-green-glow);
+      transform: translateY(-2px);
+    }
+    .btn-outline {
+      background: transparent;
+      color: var(--c-white);
+      padding: 14px 34px;
+      border-radius: 100px;
+      font-size: .88rem; font-weight: 500;
+      letter-spacing: .08em;
+      border: 2px solid rgba(255,255,255,.4);
+      transition: border-color var(--transition), background var(--transition), transform .2s;
+      cursor: pointer;
+      position: relative; z-index: 10;
+    }
+    .btn-outline:hover {
+      border-color: var(--c-green-lt);
+      background: rgba(61,107,79,.15);
+      transform: translateY(-2px);
+    }
+    .scroll-hint {
+      position: absolute; bottom: 32px; left: 50%;
+      transform: translateX(-50%);
+      z-index: 2; text-align: center;
+    }
+    .scroll-hint span {
+      display: block;
+      width: 1px; height: 52px;
+      background: linear-gradient(to bottom, rgba(255,255,255,.6), transparent);
+      margin: 0 auto;
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+    @keyframes scrollPulse {
+      0%,100% { opacity: .4; transform: scaleY(1); }
+      50% { opacity: 1; transform: scaleY(1.1); }
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       OUR MISSION (still on landing page)
+    ═══════════════════════════════════════════════════════════════ */
+    #mission {
+      padding: 96px 0;
+      background: var(--c-surface);
+      transition: background var(--transition);
+    }
+    .mission-text { max-width: 720px; }
+    .mission-body { font-size: .95rem; color: var(--c-muted); line-height: 1.9; }
+    .toggle-lang {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: .78rem; letter-spacing: .06em;
+      color: var(--c-green-lt);
+      cursor: pointer; margin-top: 12px;
+      border-bottom: 1px dashed var(--c-green);
+      padding-bottom: 2px;
+      background: none; border-top: none; border-left: none; border-right: none;
+    }
+    .toggle-lang:hover { color: var(--c-white); }
+    .lang-block {
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height .5s ease;
+    }
+    .lang-block.open { max-height: 600px; }
+    .lang-block p { padding-top: 16px; font-size: .95rem; color: var(--c-muted); line-height: 1.9; }
+    .mission-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 52px;
+    }
+    .m-card {
+      background: var(--c-card);
+      border: 1px solid var(--c-border);
+      border-radius: var(--radius);
+      padding: 28px 24px;
+      transition: border-color var(--transition), transform .25s, box-shadow .25s;
+    }
+    .m-card:hover {
+      border-color: var(--c-green);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 32px rgba(0,0,0,.25);
+    }
+    .m-card-icon { font-size: 1.6rem; margin-bottom: 14px; }
+    .m-card h3 {
+      font-family: var(--font-display);
+      font-size: 1.15rem; font-weight: 600;
+      color: var(--c-white);
+      margin-bottom: 8px;
+    }
+    .m-card p { font-size: .85rem; color: var(--c-muted); }
+
+    /* ═══════════════════════════════════════════════════════════════
+       INTERNAL PAGE
+    ═══════════════════════════════════════════════════════════════ */
+    #landing.hidden, #internal.hidden { display: none; }
+    #internal { display: none; }
+    #internal.show { display: block; }
+
+    /* ─── NAV ────────────────────────────────────────────────────── */
+    .nav {
+      position: sticky; top: 0; z-index: 1000;
+      background: rgba(13,17,15,.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--c-border);
+      height: var(--nav-h);
+      display: flex; align-items: center;
+      transition: background var(--transition);
+    }
+    .light-mode .nav { background: rgba(240,244,241,.95); }
+    .nav-inner {
+      max-width: 1160px; margin: 0 auto;
+      padding: 0 24px;
+      width: 100%;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo img { height: 36px; }
+    .nav-logo span {
+      font-family: var(--font-display);
+      font-size: 1.2rem; font-weight: 700;
+      letter-spacing: .1em;
+      color: var(--c-white);
+    }
+    .nav-links {
+      display: flex; gap: 6px;
+    }
+    .nav-link {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: .83rem; font-weight: 400;
+      color: var(--c-muted);
+      cursor: pointer;
+      transition: color var(--transition), background var(--transition);
+      white-space: nowrap;
+    }
+    .nav-link:hover, .nav-link.active {
+      color: var(--c-white);
+      background: var(--c-card);
+    }
+    .nav-link img { width: 18px; height: 18px; object-fit: contain; opacity: .7; }
+    .nav-link:hover img, .nav-link.active img { opacity: 1; }
+
+    /* Hamburger */
+    .hamburger {
+      display: none; flex-direction: column; gap: 5px;
+      cursor: pointer; padding: 8px;
+    }
+    .hamburger span {
+      display: block; width: 22px; height: 2px;
+      background: var(--c-text);
+      border-radius: 2px;
+      transition: var(--transition);
+    }
+    .mobile-nav {
+      display: none;
+      position: fixed; top: var(--nav-h); left: 0; right: 0; bottom: 0;
+      background: var(--c-surface);
+      z-index: 999;
+      padding: 24px;
+      flex-direction: column; gap: 8px;
+      overflow-y: auto;
+    }
+    .mobile-nav.open { display: flex; }
+    .mobile-nav .nav-link { padding: 14px 16px; font-size: .95rem; }
+
+    /* ─── PAGE CONTENT ───────────────────────────────────────────── */
+    .page { display: none; padding-bottom: 80px; }
+    .page.active { display: block; }
+
+    /* ─── HOME REDIRECT page ─────────────────────────────────────── */
+    /* handled by JS */
+
+    /* ─── SECTION HEADER ─────────────────────────────────────────── */
+    .sec-hero {
+      padding: 80px 0 56px;
+      background: linear-gradient(to bottom, var(--c-surface), var(--c-bg));
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       ABOUT US PAGE
+    ═══════════════════════════════════════════════════════════════ */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: start;
+      margin-top: 40px;
+    }
+    .about-text p { font-size: .92rem; color: var(--c-muted); line-height: 1.95; margin-bottom: 16px; }
+    .values-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-top: 48px;
+    }
+    .val-card {
+      background: var(--c-card);
+      border: 1px solid var(--c-border);
+      border-radius: var(--radius);
+      padding: 24px;
+      transition: border-color .25s, transform .25s;
+    }
+    .val-card:hover { border-color: var(--c-green); transform: translateY(-3px); }
+    .val-card .icon { font-size: 1.4rem; margin-bottom: 10px; }
+    .val-card h4 {
+      font-family: var(--font-display);
+      font-size: 1.1rem; font-weight: 600;
+      color: var(--c-white); margin-bottom: 6px;
+    }
+    .val-card p { font-size: .82rem; color: var(--c-muted); }
+
+    /* Photo grid */
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+      margin-top: 56px;
+    }
+    .photo-item {
+      aspect-ratio: 4/3;
+      background: var(--c-card);
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+    }
+    .photo-item::after {
+      content: '📷 Documentation';
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .78rem; color: var(--c-muted);
+      background: linear-gradient(135deg, #1a2219, #222e24);
+    }
+    .photo-item:hover { transform: scale(1.02); transition: transform .25s; }
+
+    /* ═══════════════════════════════════════════════════════════════
+       OUR JOURNEY PAGE
+    ═══════════════════════════════════════════════════════════════ */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin: 48px 0;
+    }
+    .stat-card {
+      background: var(--c-card);
+      border: 1px solid var(--c-border);
+      border-radius: var(--radius);
+      padding: 28px 20px;
+      text-align: center;
+      transition: border-color .25s, transform .25s;
+    }
+    .stat-card:hover { border-color: var(--c-green); transform: translateY(-3px); }
+    .stat-num {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      color: var(--c-green-lt);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: .78rem;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--c-muted);
+      margin-top: 8px;
+    }
+
+    /* Scroll cards */
+    .scroll-section-wrap { overflow: hidden; }
+    .journey-scroll {
+      display: flex; gap: 20px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      padding: 8px 0 20px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .journey-scroll::-webkit-scrollbar { height: 4px; }
+    .j-card {
+      flex: 0 0 300px;
+      background: var(--c-card);
+      border: 1px solid var(--c-border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      scroll-snap-align: start;
+      cursor: pointer;
+      transition: border-color .25s, transform .25s, box-shadow .25s;
+    }
+    .j-card:hover {
+      border-color: var(--c-green);
+      transform: scale(1.02);
+      box-shadow: 0 8px 32px rgba(0,0,0,.3);
+    }
+    .j-card-img {
+      aspect-ratio: 16/9;
+      background: linear-gradient(135deg, #1c2b20, #263d2a);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .78rem; color: var(--c-muted);
+      position: relative; overflow: hidden;
+    }
+    .j-card-img .peak-icon {
+      position: absolute; font-size: 3rem; opacity: .2;
+    }
+    .j-card-body { padding: 18px; }
+    .j-card-body h3 {
+      font-family: var(--font-display);
+      font-size: 1.15rem; font-weight: 600;
+      color: var(--c-white); margin-bottom: 6px;
+    }
+    .j-card-body .meta { font-size: .78rem; color: var(--c-muted); display: flex; flex-direction: column; gap: 2px; }
+    .j-card-body .meta span::before { content: '📍 '; }
+    .j-card-body .meta small { color: var(--c-green-lt); font-size: .72rem; }
+
+    /* Journey detail */
+    #journey-detail {
+      display: none;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity .5s ease, transform .5s ease;
+      margin-top: 48px;
+      background: var(--c-card);
+      border: 1px solid var(--c-border);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    #journey-detail.visible {
+      display: block;
+    }
+    #journey-detail.animated {
+      opacity: 1;
+      transform: none;
+    }
+    .detail-header {
+      padding: 40px 40px 32px;
+      background: linear-gradient(135deg, var(--c-surface), var(--c-card));
+      border-bottom: 1px solid var(--c-border);
+    }
+    .detail-header h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 700;
+      color: var(--c-white);
+    }
+    .detail-meta { display: flex; gap: 24px; flex-wrap: wrap; margin-top: 12px; }
+    .detail-meta span { font-size: .82rem; color: var(--c-muted); }
+    .detail-meta strong { color: var(--c-green-lt); }
+    .detail-body { padding: 40px; }
+
+    /* Slider */
+    .slider-wrap { position: relative; margin-bottom: 32px; }
+    .slider-track {
+      aspect-ratio: 16/9;
+      max-height: 320px;
+      background: linear-gradient(135deg, #1c2b20, #263d2a);
+      border-radius: 10px;
+      overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .slide {
+      display: none;
+      width: 100%; height: 100%;
+      align-items: center; justify-content: center;
+      font-size: .82rem; color: var(--c-muted);
+      background: linear-gradient(135deg, #1c2b20, #263d2a);
+    }
+    .slide.active { display: flex; }
+    .slider-counter {
+      text-align: center; font-size: .78rem;
+      color: var(--c-muted); margin: 8px 0;
+    }
+    .slider-controls {
+      display: flex; gap: 12px; justify-content: center; margin-top: 12px;
+    }
+    .sl-btn {
+      background: var(--c-card);
+      border: 1px solid var(--c-border);
+      border-radius: 8px;
+      color: var(--c-text);
+      padding: 8px 20px;
+      font-size: .82rem;
+      cursor: pointer;
+      transition: border-color .2s, background .2s;
+    }
+    .sl-btn:hover { border-color: var(--c-green); background: var(--c-surface); }
+
+    /* Story section */
+    .story-section { margin-bottom: 28px; }
+    .story-excerpt { font-size: .92rem; color: var(--c-muted); line-height: 1.9; }
+    .story-extra {
+      overflow: hidden; max-height: 0;
+      transition: max-height .5s ease;
+    }
+    .story-extra.open { max-height: 600px; }
+    .story-extra p { font-size: .92rem; color: var(--c-muted); line-height: 1.9; padding-top: 12px; }
+    .read-more {
+      background: none; border: none;
+      color: var(--c-green-lt);
+      font-size: .82rem; letter-spacing: .04em;
+      cursor: pointer; margin-top: 10px;
+      text-decoration: underline; text-underline-offset: 3px;
+    }
+
+    /* Highlight box */
+    .highlight-box {
+      background: linear-gradient(135deg, rgba(61,107,79,.15), rgba(61,107,79,.05));
+      border: 1px solid rgba(61,107,79,.35);
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-bottom: 28px;
+    }
+    .highlight-box p { font-size: .88rem; color: var(--c-muted); font-style: italic; }
+
+    /* Map placeholder */
+    .map-placeholder {
+      height: 200px;
+      background: #151e16;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--c-muted); font-size: .82rem;
+      border: 1px solid var(--c-border);
+      margin-bottom: 28px;
+    }
+
+    /* Blockquote */
+    .journey-quote {
+      border-left: 3px solid var(--c-green);
+      padding: 16px 24px;
+      font-family: var(--font-display);
+      font-size: 1.05rem; font-style: italic;
+      color: var(--c-muted);
+      text-align: center;
+    }
+    .journey-quote cite { display: block; font-size: .78rem; margin-top: 8px; color: var(--c-green-lt); font-style: normal; }
+
+    /* Close detail */
+    .close-detail {
+      background: var(--c-surface);
+      border: 1px solid var(--c-border);
+      color: var(--c-muted);
+      border-radius: 8px;
+      padding: 8px 20px; font-size: .82rem;
+      cursor: pointer;
+      transition: border-color .2s;
+    }
+    .close-detail:hover { border-color: var(--c-green); color: var(--c-white); }
+
+    /* ═══════════════════════════════════════════════════════════════
+       CONTACT US PAGE
+    ═══════════════════════════════════════════════════════════════ */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      margin-top: 40px;
+    }
+    .contact-form label {
+      display: block;
+      font-size: .78rem; letter-spacing: .06em; text-transform: uppercase;
+      color: var(--c-muted); margin-bottom: 8px;
+    }
+    .contact-form input,
+    .contact-form textarea {
+      width: 100%;
+      background: var(--c-card);
+      border: 1px solid var(--c-border);
+      border-radius: 8px;
+      color: var(--c-text);
+      font-family: var(--font-body);
+      font-size: .9rem;
+      padding: 12px 16px;
+      margin-bottom: 20px;
+      outline: none;
+      transition: border-color .25s;
+    }
+    .contact-form input:focus,
+    .contact-form textarea:focus { border-color: var(--c-green); }
+    .contact-form textarea { resize: vertical; min-height: 120px; }
+    .contact-form .btn-primary { border-radius: 8px; padding: 12px 28px; }
+    .contact-info h3 {
+      font-family: var(--font-display);
+      font-size: 1.3rem; font-weight: 600;
+      color: var(--c-white); margin-bottom: 16px;
+    }
+    .contact-info p { font-size: .88rem; color: var(--c-muted); margin-bottom: 24px; line-height: 1.8; }
+    .contact-details { display: flex; flex-direction: column; gap: 12px; }
+    .c-detail { display: flex; gap: 12px; align-items: flex-start; }
+    .c-detail-icon { font-size: 1rem; margin-top: 2px; }
+    .c-detail-text { font-size: .85rem; color: var(--c-muted); }
+    .c-detail-text strong { color: var(--c-white); display: block; font-size: .78rem; letter-spacing: .05em; text-transform: uppercase; margin-bottom: 2px; }
+
+    /* ═══════════════════════════════════════════════════════════════
+       INFORMATION PAGE
+    ═══════════════════════════════════════════════════════════════ */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 40px;
+    }
+    .info-card {
+      background: var(--c-card);
+      border: 1px solid var(--c-border);
+      border-radius: var(--radius);
+      padding: 28px;
+      transition: border-color .25s, transform .25s;
+    }
+    .info-card:hover { border-color: var(--c-green); transform: translateY(-3px); }
+    .info-card .icon { font-size: 1.6rem; margin-bottom: 14px; }
+    .info-card h3 {
+      font-family: var(--font-display);
+      font-size: 1.15rem; font-weight: 600;
+      color: var(--c-white); margin-bottom: 14px;
+    }
+    .info-card ul { display: flex; flex-direction: column; gap: 8px; }
+    .info-card li {
+      font-size: .85rem; color: var(--c-muted);
+      display: flex; align-items: flex-start; gap: 8px;
+    }
+    .info-card li::before { content: '→'; color: var(--c-green-lt); flex-shrink: 0; }
+    .upcoming-card {
+      grid-column: 1 / -1;
+      background: linear-gradient(135deg, rgba(61,107,79,.12), rgba(61,107,79,.04));
+      border: 1px solid rgba(61,107,79,.3);
+      border-radius: var(--radius);
+      padding: 36px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: center;
+    }
+    .upcoming-card h3 {
+      font-family: var(--font-display);
+      font-size: 1.4rem; font-weight: 600;
+      color: var(--c-white); margin-bottom: 8px;
+    }
+    .upcoming-card p { font-size: .88rem; color: var(--c-muted); }
+    .upcoming-badge {
+      background: var(--c-green);
+      color: var(--c-white);
+      border-radius: 100px;
+      padding: 6px 18px;
+      font-size: .75rem; letter-spacing: .08em; text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       FOOTER
+    ═══════════════════════════════════════════════════════════════ */
+    .footer {
+      background: var(--c-surface);
+      border-top: 1px solid var(--c-border);
+      padding: 56px 0 32px;
+      transition: background var(--transition);
+    }
+    .footer-inner {
+      max-width: 1160px; margin: 0 auto; padding: 0 24px;
+    }
+    .footer-top {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      flex-wrap: wrap; gap: 32px;
+      padding-bottom: 40px;
+      border-bottom: 1px solid var(--c-border);
+    }
+    .footer-brand .f-logo {
+      font-family: var(--font-display);
+      font-size: 1.5rem; font-weight: 700;
+      letter-spacing: .12em;
+      color: var(--c-white); margin-bottom: 8px;
+    }
+    .footer-brand p { font-size: .82rem; color: var(--c-muted); }
+    .footer-social { display: flex; gap: 12px; flex-wrap: wrap; }
+    .soc-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 9px 18px;
+      border-radius: 100px;
+      border: 1px solid var(--c-border);
+      font-size: .78rem; font-weight: 500;
+      cursor: pointer;
+      transition: transform .2s, box-shadow .2s, border-color .2s;
+      text-decoration: none;
+    }
+    .soc-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.3); }
+    .soc-ig { background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: white; border-color: transparent; }
+    .soc-tt { color: #00f2ea; border-color: rgba(0,242,234,.3); }
+    .soc-tt:hover { background: rgba(0,242,234,.08); }
+    .soc-fb { color: #1877f2; border-color: rgba(24,119,242,.3); }
+    .soc-fb:hover { background: rgba(24,119,242,.08); }
+    .footer-bottom {
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 12px;
+      padding-top: 28px;
+    }
+    .footer-bottom p { font-size: .78rem; color: var(--c-muted); }
+    .footer-bottom a { color: var(--c-green-lt); }
+
+    /* ═══════════════════════════════════════════════════════════════
+       AUDIO
+    ═══════════════════════════════════════════════════════════════ */
+    #bgAudio { display: none; }
+
+    /* ═══════════════════════════════════════════════════════════════
+       RESPONSIVE
+    ═══════════════════════════════════════════════════════════════ */
+    @media (max-width: 900px) {
+      .mission-cards { grid-template-columns: repeat(2, 1fr); }
+      .about-grid { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .contact-grid { grid-template-columns: 1fr; }
+      .info-grid { grid-template-columns: 1fr; }
+      .upcoming-card { grid-template-columns: 1fr; }
+      .values-grid { grid-template-columns: 1fr; }
+      .footer-top { flex-direction: column; }
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .detail-header, .detail-body { padding: 24px; }
+    }
+    @media (max-width: 600px) {
+      .mission-cards { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .j-card { flex: 0 0 260px; }
+      .hero-btns { flex-direction: column; align-items: center; }
+      .btn-primary, .btn-outline { width: 100%; max-width: 280px; text-align: center; }
+      #dm-btn { padding: 7px 13px; font-size: .72rem; }
+    }
+    @media (max-width: 380px) {
+      .stats-grid { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
 
-<audio id="bg-music" src="musik01.mp3" loop preload="none"></audio>
+<!-- DARK MODE BUTTON (always visible) -->
+<button id="dm-btn" onclick="toggleDark()" title="Toggle Dark/Light Mode">🌙 Dark</button>
 
-<!-- ===================== LANDING PAGE ===================== -->
-<div id="page-landing" class="page active">
-  <div class="landing-bg"></div>
+<!-- AUDIO -->
+<audio id="bgAudio" loop preload="none">
+  <source src="musik01.mp3" type="audio/mpeg" />
+</audio>
 
+<!-- ═══════════════════════════════════════════════════════════════
+     LANDING PAGE
+════════════════════════════════════════════════════════════════ -->
+<div id="landing">
+
+  <!-- Header -->
   <header class="landing-header">
-    <div class="logo-wrap">
-      <img src="logo.png" alt="CLEAR.ADV Logo">
+    <div class="logo">
+      <!-- If logo.png missing, fallback to text -->
+      <img src="logo.png" alt="CLEAR.ADV" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'" />
+      <span class="logo-text" style="display:none">CLEAR.ADV</span>
     </div>
-    <button class="btn-darkmode" id="darkmode-btn-landing" onclick="toggleDarkMode()">
-      <span class="mode-icon">🌿</span>
-      <span class="mode-text">Light Mode</span>
-    </button>
   </header>
 
-  <main class="landing-center">
-    <p class="landing-eyebrow">Est. 2024 · Sulawesi Selatan</p>
-    <h1 class="landing-title">CLEAR.ADV</h1>
-    <div class="landing-divider"></div>
-    <p class="landing-subtitle">Responsible Exploration. Meaningful Journey.</p>
-    <div class="landing-btns">
-      <button class="btn-primary" onclick="enterApp()">
-        <span>⛰</span> Explore Our Journey
-      </button>
-      <button class="btn-outline" onclick="showMission()">
-        Learn About Our Mission
-      </button>
-    </div>
-  </main>
-
-  <div class="landing-scroll-hint">
-    <div class="scroll-line"></div>
-    <p class="scroll-text">Scroll</p>
-  </div>
-</div>
-
-<!-- ===================== OUR MISSION PAGE ===================== -->
-<div id="page-mission" class="page">
-  <header class="landing-header" style="position:sticky; top:0; z-index:100; background:rgba(10,12,11,0.88); backdrop-filter:blur(16px);">
-    <div class="logo-wrap">
-      <img src="logo.png" alt="CLEAR.ADV Logo">
-    </div>
-    <button class="btn-darkmode" onclick="toggleDarkMode()">
-      <span class="mode-icon">🌿</span>
-      <span class="mode-text">Light Mode</span>
-    </button>
-  </header>
-
-  <div class="mission-header">
-    <p class="section-eyebrow">Who We Are</p>
-    <h1 class="section-title" style="font-size:clamp(56px,9vw,96px);">Our Mission</h1>
-  </div>
-
-  <div class="mission-body">
-    <button class="mission-back" onclick="showPage('page-landing')">
-      ← Back to Home
-    </button>
-
-    <div id="mission-en">
-      <p class="mission-text">
-        Clear Adventure exists to reconnect people with nature through responsible exploration. We believe that every journey should leave the environment as clear as we found it. Our mission is to promote conscious adventures—where respect for nature, safety, and sustainability come first.
-      </p>
-      <p class="mission-text">
-        We explore mountains, forests, and wild spaces with a simple principle: leave nothing behind but footprints, take nothing but memories. Through every step, we aim to inspire adventurers to travel lightly, act responsibly, and protect the natural beauty for future generations.
-      </p>
-    </div>
-
-    <div id="mission-id" class="mission-text-id">
-      <p class="mission-text">
-        Clear Adventure hadir untuk mendekatkan manusia dengan alam melalui eksplorasi yang bertanggung jawab. Kami percaya bahwa setiap perjalanan seharusnya membiarkan lingkungan tetap seindah saat pertama kali kami temukan. Misi kami adalah mempromosikan petualangan yang sadar—di mana rasa hormat terhadap alam, keselamatan, dan keberlanjutan menjadi prioritas utama.
-      </p>
-      <p class="mission-text">
-        Kami menjelajahi gunung, hutan, dan ruang liar dengan prinsip sederhana: tidak meninggalkan apa pun selain jejak langkah, tidak membawa apa pun selain kenangan. Melalui setiap langkah, kami bertujuan menginspirasi para petualang untuk melangkah ringan, bertindak bertanggung jawab, dan menjaga keindahan alam untuk generasi mendatang.
-      </p>
-    </div>
-
-    <button class="translate-toggle" id="translate-btn" onclick="toggleTranslation()">
-      🌐 Lihat Terjemahan
-    </button>
-
-    <div class="mission-cards">
-      <div class="mission-card">
-        <span class="mission-card-icon">🌿</span>
-        <h3>Respect Nature</h3>
-        <p>Treat every ecosystem with the reverence it deserves. No trace left behind.</p>
-      </div>
-      <div class="mission-card">
-        <span class="mission-card-icon">🛡</span>
-        <h3>Safe Exploration</h3>
-        <p>Every expedition is planned with safety protocols and proper preparation.</p>
-      </div>
-      <div class="mission-card">
-        <span class="mission-card-icon">♻️</span>
-        <h3>Sustainable Future</h3>
-        <p>Our adventures today must preserve nature's beauty for tomorrow's explorers.</p>
+  <!-- HERO -->
+  <section class="hero" id="home-hero">
+    <div class="hero-content fade-in visible">
+      <p class="hero-eyebrow">Adventure Community · Est. 2024</p>
+      <h1 class="hero-title">CLEAR.ADV</h1>
+      <p class="hero-sub">Responsible Exploration. Meaningful Journey.</p>
+      <div class="hero-btns">
+        <button class="btn-primary" id="exploreBtn">Explore Our Journey</button>
+        <button class="btn-outline" onclick="scrollToMission()">Learn About Our Mission</button>
       </div>
     </div>
-  </div>
+    <div class="scroll-hint"><span></span></div>
+  </section>
 
-  <footer>
+  <!-- OUR MISSION -->
+  <section id="mission">
+    <div class="container">
+      <div class="fade-in">
+        <span class="badge">Our Mission</span>
+        <h2 class="section-title">Why We Explore</h2>
+        <div class="green-line"></div>
+        <div class="mission-text">
+          <p class="mission-body" id="text-en">
+            CLEAR.ADV is a community built on the principles of responsible and sustainable exploration. We believe that the mountains, forests, and wild spaces of this earth are gifts to be respected — not conquered. Every expedition we undertake is guided by a deep commitment to environmental stewardship, personal safety, and cultural sensitivity. We do not simply seek summits; we seek understanding, growth, and connection — with nature, with local communities, and with one another.
+          </p>
+          <button class="toggle-lang" onclick="toggleLang(this)">
+            <span>🌐</span> <span class="lang-label">Lihat Terjemahan</span>
+          </button>
+          <div class="lang-block" id="lang-id">
+            <p>
+              CLEAR.ADV adalah komunitas yang dibangun atas prinsip-prinsip eksplorasi yang bertanggung jawab dan berkelanjutan. Kami percaya bahwa gunung, hutan, dan ruang-ruang alam di bumi ini adalah hadiah yang harus dihormati — bukan ditaklukkan. Setiap ekspedisi yang kami lakukan dipandu oleh komitmen mendalam terhadap pelestarian lingkungan, keselamatan pribadi, dan kepekaan budaya. Kami tidak sekadar mencari puncak; kami mencari pemahaman, pertumbuhan, dan koneksi — dengan alam, dengan masyarakat lokal, dan satu sama lain.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3 Cards -->
+      <div class="mission-cards">
+        <div class="m-card fade-in">
+          <div class="m-card-icon">🌿</div>
+          <h3>Respect Nature</h3>
+          <p>Every step we take leaves the smallest footprint possible. We pack out what we pack in and leave trails better than we found them.</p>
+        </div>
+        <div class="m-card fade-in">
+          <div class="m-card-icon">🛡️</div>
+          <h3>Safe Exploration</h3>
+          <p>Safety is non-negotiable. We plan meticulously, train regularly, and never push beyond limits that could jeopardize our team.</p>
+        </div>
+        <div class="m-card fade-in">
+          <div class="m-card-icon">♻️</div>
+          <h3>Sustainable Future</h3>
+          <p>Our expeditions contribute to local economies and conservation efforts, ensuring these wild places thrive for generations to come.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER on landing -->
+  <footer class="footer">
     <div class="footer-inner">
-      <div class="footer-brand">
-        <h3>CLEAR.ADV</h3>
-        <p>Responsible Exploration Since 2024</p>
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="f-logo">CLEAR.ADV</div>
+          <p>Responsible Exploration Since 2024</p>
+        </div>
+        <div class="footer-social">
+          <a href="https://instagram.com/" target="_blank" rel="noopener" class="soc-btn soc-ig">📷 Instagram</a>
+          <a href="https://tiktok.com/" target="_blank" rel="noopener" class="soc-btn soc-tt">🎵 TikTok</a>
+          <a href="https://facebook.com/" target="_blank" rel="noopener" class="soc-btn soc-fb">📘 Facebook</a>
+        </div>
       </div>
-      <div class="footer-social">
-        <a href="#" title="Instagram">📷</a>
-        <a href="#" title="TikTok">🎵</a>
-        <a href="#" title="Facebook">💬</a>
+      <div class="footer-bottom">
+        <p>© 2026 CLEAR.ADV. All Rights Reserved.</p>
+        <p>Made with ❤️ for the Mountains</p>
       </div>
     </div>
-    <div class="footer-copy">© 2026 CLEAR.ADV. All Rights Reserved.</div>
   </footer>
-</div>
 
-<!-- ===================== MAIN APP ===================== -->
-<div id="page-app" class="page">
+</div><!-- /#landing -->
 
-  <!-- NAVBAR -->
-  <nav class="navbar">
-    <div class="nav-logo">
-      <img src="logo.png" alt="CLEAR.ADV Logo">
-    </div>
-    <ul class="nav-links" id="nav-links">
-      <li>
-        <button onclick="navTo('home')" class="active" id="nav-home">
-          <img src="iconhome.png" class="nav-icon" alt="" onerror="this.style.display='none'">Home
-        </button>
-      </li>
-      <li>
-        <button onclick="navTo('about')" id="nav-about">
-          <img src="iconabout.png" class="nav-icon" alt="" onerror="this.style.display='none'">About Us
-        </button>
-      </li>
-      <li>
-        <button onclick="navTo('journey')" id="nav-journey">
-          <img src="iconjourney.png" class="nav-icon" alt="" onerror="this.style.display='none'">Our Journey
-        </button>
-      </li>
-      <li>
-        <button onclick="navTo('contact')" id="nav-contact">
-          <img src="iconcontact.png" class="nav-icon" alt="" onerror="this.style.display='none'">Contact Us
-        </button>
-      </li>
-      <li>
-        <button onclick="navTo('information')" id="nav-information">
-          <img src="iconinfo.png" class="nav-icon" alt="" onerror="this.style.display='none'">Information
-        </button>
-      </li>
-    </ul>
-    <div class="nav-right">
-      <button class="btn-darkmode" onclick="toggleDarkMode()">
-        <span class="mode-icon">🌿</span>
-        <span class="mode-text">Light Mode</span>
-      </button>
-      <button class="hamburger" id="hamburger" onclick="toggleMobile()">
+<!-- ═══════════════════════════════════════════════════════════════
+     INTERNAL PAGE
+════════════════════════════════════════════════════════════════ -->
+<div id="internal">
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <div class="nav-logo" style="display:flex;align-items:center;gap:10px;cursor:pointer" onclick="goHome()">
+        <img src="logo.png" alt="CLEAR.ADV" onerror="this.style.display='none'" />
+        <span>CLEAR.ADV</span>
+      </div>
+      <div class="nav-links" id="navLinks">
+        <div class="nav-link active" onclick="switchPage('about-us')">
+          <img src="iconaboutus.png" alt="" onerror="this.style.display='none'" />About Us
+        </div>
+        <div class="nav-link" onclick="switchPage('our-journey')">
+          <img src="iconourjourney.png" alt="" onerror="this.style.display='none'" />Our Journey
+        </div>
+        <div class="nav-link" onclick="switchPage('contact-us')">
+          <img src="iconcontactus.png" alt="" onerror="this.style.display='none'" />Contact Us
+        </div>
+        <div class="nav-link" onclick="switchPage('information')">
+          <img src="iconinformation.png" alt="" onerror="this.style.display='none'" />Information
+        </div>
+        <div class="nav-link" onclick="goHome()">
+          <img src="iconhome.png" alt="" onerror="this.style.display='none'" />Home
+        </div>
+      </div>
+      <div class="hamburger" id="hamburger" onclick="toggleMobileNav()">
         <span></span><span></span><span></span>
-      </button>
+      </div>
     </div>
   </nav>
 
-  <!-- MOBILE MENU -->
-  <div class="mobile-menu" id="mobile-menu">
-    <button onclick="navTo('home'); closeMobile()">
-      <img src="iconhome.png" class="nav-icon" alt="" onerror="this.style.display='none'"> Home
-    </button>
-    <button onclick="navTo('about'); closeMobile()">
-      <img src="iconabout.png" class="nav-icon" alt="" onerror="this.style.display='none'"> About Us
-    </button>
-    <button onclick="navTo('journey'); closeMobile()">
-      <img src="iconjourney.png" class="nav-icon" alt="" onerror="this.style.display='none'"> Our Journey
-    </button>
-    <button onclick="navTo('contact'); closeMobile()">
-      <img src="iconcontact.png" class="nav-icon" alt="" onerror="this.style.display='none'"> Contact Us
-    </button>
-    <button onclick="navTo('information'); closeMobile()">
-      <img src="iconinfo.png" class="nav-icon" alt="" onerror="this.style.display='none'"> Information
-    </button>
+  <!-- MOBILE NAV -->
+  <div class="mobile-nav" id="mobileNav">
+    <div class="nav-link" onclick="switchPage('about-us');toggleMobileNav()">
+      <img src="iconabout.png" alt="" onerror="this.style.display='none'" />About Us
+    </div>
+    <div class="nav-link" onclick="switchPage('our-journey');toggleMobileNav()">
+      <img src="iconjourney.png" alt="" onerror="this.style.display='none'" />Our Journey
+    </div>
+    <div class="nav-link" onclick="switchPage('contact-us');toggleMobileNav()">
+      <img src="iconcontact.png" alt="" onerror="this.style.display='none'" />Contact Us
+    </div>
+    <div class="nav-link" onclick="switchPage('information');toggleMobileNav()">
+      <img src="iconinfo.png" alt="" onerror="this.style.display='none'" />Information
+    </div>
+    <div class="nav-link" onclick="goHome();toggleMobileNav()">
+      <img src="iconhome.png" alt="" onerror="this.style.display='none'" />Home
+    </div>
   </div>
 
-  <!-- ===== HOME SECTION ===== -->
-  <section id="section-home" class="section active">
-    <div class="home-hero">
-      <div class="home-hero-content">
-        <h2>CLEAR.ADV</h2>
-        <p>Responsible Exploration. Meaningful Journey.</p>
+  <!-- ── ABOUT US PAGE ─────────────────────────────────────────── -->
+  <section class="page active" id="about-us">
+    <div class="sec-hero">
+      <div class="container">
+        <span class="badge">Who We Are</span>
+        <h1 class="section-title">About CLEAR.ADV</h1>
+        <div class="green-line"></div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-text fade-in">
+          <p>CLEAR.ADV was founded in 2024 by a group of passionate mountain enthusiasts from South Sulawesi who believed that adventure could — and should — be done responsibly. We are not a club of record-breakers. We are a community of learners, caretakers, and storytellers.</p>
+          <p>Our members come from all walks of life: students, professionals, photographers, and conservationists. What unites us is a shared reverence for the wild places that have shaped us, and a commitment to leaving them intact for those who follow.</p>
+          <p>Since our first expedition to Gunung Bawakaraeng in 2024, we have traversed four of South Sulawesi's most iconic peaks, each journey adding new chapters to our collective story. We document, we reflect, and we share — not to boast, but to inspire others to explore with care.</p>
+        </div>
+        <div class="about-text fade-in">
+          <p>We operate on three core principles: plan with precision, act with respect, leave with gratitude. These principles guide not only our expeditions but our community interactions, our partnerships with local guides, and our relationships with the natural environments we enter.</p>
+          <p>CLEAR.ADV is actively seeking like-minded individuals to join our growing community. Whether you are an experienced mountaineer or a curious first-timer, there is a place for you here — as long as you share our commitment to responsible exploration.</p>
+        </div>
+      </div>
+
+      <!-- Values -->
+      <div class="fade-in" style="margin-top: 64px;">
+        <span class="badge">Core Values</span>
+        <h2 class="section-title">Our Values</h2>
+        <div class="green-line"></div>
+        <div class="values-grid">
+          <div class="val-card fade-in">
+            <div class="icon">⚖️</div>
+            <h4>Integrity</h4>
+            <p>We do what we say, and we say what we mean. Our word is our bond — on the mountain and off.</p>
+          </div>
+          <div class="val-card fade-in">
+            <div class="icon">🌱</div>
+            <h4>Responsibility</h4>
+            <p>We own our impact. Every decision on an expedition is made with the environment and community in mind.</p>
+          </div>
+          <div class="val-card fade-in">
+            <div class="icon">🤝</div>
+            <h4>Brotherhood</h4>
+            <p>We rise together. No one is left behind — on the trail or in life. Community is our greatest strength.</p>
+          </div>
+          <div class="val-card fade-in">
+            <div class="icon">🔄</div>
+            <h4>Sustainability</h4>
+            <p>We explore for the future. Our footprints today must not prevent others from walking these paths tomorrow.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Photo Grid -->
+      <div class="fade-in" style="margin-top: 64px;">
+        <span class="badge">Documentation</span>
+        <h2 class="section-title">Our Moments</h2>
+        <div class="green-line"></div>
+        <div class="photo-grid">
+          <div class="photo-item"></div>
+          <div class="photo-item"></div>
+          <div class="photo-item"></div>
+          <div class="photo-item"></div>
+          <div class="photo-item"></div>
+          <div class="photo-item"></div>
+        </div>
       </div>
     </div>
 
-    <div class="home-quick">
-      <div class="home-quick-card">
-        <span class="qc-icon">⛰</span>
-        <h3>Our Journeys</h3>
-        <p>4 mountains explored across Sulawesi Selatan with full responsible expedition standards.</p>
+    <!-- Footer -->
+    <footer class="footer" style="margin-top:80px">
+      <div class="footer-inner">
+        <div class="footer-top">
+          <div class="footer-brand">
+            <div class="f-logo">CLEAR.ADV</div>
+            <p>Responsible Exploration Since 2024</p>
+          </div>
+          <div class="footer-social">
+            <a href="https://instagram.com/" target="_blank" rel="noopener" class="soc-btn soc-ig">📷 Instagram</a>
+            <a href="https://tiktok.com/" target="_blank" rel="noopener" class="soc-btn soc-tt">🎵 TikTok</a>
+            <a href="https://facebook.com/" target="_blank" rel="noopener" class="soc-btn soc-fb">📘 Facebook</a>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>© 2026 CLEAR.ADV. All Rights Reserved.</p>
+          <p>Made with ❤️ for the Mountains</p>
+        </div>
       </div>
-      <div class="home-quick-card">
-        <span class="qc-icon">🌿</span>
-        <h3>Eco-First</h3>
-        <p>Every step guided by the principle: leave no trace, protect what we love.</p>
-      </div>
-      <div class="home-quick-card">
-        <span class="qc-icon">🤝</span>
-        <h3>Community</h3>
-        <p>20 members united by passion for adventure and commitment to sustainability.</p>
-      </div>
-    </div>
-
-    <div class="home-more">
-      <h3>Who We Are</h3>
-      <p>CLEAR.ADV is a community of adventurers dedicated to exploring Indonesia's wild landscapes with intention and integrity. We don't just hike—we connect, protect, and inspire. Every expedition is a story worth telling.</p>
-    </div>
+    </footer>
   </section>
 
-  <!-- ===== ABOUT SECTION ===== -->
-  <section id="section-about" class="section">
-    <div class="section-inner">
-      <p class="section-eyebrow">Who We Are</p>
-      <h2 class="section-title">About CLEAR.ADV</h2>
-      <div class="section-divider"></div>
-
-      <div class="about-intro">
-        <div class="about-text">
-          <p>CLEAR.ADV is a community driven by a shared love for mountains, forests, and wild landscapes. We are explorers who value responsibility as much as adventure. Every expedition we organize is built on teamwork, preparation, and environmental awareness.</p>
-        </div>
-        <div class="about-visual" style="background: linear-gradient(135deg, var(--forest), var(--graphite)); border-radius: var(--radius-lg); height: 260px; display:flex; align-items:center; justify-content:center; font-size:12px; color:var(--ash); letter-spacing:0.12em; text-transform:uppercase;">
-          Community Photo
-        </div>
-      </div>
-
-      <h3 style="font-family:var(--font-display); font-size:32px; letter-spacing:0.05em; color:var(--ivory); margin-bottom:24px;">Our Values</h3>
-      <div class="values-grid" style="margin-bottom:64px;">
-        <div class="value-card">
-          <span class="v-icon">⚖️</span>
-          <h4>Integrity</h4>
-          <p>We act with honesty and transparency in every aspect of our community and expeditions.</p>
-        </div>
-        <div class="value-card">
-          <span class="v-icon">🌱</span>
-          <h4>Responsibility</h4>
-          <p>Every decision we make considers its impact on nature and the communities we pass through.</p>
-        </div>
-        <div class="value-card">
-          <span class="v-icon">🤝</span>
-          <h4>Brotherhood</h4>
-          <p>We move together as one—supporting, lifting, and trusting each other on every trail.</p>
-        </div>
-        <div class="value-card">
-          <span class="v-icon">♻️</span>
-          <h4>Sustainability</h4>
-          <p>Our expeditions are designed to preserve the wild places that inspire and sustain us.</p>
-        </div>
-      </div>
-
-      <h3 style="font-family:var(--font-display); font-size:32px; letter-spacing:0.05em; color:var(--ivory); margin-bottom:20px;">Documentation</h3>
-      <div class="photo-grid">
-        <div class="photo-placeholder" style="aspect-ratio:16/9">Photo 1</div>
-        <div class="photo-placeholder">Photo 2</div>
-        <div class="photo-placeholder">Photo 3</div>
-        <div class="photo-placeholder" style="aspect-ratio:16/9">Photo 4</div>
-        <div class="photo-placeholder">Photo 5</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== JOURNEY SECTION ===== -->
-  <section id="section-journey" class="section">
-    <div class="journey-hero">
-      <h2>Our Journey</h2>
-      <p>Every Step Tells a Story</p>
-    </div>
-
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-num">4</div>
-        <div class="stat-label">Mountains Explored</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-num">12</div>
-        <div class="stat-label">Expedition Days</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-num">48<span style="font-size:0.45em;letter-spacing:0.05em;">km</span></div>
-        <div class="stat-label">Total Traveled</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-num">20</div>
-        <div class="stat-label">Members Involved</div>
+  <!-- ── OUR JOURNEY PAGE ──────────────────────────────────────── -->
+  <section class="page" id="our-journey">
+    <!-- Journey Hero -->
+    <div class="sec-hero" style="background: linear-gradient(160deg, #0d160f, #1a2b1c);">
+      <div class="container">
+        <span class="badge">Expedition Log</span>
+        <h1 class="section-title">Our Journey</h1>
+        <div class="green-line"></div>
+        <p style="color:var(--c-muted);max-width:560px;font-size:.92rem;">Every Step Tells a Story</p>
       </div>
     </div>
 
-    <div class="mountains-scroll-wrap">
-      <h3>Destinations</h3>
-      <div class="mountains-scroll" id="mountains-scroll">
-        <div class="mountain-card" onclick="showDetail('latimojong', this)">
-          <div class="mc-img">Gunung Latimojong</div>
-          <div class="mc-body">
-            <div class="mc-name">Latimojong</div>
-            <div class="mc-location">📍 Sulawesi Selatan</div>
-            <div class="mc-year">2024</div>
-          </div>
+    <div class="container">
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-card fade-in">
+          <div class="stat-num">4</div>
+          <div class="stat-label">Mountains Explored</div>
         </div>
-        <div class="mountain-card" onclick="showDetail('lompobattang', this)">
-          <div class="mc-img">Gunung Lompobattang</div>
-          <div class="mc-body">
-            <div class="mc-name">Lompobattang</div>
-            <div class="mc-location">📍 Sulawesi Selatan</div>
-            <div class="mc-year">2024</div>
-          </div>
+        <div class="stat-card fade-in">
+          <div class="stat-num">12</div>
+          <div class="stat-label">Expedition Days</div>
         </div>
-        <div class="mountain-card" onclick="showDetail('bulubaria', this)">
-          <div class="mc-img">Bulu Baria</div>
-          <div class="mc-body">
-            <div class="mc-name">Bulu Baria</div>
-            <div class="mc-location">📍 Sulawesi Selatan</div>
-            <div class="mc-year">2024</div>
-          </div>
+        <div class="stat-card fade-in">
+          <div class="stat-num">48</div>
+          <div class="stat-label">KM Traveled</div>
         </div>
-        <div class="mountain-card" onclick="showDetail('bawakaraeng', this)">
-          <div class="mc-img">Gunung Bawakaraeng</div>
-          <div class="mc-body">
-            <div class="mc-name">Bawakaraeng</div>
-            <div class="mc-location">📍 Sulawesi Selatan</div>
-            <div class="mc-year">2024</div>
+        <div class="stat-card fade-in">
+          <div class="stat-num">20</div>
+          <div class="stat-label">Members Involved</div>
+        </div>
+      </div>
+
+      <!-- Horizontal Scroll -->
+      <div class="fade-in" style="margin-bottom: 12px;">
+        <span class="badge">Mountains</span>
+        <h2 class="section-title">Expeditions</h2>
+        <div class="green-line"></div>
+      </div>
+      <div class="scroll-section-wrap fade-in">
+        <div class="journey-scroll" id="journeyScroll">
+          <div class="j-card" onclick="showDetail('latimojong')">
+            <div class="j-card-img">
+              <span class="peak-icon">⛰️</span>
+              <span>Latimojong Image</span>
+            </div>
+            <div class="j-card-body">
+              <h3>Latimojong</h3>
+              <div class="meta">
+                <span>Sulawesi Selatan</span>
+                <small>2024 · 3,478 mdpl</small>
+              </div>
+            </div>
+          </div>
+          <div class="j-card" onclick="showDetail('lompobattang')">
+            <div class="j-card-img">
+              <span class="peak-icon">⛰️</span>
+              <span>Lompobattang Image</span>
+            </div>
+            <div class="j-card-body">
+              <h3>Lompobattang</h3>
+              <div class="meta">
+                <span>Sulawesi Selatan</span>
+                <small>2024 · 2,871 mdpl</small>
+              </div>
+            </div>
+          </div>
+          <div class="j-card" onclick="showDetail('baria')">
+            <div class="j-card-img">
+              <span class="peak-icon">⛰️</span>
+              <span>Bulu Baria Image</span>
+            </div>
+            <div class="j-card-body">
+              <h3>Bulu Baria</h3>
+              <div class="meta">
+                <span>Sulawesi Selatan</span>
+                <small>2024 · 1,927 mdpl</small>
+              </div>
+            </div>
+          </div>
+          <div class="j-card" onclick="showDetail('bawakaraeng')">
+            <div class="j-card-img">
+              <span class="peak-icon">⛰️</span>
+              <span>Bawakaraeng Image</span>
+            </div>
+            <div class="j-card-body">
+              <h3>Bawakaraeng</h3>
+              <div class="meta">
+                <span>Sulawesi Selatan</span>
+                <small>2024 · 2,833 mdpl</small>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <div class="journey-detail-wrap">
+      <!-- JOURNEY DETAIL -->
       <div id="journey-detail">
-        <!-- Dynamic content injected by JS -->
+        <div class="detail-header">
+          <h2 id="d-name">Mountain Name</h2>
+          <div class="detail-meta">
+            <span>📍 <strong id="d-loc">Location</strong></span>
+            <span>📏 <strong id="d-elev">Elevation</strong></span>
+            <span>📅 <strong id="d-year">Year</strong></span>
+          </div>
+        </div>
+        <div class="detail-body">
+
+          <!-- Gallery Slider -->
+          <div class="slider-wrap">
+            <div class="slider-track">
+              <div class="slide active">📸 Gallery Image 1 — <span class="d-name-inline"></span></div>
+              <div class="slide">📸 Gallery Image 2 — <span class="d-name-inline"></span></div>
+              <div class="slide">📸 Gallery Image 3 — <span class="d-name-inline"></span></div>
+            </div>
+            <div class="slider-counter" id="sliderCounter">1 / 3</div>
+            <div class="slider-controls">
+              <button class="sl-btn" onclick="prevSlide()">← Prev</button>
+              <button class="sl-btn" onclick="nextSlide()">Next →</button>
+            </div>
+          </div>
+
+          <!-- Story -->
+          <div class="story-section">
+            <h3 style="font-family:var(--font-display);font-size:1.2rem;font-weight:600;color:var(--c-white);margin-bottom:12px;">The Story</h3>
+            <p class="story-excerpt" id="d-story-short"></p>
+            <div class="story-extra" id="d-story-extra">
+              <p id="d-story-long"></p>
+            </div>
+            <button class="read-more" id="readMoreBtn" onclick="toggleStory()">Baca Selengkapnya →</button>
+          </div>
+
+          <!-- Highlight -->
+          <div class="highlight-box">
+            <p id="d-highlight"></p>
+          </div>
+
+          <!-- Map -->
+          <div class="map-placeholder">
+            🗺️ Map Location — <span id="d-map-name"></span>
+          </div>
+
+          <!-- Quote -->
+          <blockquote class="journey-quote">
+            "<span id="d-quote"></span>"
+            <cite id="d-member"></cite>
+          </blockquote>
+
+          <button class="close-detail" onclick="closeDetail()" style="margin-top:24px;">✕ Close Detail</button>
+        </div>
       </div>
-    </div>
+
+    </div><!-- /container -->
+
+    <!-- Footer -->
+    <footer class="footer" style="margin-top:80px">
+      <div class="footer-inner">
+        <div class="footer-top">
+          <div class="footer-brand"><div class="f-logo">CLEAR.ADV</div><p>Responsible Exploration Since 2024</p></div>
+          <div class="footer-social">
+            <a href="https://instagram.com/" target="_blank" rel="noopener" class="soc-btn soc-ig">📷 Instagram</a>
+            <a href="https://tiktok.com/" target="_blank" rel="noopener" class="soc-btn soc-tt">🎵 TikTok</a>
+            <a href="https://facebook.com/" target="_blank" rel="noopener" class="soc-btn soc-fb">📘 Facebook</a>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>© 2026 CLEAR.ADV. All Rights Reserved.</p>
+          <p>Made with ❤️ for the Mountains</p>
+        </div>
+      </div>
+    </footer>
   </section>
 
-  <!-- ===== CONTACT SECTION ===== -->
-  <section id="section-contact" class="section">
-    <div class="section-inner">
-      <p class="section-eyebrow">Get In Touch</p>
-      <h2 class="section-title">Contact Us</h2>
-      <div class="section-divider"></div>
-
+  <!-- ── CONTACT US PAGE ───────────────────────────────────────── -->
+  <section class="page" id="contact-us">
+    <div class="sec-hero">
+      <div class="container">
+        <span class="badge">Get In Touch</span>
+        <h1 class="section-title">Contact Us</h1>
+        <div class="green-line"></div>
+      </div>
+    </div>
+    <div class="container">
       <div class="contact-grid">
-        <div class="contact-form-wrap">
-          <form class="contact-form" onsubmit="return false">
-            <div class="form-group">
-              <label for="c-name">Your Name</label>
-              <input type="text" id="c-name" placeholder="Nama lengkap kamu">
-            </div>
-            <div class="form-group">
-              <label for="c-email">Email Address</label>
-              <input type="email" id="c-email" placeholder="email@example.com">
-            </div>
-            <div class="form-group">
-              <label for="c-msg">Message</label>
-              <textarea id="c-msg" rows="6" placeholder="Tulis pesanmu di sini..."></textarea>
-            </div>
-            <button type="button" class="btn-send" onclick="sendMessage()">Send Message →</button>
-          </form>
+        <div class="contact-form fade-in">
+          <label for="cName">Name</label>
+          <input type="text" id="cName" placeholder="Your full name" />
+          <label for="cEmail">Email</label>
+          <input type="email" id="cEmail" placeholder="your@email.com" />
+          <label for="cMsg">Message</label>
+          <textarea id="cMsg" placeholder="Tell us about yourself or your inquiry..."></textarea>
+          <button class="btn-primary" onclick="submitForm()">Send Message</button>
+          <div id="formMsg" style="display:none;margin-top:14px;font-size:.85rem;color:var(--c-green-lt)">
+            ✓ Message sent! We'll get back to you soon.
+          </div>
         </div>
-
-        <div class="contact-info">
+        <div class="contact-info fade-in">
           <h3>Let's Connect</h3>
-          <p class="contact-tagline">Interested in collaborating or joining our next expedition? Let's connect.</p>
-          <div class="contact-detail">
-            <div class="contact-item">
-              <span class="contact-item-icon">🌏</span>
-              <div class="contact-item-body">
-                <h4>Location</h4>
-                <p>Indonesia, Sulawesi Selatan</p>
+          <p>Interested in collaborating or joining our next expedition? Let's connect. We welcome passionate explorers, photographers, environmentalists, and anyone who shares our love for the mountains.</p>
+          <div class="contact-details">
+            <div class="c-detail">
+              <span class="c-detail-icon">🌏</span>
+              <div class="c-detail-text">
+                <strong>Location</strong>
+                Sulawesi Selatan, Indonesia
               </div>
             </div>
-            <div class="contact-item">
-              <span class="contact-item-icon">📧</span>
-              <div class="contact-item-body">
-                <h4>Email</h4>
-                <p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b5ddd0d9d9daf5d6d9d0d4c7d4d1c39bdcd1">[email&#160;protected]</a></p>
+            <div class="c-detail">
+              <span class="c-detail-icon">📧</span>
+              <div class="c-detail-text">
+                <strong>Email</strong>
+                hello@clearadv.id
               </div>
             </div>
-            <div class="contact-item">
-              <span class="contact-item-icon">📞</span>
-              <div class="contact-item-body">
-                <h4>Phone / WhatsApp</h4>
-                <p>+62 8xx xxxx xxxx</p>
+            <div class="c-detail">
+              <span class="c-detail-icon">📱</span>
+              <div class="c-detail-text">
+                <strong>WhatsApp</strong>
+                +62 812-3456-7890
               </div>
             </div>
-            <div class="contact-item">
-              <span class="contact-item-icon">📸</span>
-              <div class="contact-item-body">
-                <h4>Social Media</h4>
-                <p>@clearadv · Instagram · TikTok</p>
+            <div class="c-detail">
+              <span class="c-detail-icon">📷</span>
+              <div class="c-detail-text">
+                <strong>Instagram</strong>
+                @clearadv
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Footer -->
+    <footer class="footer" style="margin-top:80px">
+      <div class="footer-inner">
+        <div class="footer-top">
+          <div class="footer-brand"><div class="f-logo">CLEAR.ADV</div><p>Responsible Exploration Since 2024</p></div>
+          <div class="footer-social">
+            <a href="https://instagram.com/" target="_blank" rel="noopener" class="soc-btn soc-ig">📷 Instagram</a>
+            <a href="https://tiktok.com/" target="_blank" rel="noopener" class="soc-btn soc-tt">🎵 TikTok</a>
+            <a href="https://facebook.com/" target="_blank" rel="noopener" class="soc-btn soc-fb">📘 Facebook</a>
+          </div>
+        </div>
+        <div class="footer-bottom"><p>© 2026 CLEAR.ADV. All Rights Reserved.</p><p>Made with ❤️ for the Mountains</p></div>
+      </div>
+    </footer>
   </section>
 
-  <!-- ===== INFORMATION SECTION ===== -->
-  <section id="section-information" class="section">
-    <div class="section-inner">
-      <p class="section-eyebrow">Field Notes</p>
-      <h2 class="section-title">Information</h2>
-      <div class="section-divider"></div>
-
+  <!-- ── INFORMATION PAGE ──────────────────────────────────────── -->
+  <section class="page" id="information">
+    <div class="sec-hero">
+      <div class="container">
+        <span class="badge">Explorer's Guide</span>
+        <h1 class="section-title">Information</h1>
+        <div class="green-line"></div>
+      </div>
+    </div>
+    <div class="container">
       <div class="info-grid">
-        <div class="info-card">
-          <span class="info-card-icon">📋</span>
+        <div class="info-card fade-in">
+          <div class="icon">📋</div>
           <h3>Exploration Guidelines</h3>
-          <p style="font-size:13px; color:var(--ash);">Standards we uphold on every expedition.</p>
-          <ul class="info-list">
-            <li>Leave no trash — pack out everything you bring in</li>
-            <li>Respect local culture and indigenous land rights</li>
-            <li>Safety first — never compromise for speed or summit</li>
-            <li>Travel prepared with proper gear and knowledge</li>
+          <ul>
+            <li>Leave no trash — carry out everything you carry in</li>
+            <li>Respect local culture and customs of surrounding communities</li>
+            <li>Safety first — know your limits and never push recklessly</li>
+            <li>Travel prepared with proper gear and emergency plans</li>
           </ul>
         </div>
-
-        <div class="info-card">
-          <span class="info-card-icon">🎒</span>
+        <div class="info-card fade-in">
+          <div class="icon">🎒</div>
           <h3>Equipment Checklist</h3>
-          <p style="font-size:13px; color:var(--ash);">Essential gear for responsible mountaineering.</p>
-          <ul class="info-list">
-            <li>Hiking boots — waterproof & ankle support</li>
-            <li>Rain jacket — lightweight & windproof</li>
-            <li>Headlamp — with spare batteries</li>
-            <li>Adequate water supply & filtration</li>
-            <li>Emergency first aid kit</li>
+          <ul>
+            <li>Hiking boots with proper ankle support</li>
+            <li>Rain jacket and waterproof layers</li>
+            <li>Headlamp with extra batteries</li>
+            <li>Water supply and purification method</li>
+            <li>Emergency kit (first aid, whistle, mirror)</li>
           </ul>
         </div>
-
-        <div class="upcoming-card">
-          <span class="upcoming-badge">Coming Soon</span>
-          <h3>Next Expedition</h3>
-          <p style="font-size:13px; color:var(--ash); margin:4px 0 16px;">Upcoming</p>
-          <p>Our next expedition is currently being planned. Details on destination, dates, and registration will be announced soon through our social media channels. Stay connected and be ready to move.</p>
-          <div style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap;">
-            <span style="background:rgba(74,222,128,0.1); border:1px solid rgba(74,222,128,0.2); border-radius:20px; padding:6px 14px; font-size:12px; color:var(--sage);">🏔 TBA</span>
-            <span style="background:rgba(74,222,128,0.1); border:1px solid rgba(74,222,128,0.2); border-radius:20px; padding:6px 14px; font-size:12px; color:var(--sage);">📅 2025</span>
+        <div class="upcoming-card fade-in">
+          <div>
+            <span class="badge">Coming Soon</span>
+            <h3>Upcoming Expedition</h3>
+            <p>Our next expedition is in the planning phase. Stay connected with our community for the official announcement. We're looking at another iconic peak in Sulawesi Selatan — details to be revealed soon to registered members.</p>
+          </div>
+          <div>
+            <span class="upcoming-badge">TBA 2025</span>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Footer -->
+    <footer class="footer" style="margin-top:80px">
+      <div class="footer-inner">
+        <div class="footer-top">
+          <div class="footer-brand"><div class="f-logo">CLEAR.ADV</div><p>Responsible Exploration Since 2024</p></div>
+          <div class="footer-social">
+            <a href="https://instagram.com/" target="_blank" rel="noopener" class="soc-btn soc-ig">📷 Instagram</a>
+            <a href="https://tiktok.com/" target="_blank" rel="noopener" class="soc-btn soc-tt">🎵 TikTok</a>
+            <a href="https://facebook.com/" target="_blank" rel="noopener" class="soc-btn soc-fb">📘 Facebook</a>
+          </div>
+        </div>
+        <div class="footer-bottom"><p>© 2026 CLEAR.ADV. All Rights Reserved.</p><p>Made with ❤️ for the Mountains</p></div>
+      </div>
+    </footer>
   </section>
 
-  <!-- FOOTER (app) -->
-  <footer>
-    <div class="footer-inner">
-      <div class="footer-brand">
-        <h3>CLEAR.ADV</h3>
-        <p>Responsible Exploration Since 2024</p>
-      </div>
-      <div class="footer-social">
-        <a href="#" title="Instagram">📷</a>
-        <a href="#" title="TikTok">🎵</a>
-        <a href="#" title="Facebook">💬</a>
-      </div>
-    </div>
-    <div class="footer-copy">© 2026 CLEAR.ADV. All Rights Reserved.</div>
-  </footer>
-</div>
+</div><!-- /#internal -->
 
-<!-- ===================== JAVASCRIPT ===================== -->
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-// ===================== STATE =====================
-let currentSlide = 0;
-let selectedCard = null;
-let isDarkMode = true;
-let translationVisible = false;
-let storyOpen = false;
-
-const mountainData = {
-  latimojong: {
-    name: 'Latimojong',
-    location: 'Enrekang, Sulawesi Selatan',
-    elevation: '3.478 mdpl',
-    year: '2024',
-    slides: ['Latimojong — Summit View', 'Latimojong — Base Camp', 'Latimojong — Trail'],
-    story1: 'Gunung Latimojong adalah puncak tertinggi di Sulawesi Selatan. Perjalanan menuju puncaknya menempuh jalur yang panjang, melewati hutan tropis yang lebat dan vegetasi unik khas pegunungan tinggi.',
-    story2: 'Tim CLEAR.ADV menyelesaikan pendakian ini selama 4 hari 3 malam, dengan berbagi beban antar anggota dan menjaga semangat satu sama lain hingga puncak. Keindahan panorama dari atas Rante Mario menjadi kenangan yang tak terlupakan.',
-    story3: 'Perjalanan turun mengajarkan kami tentang kesabaran. Medan yang licin dan kabut tebal menuntut fokus penuh. Namun setiap langkah terasa bermakna saat kami kembali ke bawah dengan selamat.',
-    highlight: '"Di atas awan, kami belajar bahwa ketinggian bukan tujuan—ia adalah perspektif baru tentang kehidupan."',
-    quote: 'Perjalanan ini mengajarkan arti sabar dan kebersamaan.',
-    member: 'Arif R., CLEAR.ADV Member'
-  },
-  lompobattang: {
-    name: 'Lompobattang',
-    location: 'Bulukumba, Sulawesi Selatan',
-    elevation: '2.871 mdpl',
-    year: '2024',
-    slides: ['Lompobattang — Dawn', 'Lompobattang — Ridgeline', 'Lompobattang — Forest'],
-    story1: 'Gunung Lompobattang menawarkan jalur pendakian yang beragam, dari hutan pinus hingga padang savana yang menakjubkan. Perjalanan ini menjadi salah satu ekspedisi paling berkesan bagi tim kami.',
-    story2: 'Kami memulai pendakian pada subuh buta, menembus dinginnya udara pegunungan. Setibanya di puncak saat matahari terbit, panorama Teluk Bone yang membentang di kejauhan menjadi hadiah terbaik yang pernah kami rasakan.',
-    story3: 'Selama ekspedisi ini, kami juga melakukan edukasi kepada pendaki lain tentang pentingnya membawa kembali sampah mereka. Sebuah langkah kecil yang kami harap berdampak besar.',
-    highlight: '"Matahari terbit di Lompobattang—sebuah momen yang membuat semua langkah terasa ringan."',
-    quote: 'Puncak bukan akhir perjalanan, ia adalah awal dari pemahaman yang lebih dalam.',
-    member: 'Dewi S., CLEAR.ADV Member'
-  },
-  bulubaria: {
-    name: 'Bulu Baria',
-    location: 'Sinjai, Sulawesi Selatan',
-    elevation: '1.946 mdpl',
-    year: '2024',
-    slides: ['Bulu Baria — Panorama', 'Bulu Baria — Camp', 'Bulu Baria — Sunrise'],
-    story1: 'Bulu Baria, yang berarti "Gunung Besar" dalam bahasa lokal, menawarkan pemandangan yang spektakuler dari tiga kabupaten sekaligus. Jalurnya lebih pendek namun tetap menuntut ketahanan fisik.',
-    story2: 'Tim kecil yang terdiri dari 8 orang berhasil mencapai puncak dalam satu hari, membuktikan bahwa pendakian hari ini pun bisa bermakna dan penuh cerita jika dilakukan dengan penuh kesadaran.',
-    story3: 'Bulu Baria mengajarkan kami bahwa tidak setiap perjalanan harus panjang untuk berkesan. Kadang, kedalaman pengalaman lebih penting dari lamanya waktu.',
-    highlight: '"Dari Bulu Baria, tiga kabupaten terhampar seperti lukisan—alam yang tak pernah pelit memberikan keindahannya."',
-    quote: 'Setiap gunung punya cara uniknya sendiri dalam memanggil jiwa petualang.',
-    member: 'Fauzan M., CLEAR.ADV Member'
-  },
-  bawakaraeng: {
-    name: 'Bawakaraeng',
-    location: 'Gowa, Sulawesi Selatan',
-    elevation: '2.833 mdpl',
-    year: '2024',
-    slides: ['Bawakaraeng — Crater', 'Bawakaraeng — Mist', 'Bawakaraeng — Trail'],
-    story1: 'Gunung Bawakaraeng adalah gunung bersejarah yang sakral bagi masyarakat Bugis-Makassar. Mendakinya bukan sekadar petualangan fisik—ini adalah pengalaman yang menyentuh dimensi spiritual dan budaya.',
-    story2: 'Ekspedisi ke Bawakaraeng membawa kami melewati bekas longsoran dahsyat tahun 2004. Area itu kini telah ditumbuhi kembali oleh hutan muda—sebuah pengingat kuat tentang kekuatan alam untuk pulih dan bangkit.',
-    story3: 'Di puncaknya, kami duduk dalam keheningan, merenungkan perjalanan yang baru saja kami tempuh. Bawakaraeng bukan hanya menguji kaki, ia menguji jiwa.',
-    highlight: '"Bawakaraeng bukan sekadar gunung—ia adalah cermin bagi mereka yang datang dengan hati yang terbuka."',
-    quote: 'Alam bicara kepada mereka yang mau mendengarkan dalam keheningan.',
-    member: 'Nur H., CLEAR.ADV Member'
+<!-- ═══════════════════════════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════════════════════════════ -->
+<script>
+  /* ─ DARK MODE ─────────────────────────────────────────────────── */
+  const dmBtn = document.getElementById('dm-btn');
+  let isDark = true;
+  function toggleDark() {
+    isDark = !isDark;
+    document.body.classList.toggle('light-mode', !isDark);
+    dmBtn.textContent = isDark ? '🌙 Dark' : '☀️ Light';
   }
-};
 
-// ===================== PAGE NAVIGATION =====================
-function showPage(id) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  window.scrollTo(0, 0);
-}
+  /* ─ FADE IN OBSERVER ──────────────────────────────────────────── */
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting) { e.target.classList.add('visible'); } });
+  }, { threshold: 0.12 });
+  function observeFades() {
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+  }
+  observeFades();
 
-function enterApp() {
-  showPage('page-app');
-  const music = document.getElementById('bg-music');
-  music.volume = 0.2;
-  music.play().catch(() => {});
-  navTo('home');
-}
+  /* ─ SCROLL TO MISSION ─────────────────────────────────────────── */
+  function scrollToMission() {
+    document.getElementById('mission').scrollIntoView({ behavior: 'smooth' });
+  }
 
-function showMission() {
-  showPage('page-mission');
-}
+  /* ─ LANGUAGE TOGGLE ───────────────────────────────────────────── */
+  function toggleLang(btn) {
+    const block = document.getElementById('lang-id');
+    const label = btn.querySelector('.lang-label');
+    block.classList.toggle('open');
+    label.textContent = block.classList.contains('open') ? 'Sembunyikan' : 'Lihat Terjemahan';
+  }
 
-// ===================== DARK MODE =====================
-function toggleDarkMode() {
-  isDarkMode = !isDarkMode;
-  document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
-  document.querySelectorAll('.mode-text').forEach(el => {
-    el.textContent = isDarkMode ? 'Light Mode' : 'Dark Mode';
+  /* ─ AUDIO ─────────────────────────────────────────────────────── */
+  const audio = document.getElementById('bgAudio');
+  function playMusic() {
+    audio.volume = 0.25;
+    audio.play().catch(() => {});
+  }
+  function stopMusic() {
+    audio.pause();
+    audio.currentTime = 0;
+  }
+
+  /* ─ LANDING ↔ INTERNAL ────────────────────────────────────────── */
+  const landing = document.getElementById('landing');
+  const internal = document.getElementById('internal');
+
+  document.getElementById('exploreBtn').addEventListener('click', function() {
+    landing.classList.add('hidden');
+    internal.classList.add('show');
+    playMusic();
+    window.scrollTo(0, 0);
+    switchPage('about-us');
+    observeFades();
   });
-}
 
-// ===================== TRANSLATION =====================
-function toggleTranslation() {
-  const en = document.getElementById('mission-en');
-  const id = document.getElementById('mission-id');
-  const btn = document.getElementById('translate-btn');
-
-  translationVisible = !translationVisible;
-  if (translationVisible) {
-    en.style.display = 'none';
-    id.classList.add('visible');
-    btn.textContent = '🌐 Lihat Versi Inggris';
-  } else {
-    en.style.display = 'block';
-    id.classList.remove('visible');
-    setTimeout(() => { id.style.display = 'none'; }, 350);
-    btn.textContent = '🌐 Lihat Terjemahan';
-  }
-}
-
-// ===================== NAV =====================
-function navTo(section) {
-  // If home, go back to landing and stop music
-  if (section === 'home') {
-    const music = document.getElementById('bg-music');
-    music.pause();
-    music.currentTime = 0;
-    showPage('page-landing');
-    return;
+  function goHome() {
+    internal.classList.remove('show');
+    landing.classList.remove('hidden');
+    stopMusic();
+    window.scrollTo(0, 0);
   }
 
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.getElementById('section-' + section).classList.add('active');
-
-  document.querySelectorAll('.nav-links button, .nav-links a').forEach(el => el.classList.remove('active'));
-  const btn = document.getElementById('nav-' + section);
-  if (btn) btn.classList.add('active');
-
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-// ===================== MOBILE MENU =====================
-function toggleMobile() {
-  const menu = document.getElementById('mobile-menu');
-  const hamburger = document.getElementById('hamburger');
-  menu.classList.toggle('visible');
-  hamburger.classList.toggle('open');
-}
-function closeMobile() {
-  document.getElementById('mobile-menu').classList.remove('visible');
-  document.getElementById('hamburger').classList.remove('open');
-}
-
-// ===================== GALLERY SLIDER =====================
-function initSlider() {
-  currentSlide = 0;
-  updateSlider();
-}
-
-function updateSlider() {
-  const slides = document.querySelectorAll('.gallery-slide');
-  const dots = document.querySelectorAll('.gallery-dot');
-  slides.forEach((s, i) => s.classList.toggle('active', i === currentSlide));
-  dots.forEach((d, i) => d.classList.toggle('active', i === currentSlide));
-}
-
-function prevSlide() {
-  const slides = document.querySelectorAll('.gallery-slide');
-  currentSlide = (currentSlide - 1 + slides.length) % slides.length;
-  updateSlider();
-}
-
-function nextSlide() {
-  const slides = document.querySelectorAll('.gallery-slide');
-  currentSlide = (currentSlide + 1) % slides.length;
-  updateSlider();
-}
-
-function goToSlide(i) { currentSlide = i; updateSlider(); }
-
-// ===================== JOURNEY DETAIL =====================
-function showDetail(key, cardEl) {
-  const data = mountainData[key];
-  const detail = document.getElementById('journey-detail');
-
-  // Deselect all cards
-  document.querySelectorAll('.mountain-card').forEach(c => c.classList.remove('selected'));
-  cardEl.classList.add('selected');
-
-  // Build gallery HTML
-  const slidesHTML = data.slides.map((s, i) => `
-    <div class="gallery-slide ${i===0?'active':''}">${s}</div>
-  `).join('');
-
-  const dotsHTML = data.slides.map((_, i) => `
-    <div class="gallery-dot ${i===0?'active':''}" onclick="goToSlide(${i})"></div>
-  `).join('');
-
-  detail.innerHTML = `
-    <div class="detail-header">
-      <h2>${data.name}</h2>
-      <div class="detail-meta">
-        <span>📍 <strong>${data.location}</strong></span>
-        <span>⛰ Elevasi: <strong>${data.elevation}</strong></span>
-        <span>📅 Tahun: <strong>${data.year}</strong></span>
-      </div>
-    </div>
-
-    <div class="gallery-slider">
-      ${slidesHTML}
-      <div class="gallery-controls">
-        <button class="gallery-btn" onclick="prevSlide()">‹</button>
-        <div class="gallery-dots">${dotsHTML}</div>
-        <button class="gallery-btn" onclick="nextSlide()">›</button>
-      </div>
-    </div>
-
-    <div class="story-section">
-      <h3>The Story</h3>
-      <p class="story-text">${data.story1}</p>
-      <p class="story-text">${data.story2}</p>
-      <div class="story-more" id="story-more">
-        <p class="story-text">${data.story3}</p>
-      </div>
-      <button class="btn-read-more" id="btn-read-more" onclick="toggleStory()">Baca Selengkapnya ↓</button>
-    </div>
-
-    <div class="highlight-box">
-      <h4>✦ Highlight Moment</h4>
-      <p>${data.highlight}</p>
-    </div>
-
-    <div class="mini-map">
-      <span>🗺 Map Location</span>
-    </div>
-
-    <blockquote class="detail-blockquote">
-      <p>${data.quote}</p>
-      <cite>— ${data.member}</cite>
-    </blockquote>
-  `;
-
-  // Reset story state
-  storyOpen = false;
-  currentSlide = 0;
-
-  // Show with animation
-  detail.classList.remove('visible');
-  detail.style.display = 'block';
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      detail.classList.add('visible');
+  /* ─ PAGE SWITCHING ────────────────────────────────────────────── */
+  function switchPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    const target = document.getElementById(id);
+    if(target) {
+      target.classList.add('active');
+      window.scrollTo(0, 0);
+      // Trigger fade-ins in new page
+      setTimeout(() => {
+        target.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+      }, 50);
+    }
+    // Highlight nav
+    document.querySelectorAll('.nav-link, .mobile-nav .nav-link').forEach(l => {
+      if(l.textContent.trim().toLowerCase().replace(/\s/g,'').includes(id.replace('-','').replace('us','').toLowerCase())) {
+        l.classList.add('active');
+      }
     });
-  });
-
-  // Scroll to detail
-  setTimeout(() => {
-    detail.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, 100);
-}
-
-function toggleStory() {
-  storyOpen = !storyOpen;
-  const more = document.getElementById('story-more');
-  const btn = document.getElementById('btn-read-more');
-  if (more) {
-    more.classList.toggle('open', storyOpen);
-    btn.textContent = storyOpen ? 'Tutup ↑' : 'Baca Selengkapnya ↓';
+    // Close detail if switching away from journey
+    if(id !== 'our-journey') closeDetail();
   }
-}
 
-// ===================== CONTACT =====================
-function sendMessage() {
-  const name = document.getElementById('c-name').value.trim();
-  const email = document.getElementById('c-email').value.trim();
-  const msg = document.getElementById('c-msg').value.trim();
-  if (!name || !email || !msg) {
-    alert('Silakan lengkapi semua kolom terlebih dahulu.');
-    return;
+  /* ─ MOBILE NAV ────────────────────────────────────────────────── */
+  function toggleMobileNav() {
+    document.getElementById('mobileNav').classList.toggle('open');
   }
-  alert('Pesan terkirim! Terima kas
+
+  /* ─ JOURNEY DATA ──────────────────────────────────────────────── */
+  const mountains = {
+    latimojong: {
+      name: 'Latimojong',
+      loc: 'Kabupaten Enrekang, Sulawesi Selatan',
+      elev: '3,478 mdpl — Tertinggi di Sulawesi',
+      year: '2024',
+      storyShort: 'Gunung Latimojong adalah tantangan terbesar yang pernah kami hadapi. Jalur yang panjang, vegetasi rapat, dan cuaca yang tak terduga menguji setiap anggota tim hingga batas kemampuan.',
+      storyLong: 'Perjalanan menuju puncak Latimojong memakan waktu tiga hari penuh. Kami memulai perjalanan dari Desa Karangan, melewati padang rumput terbuka, hutan berlumut yang magis, dan bebatuan terjal sebelum akhirnya meraih puncak Rante Mario. Di setiap langkah, kami belajar tentang ketahanan fisik dan mental. Dan ketika kami berdiri di atas atap Sulawesi, tidak ada kata yang cukup untuk menggambarkan rasa syukur yang kami rasakan.',
+      highlight: '✨ Highlight: Kami menemukan vegetasi endemik yang jarang ditemukan di ketinggian 3.200 mdpl — momen tak terlupakan bagi seluruh tim.',
+      quote: 'Latimojong mengajarkan kami bahwa jarak bukan hambatan, melainkan ukuran tekad.',
+      member: 'Rizal A., Ketua Ekspedisi'
+    },
+    lompobattang: {
+      name: 'Lompobattang',
+      loc: 'Kabupaten Bulukumba, Sulawesi Selatan',
+      elev: '2,871 mdpl',
+      year: '2024',
+      storyShort: 'Lompobattang menyimpan misteri yang luar biasa. Kabut tebal yang menyelimuti jalur pendakian menciptakan suasana yang sinematik dan penuh misteri.',
+      storyLong: 'Ekspedisi Lompobattang adalah tentang kebersamaan. Saat hujan deras menghantam tenda di malam kedua, semua orang bergerak kompak — mengamankan peralatan, memperkuat struktur tenda, dan saling memastikan keselamatan. Pagi berikutnya, kami muncul dari tenda dan disuguhi lautan awan yang menakjubkan di bawah kami.',
+      highlight: '✨ Highlight: Lautan awan di pagi hari summit — pemandangan yang terbayar semua kerja keras.',
+      quote: 'Di atas kabut Lompobattang, kami menemukan versi terbaik diri kami.',
+      member: 'Sari W., Fotografer Ekspedisi'
+    },
+    baria: {
+      name: 'Bulu Baria',
+      loc: 'Kabupaten Gowa, Sulawesi Selatan',
+      elev: '1,927 mdpl',
+      year: '2024',
+      storyShort: 'Bulu Baria adalah ekspedisi pertama CLEAR.ADV yang melibatkan anggota baru. Gunung ini menjadi tempat pembelajaran dan pembekalan sebelum menghadapi puncak yang lebih menantang.',
+      storyLong: 'Dengan jalur yang lebih ramah namun tetap menantang, Bulu Baria menjadi laboratory sempurna bagi anggota baru kami untuk belajar teknik navigasi, manajemen logistik, dan protokol keselamatan. Senior member mendampingi setiap langkah, memastikan semua orang mendapat pengalaman yang berharga.',
+      highlight: '✨ Highlight: 8 anggota baru berhasil menyelesaikan summit pertama mereka di sini.',
+      quote: 'Setiap gunung besar dimulai dari langkah pertama di gunung kecil.',
+      member: 'Andi P., Pembina Anggota'
+    },
+    bawakaraeng: {
+      name: 'Bawakaraeng',
+      loc: 'Kabupaten Gowa, Sulawesi Selatan',
+      elev: '2,833 mdpl',
+      year: '2024',
+      storyShort: 'Bawakaraeng adalah gunung yang sakral bagi masyarakat Bugis-Makassar. Kami mendekatinya dengan hormat yang mendalam, belajar dari guide lokal yang telah mengenal gunung ini lebih dari satu dekade.',
+      storyLong: 'Ekspedisi Bawakaraeng adalah tentang mendengarkan — mendengar cerita dari guide lokal Pak Dg. Naba, mendengar bunyi hutan yang hidup di malam hari, dan mendengar suara batin sendiri di puncak yang anginnya bertiup kencang. Kami belajar bahwa pendakian sejati adalah tentang berdialog dengan alam, bukan menaklukkannya.',
+      highlight: '✨ Highlight: Interaksi mendalam dengan komunitas lokal di kaki gunung — mereka berbagi cerita dan kami berbagi makan.',
+      quote: 'Perjalanan ini mengajarkan arti sabar dan kebersamaan.',
+      member: 'Muh. Faisal, Anggota Ekspedisi'
+    }
+  };
+
+  /* ─ SLIDER STATE ──────────────────────────────────────────────── */
+  let currentSlide = 0;
+  function updateSlider() {
+    const slides = document.querySelectorAll('.slide');
+    slides.forEach((s, i) => s.classList.toggle('active', i === currentSlide));
+    document.getElementById('sliderCounter').textContent = `${currentSlide + 1} / ${slides.length}`;
+  }
+  function nextSlide() {
+    const slides = document.querySelectorAll('.slide');
+    currentSlide = (currentSlide + 1) % slides.length;
+    updateSlider();
+  }
+  function prevSlide() {
+    const slides = document.querySelectorAll('.slide');
+    currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+    updateSlider();
+  }
+
+  /* ─ SHOW DETAIL ───────────────────────────────────────────────── */
+  function showDetail(key) {
+    const d = mountains[key];
+    if(!d) return;
+    currentSlide = 0;
+
+    // Populate
+    document.getElementById('d-name').textContent = d.name;
+    document.getElementById('d-loc').textContent = d.loc;
+    document.getElementById('d-elev').textContent = d.elev;
+    document.getElementById('d-year').textContent = d.year;
+    document.getElementById('d-story-short').textContent = d.storyShort;
+    document.getElementById('d-story-long').textContent = d.storyLong;
+    document.getElementById('d-highlight').textContent = d.highlight;
+    document.getElementById('d-quote').textContent = d.quote;
+    document.getElementById('d-member').textContent = '— ' + d.member;
+    document.getElementById('d-map-name').textContent = d.name;
+    document.querySelectorAll('.d-name-inline').forEach(el => el.textContent = d.name);
+
+    updateSlider();
+
+    // Reset story
+    const storyExtra = document.getElementById('d-story-extra');
+    storyExtra.classList.remove('open');
+    document.getElementById('readMoreBtn').textContent = 'Baca Selengkapnya →';
+
+    // Show detail
+    const detail = document.getElementById('journey-detail');
+    detail.classList.add('visible');
+    detail.classList.remove('animated');
+    detail.style.display = 'block';
+
+    // Scroll to it
+    setTimeout(() => {
+      detail.classList.add('animated');
+      detail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
+  }
+
+  function closeDetail() {
+    const detail = document.getElementById('journey-detail');
+    detail.classList.remove('animated');
+    setTimeout(() => {
+      detail.classList.remove('visible');
+      detail.style.display = 'none';
+    }, 400);
+  }
+
+  /* ─ TOGGLE STORY ──────────────────────────────────────────────── */
+  function toggleStory() {
+    const extra = document.getElementById('d-story-extra');
+    const btn = document.getElementById('readMoreBtn');
+    extra.classList.toggle('open');
+    btn.textContent = extra.classList.contains('open') ? 'Tutup' : 'Baca Selengkapnya →';
+  }
+
+  /* ─ CONTACT FORM ──────────────────────────────────────────────── */
+  function submitForm() {
+    const name = document.getElementById('cName').value.trim();
+    const email = document.getElementById('cEmail').value.trim();
+    const msg = document.getElementById('cMsg').value.trim();
+    if(!name || !email || !msg) { alert('Please fill in all fields.'); return; }
+    document.getElementById('formMsg').style.display = 'block';
+    document.getElementById('cName').value = '';
+    document.getElementById('cEmail').value = '';
+    document.getElementById('cMsg').value = '';
+    setTimeout(() => { document.getElementById('formMsg').style.display = 'none'; }, 4000);
+  }
+</script>
+</body>
+</html>
+
