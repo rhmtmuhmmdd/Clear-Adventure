@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CLEAR.ADV — Explore the Wild</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     /* ========== RESET & BASE ========== */
     *, *::before, *::after {
@@ -16,10 +19,17 @@
       font-size: 16px;
     }
     body {
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
       overflow-x: hidden;
       transition: background 0.4s, color 0.4s;
       min-height: 100vh;
+    }
+    h1, h2, h3, h4, h5, h6,
+    .cover-title, .page-title, .learn-title,
+    .stat-num, .big-num, .section-title-big,
+    .values-title, .learn-values-title,
+    .btn-explore, .btn-learn, .btn-cta-learn, .btn-back-home, .btn-channel {
+      font-family: 'Outfit', 'Segoe UI', system-ui, sans-serif;
     }
 
     /* ========== LIGHT MODE ========== */
@@ -411,15 +421,12 @@
 
     /* ========== COVER PAGE ========== */
     #page-cover {
-      position: relative;
+      width: 100%;
+      height: 100dvh;
       min-height: 100vh;
+      overflow: hidden;
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 6rem 1.5rem 5rem;
-      overflow: hidden;
     }
     .cover-bg {
       position: absolute;
@@ -1337,13 +1344,13 @@
       <img src="iconourjourney.png" alt="Journey" onerror="this.style.display='none'"> Our Journey
     </div>
     <div class="menu-item" onclick="goTo('page-about'); closeMenu();">
-      <img src="iconaboutus.png" alt="About" onerror="this.style.display='none'"> About Us
+      <img src="iconaboutud.png" alt="About" onerror="this.style.display='none'"> About Us
     </div>
     <div class="menu-item" onclick="goTo('page-contact'); closeMenu();">
       <img src="iconcontactus.png" alt="Contact" onerror="this.style.display='none'"> Contact Us
     </div>
     <div class="menu-item" onclick="goTo('page-info'); closeMenu();">
-      <img src="iconinformation.png" alt="Info" onerror="this.style.display='none'"> Information
+      <img src="iconinfornation.png" alt="Info" onerror="this.style.display='none'"> Information
     </div>
   </nav>
 
@@ -1367,8 +1374,8 @@
        PAGE: COVER
   ============================================================ -->
   <section class="page active" id="page-cover">
-    <div style="position:relative; min-height:100vh; display:flex; flex-direction:column; justify-content:space-between;">
-      <div id="coverMain" style="position:relative; flex:1; display:flex; align-items:center; justify-content:center; min-height:100vh;">
+    <div style="position:relative; width:100%; height:100dvh; min-height:100vh; display:flex; flex-direction:column;">
+      <div id="coverMain" style="position:relative; flex:1; display:flex; align-items:center; justify-content:center; min-height:0; overflow:hidden;">
         <div class="cover-bg"></div>
         <div class="cover-overlay"></div>
         <div class="cover-content">
@@ -1627,7 +1634,7 @@
           </div>
           <div class="info-row">
             <span class="info-icon">✉️</span>
-            <span>adventureclear@gmail.com</span>
+            <span><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="fd9c998b989389888f989e91989c8fbd9a909c9491d39e9290">[email&#160;protected]</a></span>
           </div>
           <div class="info-row">
             <span class="info-icon">📞</span>
@@ -1764,7 +1771,7 @@
   <!-- ============================================================
        JAVASCRIPT
   ============================================================ -->
-  <script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
     /* ===== MOUNTAIN DATA (modular, scalable) ===== */
     const mountainData = [
       {
@@ -1874,7 +1881,13 @@
     }
 
     function startExploration() {
-      goTo('page-main');
+      // Hide all pages first
+      pages.forEach(p => p.classList.remove('active'));
+      // Show only main page
+      const mainPage = document.getElementById('page-main');
+      if (mainPage) mainPage.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      // Show hamburger menu
       menuToggle.classList.add('visible');
       // Play music
       if (!musicStarted) {
@@ -2027,14 +2040,4 @@
       const name = document.getElementById('contactName').value.trim() || '';
       const intro = name
         ? 'Hello CLEAR.ADV Team, my name is ' + name + '. I\'m interested in your expedition.'
-        : 'Hello CLEAR.ADV Team, I\'m interested in your expedition.';
-      const url = 'https://wa.me/6208567890207?text=' + encodeURIComponent(intro);
-      window.open(url, '_blank', 'noopener,noreferrer');
-    }
-
-    /* ===== INIT ===== */
-    buildMountainCards();
-  </script>
-</body>
-</html>
-
+        : 'Hello CLEAR.ADV Team, I\'m interested in your expedit
