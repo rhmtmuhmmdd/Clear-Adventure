@@ -1,1943 +1,2040 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CLEAR.ADV - Mountain Exploration Community</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --primary-dark: #1a3a2a;
-            --primary-light: #2d5a47;
-            --accent-green: #8BC34A;
-            --accent-green-light: #A3D977;
-            --text-light: #FAFAFA;
-            --text-dark: #1a1a1a;
-            --border-color: rgba(139, 195, 74, 0.2);
-            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow-x: hidden;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-
-        body.dark-mode {
-            background: linear-gradient(135deg, #1a3a2a 0%, #0f1f1a 100%);
-            color: var(--text-light);
-        }
-
-        body.light-mode {
-            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-            color: var(--text-dark);
-        }
-
-        /* Header & Logo */
-        header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 100;
-            backdrop-filter: blur(10px);
-            background: rgba(26, 58, 42, 0.7);
-        }
-
-        .logo img {
-            height: 50px;
-            width: auto;
-            object-fit: contain;
-        }
-
-        .theme-toggle {
-            background: var(--accent-green);
-            border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            transition: var(--transition);
-        }
-
-        .theme-toggle:hover {
-            background: var(--accent-green-light);
-            transform: scale(1.1);
-        }
-
-        .menu-toggle {
-            background: transparent;
-            border: 2px solid var(--accent-green);
-            width: 50px;
-            height: 50px;
-            border-radius: 8px;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 5px;
-            transition: var(--transition);
-        }
-
-        .menu-toggle span {
-            width: 25px;
-            height: 2px;
-            background: var(--accent-green);
-            transition: var(--transition);
-        }
-
-        .menu-toggle:hover {
-            background: rgba(139, 195, 74, 0.1);
-        }
-
-        .menu-toggle.active span:nth-child(1) {
-            transform: rotate(45deg) translateY(10px);
-        }
-
-        .menu-toggle.active span:nth-child(2) {
-            opacity: 0;
-        }
-
-        .menu-toggle.active span:nth-child(3) {
-            transform: rotate(-45deg) translateY(-10px);
-        }
-
-        /* Main Container */
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 1rem;
-        }
-
-        /* Cover/Home Page */
-        .cover-section {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background-image: url('sampul1.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            position: relative;
-            padding-top: 80px;
-            overflow: hidden;
-        }
-
-        .cover-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(26, 58, 42, 0.6);
-            z-index: 1;
-        }
-
-        .cover-content {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-            width: 100%;
-            padding: 2rem;
-        }
-
-        .cover-content h1 {
-            font-size: clamp(2rem, 5vw, 4rem);
-            color: var(--text-light);
-            margin-bottom: 1rem;
-            line-height: 1.3;
-            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
-        }
-
-        .cover-content p {
-            font-size: clamp(1rem, 2vw, 1.3rem);
-            color: var(--text-light);
-            margin-bottom: 2rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            line-height: 1.6;
-            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
-        }
-
-        .cover-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1.5rem;
-            justify-content: center;
-            margin-bottom: 2rem;
-        }
-
-        .btn {
-            padding: 1rem 2.5rem;
-            font-size: clamp(0.9rem, 1.2vw, 1.1rem);
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: var(--transition);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .btn-primary {
-            background: var(--accent-green);
-            color: #1a1a1a;
-        }
-
-        .btn-primary:hover {
-            background: var(--accent-green-light);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 30px rgba(139, 195, 74, 0.4);
-        }
-
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.2);
-            color: var(--text-light);
-            border: 2px solid var(--text-light);
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 30px rgba(255, 255, 255, 0.2);
-        }
-
-        /* Side Menu */
-        .side-menu {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 250px;
-            height: 100vh;
-            background: rgba(26, 58, 42, 0.95);
-            backdrop-filter: blur(10px);
-            z-index: 99;
-            transform: translateX(-100%);
-            transition: var(--transition);
-            padding-top: 100px;
-            overflow-y: auto;
-        }
-
-        .side-menu.active {
-            transform: translateX(0);
-        }
-
-        .menu-items {
-            display: flex;
-            flex-direction: column;
-            gap: 0;
-        }
-
-        .menu-item {
-            padding: 1rem 1.5rem;
-            color: var(--text-light);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            transition: var(--transition);
-            border-left: 3px solid transparent;
-        }
-
-        .menu-item:hover {
-            background: rgba(139, 195, 74, 0.1);
-            border-left-color: var(--accent-green);
-            padding-left: 2rem;
-        }
-
-        .menu-item img {
-            width: 24px;
-            height: 24px;
-            object-fit: contain;
-        }
-
-        .menu-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 98;
-            display: none;
-        }
-
-        .menu-overlay.active {
-            display: block;
-        }
-
-        /* Page Sections */
-        .page-section {
-            display: none;
-            min-height: 100vh;
-            padding: 100px 0 0;
-        }
-
-        .page-section.active {
-            display: block;
-            animation: fadeIn 0.5s ease-in;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-
-        /* Exploration Page */
-        .exploration-section {
-            background: linear-gradient(135deg, #1a3a2a 0%, #0f1f1a 100%);
-            color: var(--text-light);
-        }
-
-        .stats-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            padding: 3rem 0;
-            margin-top: 2rem;
-        }
-
-        .stat-card {
-            background: rgba(139, 195, 74, 0.1);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 2rem;
-            text-align: center;
-            backdrop-filter: blur(10px);
-            transition: var(--transition);
-        }
-
-        .stat-card:hover {
-            background: rgba(139, 195, 74, 0.15);
-            transform: translateY(-10px);
-        }
-
-        .stat-number {
-            font-size: clamp(2rem, 5vw, 3.5rem);
-            font-weight: 900;
-            color: var(--accent-green-light);
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-label {
-            font-size: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-light);
-            font-weight: 500;
-        }
-
-        /* Our Journey Section */
-        .journey-header {
-            text-align: center;
-            padding: 3rem 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .journey-header .small-label {
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--accent-green);
-            margin-bottom: 1rem;
-        }
-
-        .journey-header h2 {
-            font-size: clamp(2.5rem, 5vw, 3.5rem);
-            margin-bottom: 1rem;
-            color: var(--text-light);
-        }
-
-        .journey-header .divider {
-            width: 60px;
-            height: 2px;
-            background: var(--accent-green);
-            margin: 1rem auto;
-        }
-
-        .journey-header .subtitle {
-            font-size: 1.1rem;
-            color: rgba(250, 250, 250, 0.8);
-            margin-top: 1rem;
-        }
-
-        /* By the Numbers Section */
-        .by-numbers {
-            padding: 3rem 2rem;
-            background: rgba(26, 58, 42, 0.5);
-            border-radius: 16px;
-            margin-bottom: 4rem;
-        }
-
-        .by-numbers h3 {
-            text-align: center;
-            font-size: 1.3rem;
-            margin-bottom: 2rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--accent-green);
-        }
-
-        .numbers-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-        }
-
-        .number-card {
-            background: rgba(139, 195, 74, 0.08);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 2rem;
-            text-align: center;
-            transition: var(--transition);
-        }
-
-        .number-card:hover {
-            background: rgba(139, 195, 74, 0.12);
-            transform: scale(1.05);
-        }
-
-        .number-card-value {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: var(--accent-green-light);
-            margin-bottom: 0.5rem;
-        }
-
-        .number-card-text {
-            font-size: 0.95rem;
-            color: rgba(250, 250, 250, 0.8);
-        }
-
-        /* Mountains Section */
-        .mountains-header {
-            text-align: center;
-            margin: 4rem 2rem 2rem;
-        }
-
-        .mountains-header h3 {
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--accent-green);
-            margin-bottom: 0.5rem;
-        }
-
-        .mountains-header h2 {
-            font-size: clamp(2rem, 5vw, 3rem);
-            margin-bottom: 1rem;
-            color: var(--text-light);
-        }
-
-        .mountains-header .divider {
-            width: 60px;
-            height: 2px;
-            background: var(--accent-green);
-            margin: 1rem auto;
-        }
-
-        .swipe-hint {
-            font-size: 0.9rem;
-            color: rgba(250, 250, 250, 0.6);
-            margin-top: 1rem;
-            font-style: italic;
-        }
-
-        /* Mountains Carousel */
-        .mountains-carousel {
-            display: flex;
-            overflow-x: auto;
-            gap: 2rem;
-            padding: 2rem;
-            scroll-snap-type: x mandatory;
-            scroll-behavior: smooth;
-            margin-bottom: 2rem;
-        }
-
-        .mountains-carousel::-webkit-scrollbar {
-            height: 8px;
-        }
-
-        .mountains-carousel::-webkit-scrollbar-track {
-            background: rgba(139, 195, 74, 0.1);
-            border-radius: 10px;
-        }
-
-        .mountains-carousel::-webkit-scrollbar-thumb {
-            background: var(--accent-green);
-            border-radius: 10px;
-        }
-
-        .mountain-card {
-            flex: 0 0 calc(33.333% - 1.5rem);
-            min-width: 300px;
-            scroll-snap-align: start;
-            background: rgba(26, 58, 42, 0.8);
-            border-radius: 16px;
-            overflow: hidden;
-            transition: var(--transition);
-            cursor: pointer;
-            box-shadow: var(--card-shadow);
-        }
-
-        .mountain-card:hover {
-            transform: scale(1.02);
-            box-shadow: 0 15px 40px rgba(139, 195, 74, 0.3);
-        }
-
-        .mountain-image {
-            width: 100%;
-            aspect-ratio: 16 / 9;
-            object-fit: cover;
-            transition: var(--transition);
-        }
-
-        .mountain-card:hover .mountain-image {
-            transform: scale(1.05);
-        }
-
-        .mountain-info {
-            padding: 1.5rem;
-        }
-
-        .mountain-name {
-            font-size: 1.4rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            color: var(--accent-green-light);
-        }
-
-        .mountain-location {
-            font-size: 0.9rem;
-            color: rgba(250, 250, 250, 0.7);
-            margin-bottom: 0.5rem;
-        }
-
-        .mountain-details {
-            font-size: 0.85rem;
-            color: rgba(250, 250, 250, 0.6);
-            display: flex;
-            gap: 1rem;
-        }
-
-        /* Mountain Detail Section */
-        .mountain-detail {
-            display: none;
-            background: rgba(26, 58, 42, 0.5);
-            border-radius: 16px;
-            padding: 3rem 2rem;
-            margin: 2rem 0;
-            animation: slideUp 0.5s ease-out;
-        }
-
-        .mountain-detail.active {
-            display: block;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .detail-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .detail-header h3 {
-            font-size: clamp(2rem, 4vw, 2.5rem);
-            margin-bottom: 0.5rem;
-            color: var(--accent-green-light);
-        }
-
-        .detail-info {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .detail-info-item {
-            background: rgba(139, 195, 74, 0.08);
-            padding: 1rem;
-            border-radius: 8px;
-            border-left: 3px solid var(--accent-green);
-        }
-
-        .detail-info-label {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            color: var(--accent-green);
-            margin-bottom: 0.3rem;
-        }
-
-        .detail-info-value {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--text-light);
-        }
-
-        /* Gallery Slider */
-        .gallery-container {
-            margin: 2rem 0;
-            border-radius: 16px;
-            overflow: hidden;
-        }
-
-        .gallery-image {
-            width: 100%;
-            max-height: 500px;
-            object-fit: cover;
-            display: block;
-        }
-
-        .gallery-controls {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            padding: 1.5rem;
-            background: rgba(26, 58, 42, 0.3);
-        }
-
-        .gallery-btn {
-            background: var(--accent-green);
-            color: #1a1a1a;
-            border: none;
-            padding: 0.8rem 1.5rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: var(--transition);
-        }
-
-        .gallery-btn:hover {
-            background: var(--accent-green-light);
-            transform: translateY(-2px);
-        }
-
-        .gallery-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .gallery-counter {
-            color: rgba(250, 250, 250, 0.8);
-            display: flex;
-            align-items: center;
-            font-size: 0.9rem;
-        }
-
-        .detail-story {
-            background: rgba(139, 195, 74, 0.08);
-            padding: 2rem;
-            border-radius: 12px;
-            border-left: 4px solid var(--accent-green);
-            margin: 2rem 0;
-        }
-
-        .detail-story h4 {
-            margin-bottom: 1rem;
-            color: var(--accent-green-light);
-            text-transform: uppercase;
-            font-size: 0.9rem;
-        }
-
-        .detail-story p {
-            line-height: 1.8;
-            color: rgba(250, 250, 250, 0.9);
-        }
-
-        /* About Us Page */
-        .about-section {
-            background: linear-gradient(135deg, #1a3a2a 0%, #0f1f1a 100%);
-            color: var(--text-light);
-            padding: 120px 2rem 3rem;
-        }
-
-        .about-header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .about-header h1 {
-            font-size: clamp(2.5rem, 5vw, 3.5rem);
-            margin-bottom: 1rem;
-        }
-
-        .about-description {
-            max-width: 800px;
-            margin: 0 auto 3rem;
-            font-size: clamp(1rem, 1.2vw, 1.1rem);
-            line-height: 1.8;
-            text-align: center;
-            color: rgba(250, 250, 250, 0.9);
-        }
-
-        .values-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-            margin-bottom: 3rem;
-        }
-
-        .value-card {
-            background: rgba(139, 195, 74, 0.1);
-            border: 1px solid var(--border-color);
-            padding: 2rem;
-            border-radius: 16px;
-            text-align: center;
-            transition: var(--transition);
-        }
-
-        .value-card:hover {
-            background: rgba(139, 195, 74, 0.15);
-            transform: scale(1.05);
-        }
-
-        .value-card h3 {
-            color: var(--accent-green-light);
-            margin-bottom: 1rem;
-            font-size: 1.3rem;
-        }
-
-        /* Contact Us Page */
-        .contact-section {
-            background: linear-gradient(135deg, #1a3a2a 0%, #0f1f1a 100%);
-            color: var(--text-light);
-            padding: 120px 2rem 3rem;
-        }
-
-        .contact-header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .contact-header h1 {
-            font-size: clamp(2rem, 4vw, 2.8rem);
-            margin-bottom: 1rem;
-        }
-
-        .contact-header p {
-            font-size: 1rem;
-            color: rgba(250, 250, 250, 0.8);
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        .contact-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 3rem;
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-
-        @media (max-width: 768px) {
-            .contact-content {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .contact-form {
-            background: rgba(26, 58, 42, 0.5);
-            padding: 2rem;
-            border-radius: 16px;
-            border: 1px solid var(--border-color);
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-size: 0.95rem;
-            color: var(--text-light);
-        }
-
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 0.8rem;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            color: var(--text-light);
-            font-family: inherit;
-            transition: var(--transition);
-            resize: vertical;
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: var(--accent-green);
-            background: rgba(139, 195, 74, 0.05);
-            box-shadow: 0 0 0 3px rgba(139, 195, 74, 0.1);
-        }
-
-        .form-buttons {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .btn-email,
-        .btn-whatsapp {
-            flex: 1;
-            min-width: 150px;
-            padding: 1rem 1.5rem;
-            background: var(--accent-green);
-            color: #1a1a1a;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            transition: var(--transition);
-        }
-
-        .btn-email:hover,
-        .btn-whatsapp:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(139, 195, 74, 0.4);
-        }
-
-        .btn-email img,
-        .btn-whatsapp img {
-            width: 20px;
-            height: 20px;
-            object-fit: contain;
-        }
-
-        .contact-info {
-            background: rgba(26, 58, 42, 0.5);
-            padding: 2rem;
-            border-radius: 16px;
-            border: 1px solid var(--border-color);
-        }
-
-        .contact-info-item {
-            margin-bottom: 2rem;
-            display: flex;
-            gap: 1rem;
-        }
-
-        .contact-info-icon {
-            width: 30px;
-            height: 30px;
-            flex-shrink: 0;
-        }
-
-        .contact-info-content h4 {
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            color: var(--accent-green);
-            margin-bottom: 0.3rem;
-        }
-
-        .contact-info-content p {
-            color: rgba(250, 250, 250, 0.9);
-        }
-
-        .map-placeholder {
-            width: 100%;
-            height: 300px;
-            background: rgba(139, 195, 74, 0.1);
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: 2rem;
-            font-size: 0.95rem;
-            color: rgba(250, 250, 250, 0.6);
-            text-align: center;
-            padding: 1rem;
-        }
-
-        .contact-quote {
-            text-align: center;
-            margin-top: 3rem;
-            font-style: italic;
-            color: rgba(250, 250, 250, 0.7);
-            font-size: 1rem;
-        }
-
-        .social-icons {
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-
-        .social-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        /* Information Page */
-        .information-section {
-            background: linear-gradient(135deg, #1a3a2a 0%, #0f1f1a 100%);
-            color: var(--text-light);
-            padding: 120px 2rem 3rem;
-        }
-
-        .information-header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .information-header h1 {
-            font-size: clamp(2rem, 4vw, 2.8rem);
-            margin-bottom: 1rem;
-        }
-
-        .information-header p {
-            font-size: 1rem;
-            color: rgba(250, 250, 250, 0.8);
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .information-card {
-            background: rgba(26, 58, 42, 0.5);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 2.5rem;
-            max-width: 800px;
-            margin: 0 auto 3rem;
-            text-align: center;
-        }
-
-        .information-card p {
-            font-size: 1rem;
-            line-height: 1.8;
-            color: rgba(250, 250, 250, 0.9);
-            margin-bottom: 2rem;
-        }
-
-        .info-buttons {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        .info-btn {
-            padding: 1.2rem 2rem;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.8rem;
-        }
-
-        .info-btn img {
-            width: 24px;
-            height: 24px;
-            object-fit: contain;
-        }
-
-        .btn-wa-channel {
-            background: #25D366;
-            color: white;
-        }
-
-        .btn-wa-channel:hover {
-            background: #20BA5A;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
-        }
-
-        .btn-wa-group {
-            background: #20BA5A;
-            color: white;
-        }
-
-        .btn-wa-group:hover {
-            background: #1e9d4b;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(32, 186, 90, 0.4);
-        }
-
-        .btn-instagram {
-            background: linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
-            color: white;
-        }
-
-        .btn-instagram:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(188, 24, 136, 0.4);
-        }
-
-        /* Learn About Us Page */
-        .learn-section {
-            background: linear-gradient(135deg, #1a3a2a 0%, #0f1f1a 100%);
-            color: var(--text-light);
-            padding: 120px 2rem 3rem;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .learn-header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .learn-header h1 {
-            font-size: clamp(2.5rem, 5vw, 3.5rem);
-            margin-bottom: 0.5rem;
-            letter-spacing: 1px;
-        }
-
-        .learn-header p {
-            font-size: 1.1rem;
-            color: rgba(250, 250, 250, 0.8);
-        }
-
-        .learn-description {
-            max-width: 700px;
-            margin: 0 auto 3rem;
-            font-size: clamp(1rem, 1.2vw, 1.1rem);
-            line-height: 1.8;
-            text-align: center;
-            color: rgba(250, 250, 250, 0.9);
-        }
-
-        .learn-values {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 3rem;
-            max-width: 900px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .learn-value-card {
-            background: rgba(139, 195, 74, 0.1);
-            border: 1px solid var(--border-color);
-            padding: 2rem;
-            border-radius: 12px;
-            text-align: center;
-            transition: var(--transition);
-        }
-
-        .learn-value-card:hover {
-            background: rgba(139, 195, 74, 0.15);
-            transform: scale(1.05);
-        }
-
-        .learn-value-card h3 {
-            color: var(--accent-green-light);
-            margin-bottom: 0.8rem;
-            font-size: 1.2rem;
-        }
-
-        .learn-value-card p {
-            font-size: 0.95rem;
-            line-height: 1.6;
-            color: rgba(250, 250, 250, 0.8);
-        }
-
-        .learn-cta {
-            text-align: center;
-            margin: 3rem 0;
-        }
-
-        .btn-cta {
-            background: linear-gradient(135deg, #8BC34A 0%, #A3D977 100%);
-            color: #1a1a1a;
-            padding: 1.2rem 2.5rem;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            font-size: 1.1rem;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            transition: var(--transition);
-            box-shadow: 0 8px 25px rgba(139, 195, 74, 0.3);
-        }
-
-        .btn-cta:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 35px rgba(139, 195, 74, 0.5);
-        }
-
-        .btn-back-home {
-            background: transparent;
-            color: var(--accent-green);
-            border: 2px solid var(--accent-green);
-            padding: 0.9rem 2rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: var(--transition);
-            margin-top: auto;
-        }
-
-        .btn-back-home:hover {
-            background: rgba(139, 195, 74, 0.1);
-            transform: translateY(-2px);
-        }
-
-        /* Footer */
-        footer {
-            padding: 2rem;
-            text-align: center;
-            background: rgba(26, 58, 42, 0.8);
-            border-top: 1px solid var(--border-color);
-            margin-top: auto;
-        }
-
-        .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-            flex-wrap: wrap;
-        }
-
-        .social-link {
-            cursor: pointer;
-            font-weight: 600;
-            text-decoration: none;
-            transition: var(--transition);
-            font-size: 0.95rem;
-        }
-
-        .social-link.instagram {
-            color: #E4405F;
-        }
-
-        .social-link.instagram:hover {
-            color: #f09433;
-        }
-
-        .social-link.tiktok {
-            color: #000000;
-        }
-
-        .social-link.tiktok:hover {
-            color: #25F4EE;
-        }
-
-        .social-link.facebook {
-            color: #1877F2;
-        }
-
-        .social-link.facebook:hover {
-            color: #E7F3FF;
-        }
-
-        body.light-mode .social-link.tiktok {
-            color: #25F4EE;
-        }
-
-        body.light-mode .social-link.tiktok:hover {
-            color: #000000;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            header {
-                padding: 0.8rem 1rem;
-            }
-
-            .logo img {
-                height: 40px;
-            }
-
-            .theme-toggle,
-            .menu-toggle {
-                width: 45px;
-                height: 45px;
-            }
-
-            .cover-buttons {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .btn {
-                width: 100%;
-            }
-
-            .mountain-card {
-                flex: 0 0 calc(100% - 2rem);
-                min-width: 280px;
-            }
-
-            .contact-content {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-
-            .form-buttons {
-                flex-direction: column;
-            }
-
-            .form-buttons button {
-                width: 100%;
-            }
-
-            .values-grid,
-            .learn-values {
-                grid-template-columns: 1fr;
-            }
-
-            .numbers-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .detail-info {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .cover-content {
-                padding: 1rem;
-            }
-
-            .cover-content h1 {
-                font-size: 1.8rem;
-            }
-
-            .cover-content p {
-                font-size: 1rem;
-            }
-
-            .stats-container {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-                padding: 1.5rem 0;
-            }
-
-            .mountain-card {
-                flex: 0 0 100%;
-                min-width: 100%;
-            }
-
-            .info-buttons {
-                grid-template-columns: 1fr;
-            }
-
-            .numbers-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CLEAR.ADV — Explore the Wild</title>
+  <style>
+    /* ========== RESET & BASE ========== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      overflow-x: hidden;
+      transition: background 0.4s, color 0.4s;
+      min-height: 100vh;
+    }
+
+    /* ========== LIGHT MODE ========== */
+    body.light {
+      background: #f4f7f0;
+      color: #111111;
+    }
+    body.light .topbar {
+      background: rgba(244, 247, 240, 0.92);
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+    }
+    body.light .menu-panel {
+      background: #edf2e7;
+      border-right: 1px solid rgba(0,0,0,0.08);
+    }
+    body.light .menu-item {
+      color: #1a2e1a;
+    }
+    body.light .menu-item:hover {
+      background: rgba(139, 195, 74, 0.18);
+      color: #2d5a1b;
+    }
+    body.light .stat-card {
+      background: rgba(255,255,255,0.85);
+      border: 1px solid rgba(139,195,74,0.25);
+      color: #111;
+    }
+    body.light .stat-card .stat-num {
+      color: #2d5a1b;
+    }
+    body.light .section-bg-alt {
+      background: #edf2e7;
+    }
+    body.light .mountain-card {
+      background: #fff;
+      border: 1px solid rgba(0,0,0,0.08);
+      color: #111;
+    }
+    body.light .mountain-card h3 {
+      color: #1a2e1a;
+    }
+    body.light .mountain-card p {
+      color: #444;
+    }
+    body.light .value-card {
+      background: #fff;
+      border: 1px solid rgba(139,195,74,0.3);
+      color: #111;
+    }
+    body.light .value-card:hover {
+      border-color: #8BC34A;
+    }
+    body.light .input-field {
+      background: #fff;
+      border: 1.5px solid rgba(139,195,74,0.4);
+      color: #111;
+    }
+    body.light .input-field:focus {
+      border-color: #8BC34A;
+      outline: none;
+    }
+    body.light .input-field::placeholder {
+      color: #888;
+    }
+    body.light .contact-info-box {
+      background: #fff;
+      border: 1px solid rgba(139,195,74,0.25);
+      color: #111;
+    }
+    body.light .contact-info-box p, body.light .contact-info-box span {
+      color: #333;
+    }
+    body.light .map-placeholder {
+      background: #dde8d8;
+      color: #444;
+    }
+    body.light .info-card-big {
+      background: #fff;
+      border: 1px solid rgba(139,195,74,0.3);
+      color: #111;
+    }
+    body.light .info-card-big p {
+      color: #333;
+    }
+    body.light .detail-section {
+      background: #f4f7f0;
+      color: #111;
+    }
+    body.light .detail-section h2,
+    body.light .detail-section h3 {
+      color: #1a2e1a;
+    }
+    body.light .detail-section p,
+    body.light .detail-section span {
+      color: #333;
+    }
+    body.light .gallery-caption {
+      color: #444;
+    }
+    body.light .page-title {
+      color: #111;
+    }
+    body.light .page-subtitle {
+      color: #444;
+    }
+    body.light .by-numbers-card {
+      background: #fff;
+      border: 1px solid rgba(139,195,74,0.25);
+    }
+    body.light .by-numbers-card .big-num {
+      color: #2d5a1b;
+    }
+    body.light .by-numbers-card .small-label {
+      color: #555;
+    }
+
+    /* ========== DARK MODE ========== */
+    body.dark {
+      background: linear-gradient(160deg, #0a1a0a 0%, #0d2a0d 40%, #050f05 100%);
+      color: #f0f0f0;
+    }
+    body.dark .topbar {
+      background: rgba(10, 26, 10, 0.93);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    body.dark .menu-panel {
+      background: #0d1f0d;
+      border-right: 1px solid rgba(255,255,255,0.06);
+    }
+    body.dark .menu-item {
+      color: #d0e8d0;
+    }
+    body.dark .menu-item:hover {
+      background: rgba(139, 195, 74, 0.15);
+      color: #a3d977;
+    }
+    body.dark .stat-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(139,195,74,0.2);
+      color: #f0f0f0;
+    }
+    body.dark .stat-card .stat-num {
+      color: #a3d977;
+    }
+    body.dark .section-bg-alt {
+      background: rgba(255,255,255,0.03);
+    }
+    body.dark .mountain-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(139,195,74,0.15);
+      color: #f0f0f0;
+    }
+    body.dark .mountain-card h3 {
+      color: #d0f0a0;
+    }
+    body.dark .mountain-card p {
+      color: #b0c8b0;
+    }
+    body.dark .value-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(139,195,74,0.2);
+      color: #f0f0f0;
+    }
+    body.dark .value-card:hover {
+      border-color: #a3d977;
+    }
+    body.dark .input-field {
+      background: rgba(255,255,255,0.07);
+      border: 1.5px solid rgba(139,195,74,0.25);
+      color: #f0f0f0;
+    }
+    body.dark .input-field:focus {
+      border-color: #8BC34A;
+      outline: none;
+    }
+    body.dark .input-field::placeholder {
+      color: #7a9a7a;
+    }
+    body.dark .contact-info-box {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(139,195,74,0.15);
+    }
+    body.dark .contact-info-box p, body.dark .contact-info-box span {
+      color: #c0d8c0;
+    }
+    body.dark .map-placeholder {
+      background: rgba(255,255,255,0.06);
+      color: #8a9a8a;
+    }
+    body.dark .info-card-big {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(139,195,74,0.2);
+      color: #f0f0f0;
+    }
+    body.dark .info-card-big p {
+      color: #b0c8b0;
+    }
+    body.dark .detail-section {
+      background: rgba(10,26,10,0.95);
+      color: #f0f0f0;
+    }
+    body.dark .detail-section h2,
+    body.dark .detail-section h3 {
+      color: #a3d977;
+    }
+    body.dark .detail-section p,
+    body.dark .detail-section span {
+      color: #b0c8b0;
+    }
+    body.dark .gallery-caption {
+      color: #8aaa8a;
+    }
+    body.dark .page-title {
+      color: #f0f0f0;
+    }
+    body.dark .page-subtitle {
+      color: #a3d977;
+    }
+    body.dark .by-numbers-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(139,195,74,0.2);
+    }
+    body.dark .by-numbers-card .big-num {
+      color: #a3d977;
+    }
+    body.dark .by-numbers-card .small-label {
+      color: #9ab89a;
+    }
+
+    /* ========== TOPBAR (permanent) ========== */
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.6rem 1.5rem;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+    }
+    .logo-img {
+      height: 44px;
+      width: auto;
+      object-fit: contain;
+      border-radius: 4px;
+    }
+    .theme-btn {
+      background: none;
+      border: 1.5px solid currentColor;
+      border-radius: 50px;
+      padding: 0.3rem 0.75rem;
+      font-size: 0.78rem;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+      transition: background 0.25s, color 0.25s;
+      white-space: nowrap;
+    }
+    body.light .theme-btn {
+      color: #2d5a1b;
+      border-color: #2d5a1b;
+    }
+    body.light .theme-btn:hover {
+      background: #2d5a1b;
+      color: #fff;
+    }
+    body.dark .theme-btn {
+      color: #a3d977;
+      border-color: #a3d977;
+    }
+    body.dark .theme-btn:hover {
+      background: #a3d977;
+      color: #0a1a0a;
+    }
+
+    /* ========== HAMBURGER ICON ========== */
+    .menu-toggle {
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: none; /* hidden until Explore pressed */
+      padding: 0.25rem;
+      border-radius: 6px;
+      transition: background 0.2s;
+    }
+    .menu-toggle.visible {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .menu-toggle img {
+      width: 26px;
+      height: 26px;
+      object-fit: contain;
+      filter: none;
+    }
+    body.light .menu-toggle img {
+      filter: invert(0);
+    }
+    body.dark .menu-toggle img {
+      filter: brightness(2);
+    }
+    .hamburger-icon {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      width: 24px;
+    }
+    .hamburger-icon span {
+      display: block;
+      height: 2.5px;
+      border-radius: 2px;
+      transition: background 0.3s;
+    }
+    body.light .hamburger-icon span { background: #2d5a1b; }
+    body.dark .hamburger-icon span  { background: #a3d977; }
+
+    /* ========== SLIDE MENU PANEL ========== */
+    .menu-panel {
+      position: fixed;
+      top: 0;
+      left: -280px;
+      width: 260px;
+      height: 100vh;
+      z-index: 999;
+      padding-top: 80px;
+      transition: left 0.35s cubic-bezier(0.4,0,0.2,1);
+      box-shadow: 4px 0 24px rgba(0,0,0,0.18);
+      overflow-y: auto;
+    }
+    .menu-panel.open {
+      left: 0;
+    }
+    .menu-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 998;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s;
+    }
+    .menu-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      padding: 0.95rem 1.5rem;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      border-radius: 8px;
+      margin: 0.2rem 0.6rem;
+      transition: background 0.2s, color 0.2s;
+      word-break: break-word;
+    }
+    .menu-item img {
+      width: 22px;
+      height: 22px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+    body.dark .menu-item img { filter: brightness(2); }
+
+    /* ========== PAGES ========== */
+    .page {
+      display: none;
+      min-height: 100vh;
+      animation: fadeInPage 0.45s ease;
+    }
+    .page.active {
+      display: block;
+    }
+    @keyframes fadeInPage {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ========== COVER PAGE ========== */
+    #page-cover {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 6rem 1.5rem 5rem;
+      overflow: hidden;
+    }
+    .cover-bg {
+      position: absolute;
+      inset: 0;
+      background-image: url('sampul1.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      z-index: 0;
+    }
+    .cover-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(170deg, rgba(0,0,0,0.52) 0%, rgba(10,40,10,0.68) 100%);
+      z-index: 1;
+    }
+    .cover-content {
+      position: relative;
+      z-index: 2;
+      max-width: 700px;
+      width: 100%;
+    }
+    .cover-eyebrow {
+      font-size: clamp(0.65rem, 2vw, 0.78rem);
+      text-transform: uppercase;
+      letter-spacing: 0.22em;
+      color: #a3d977;
+      margin-bottom: 1rem;
+    }
+    .cover-title {
+      font-size: clamp(2rem, 6vw, 3.8rem);
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.18;
+      margin-bottom: 1.25rem;
+      word-break: break-word;
+    }
+    .cover-title span {
+      color: #a3d977;
+    }
+    .cover-desc {
+      font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+      color: rgba(255,255,255,0.82);
+      line-height: 1.75;
+      margin-bottom: 2.2rem;
+      max-width: 560px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .cover-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn-explore {
+      padding: 0.9rem 2.1rem;
+      font-size: clamp(0.82rem, 2vw, 0.95rem);
+      font-weight: 700;
+      background: linear-gradient(135deg, #4caf50, #2d7a2d);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      box-shadow: 0 4px 22px rgba(76,175,80,0.45);
+      transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+      white-space: nowrap;
+    }
+    .btn-explore:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 30px rgba(76,175,80,0.55);
+      background: linear-gradient(135deg, #66bb6a, #388e3c);
+    }
+    .btn-learn {
+      padding: 0.9rem 2.1rem;
+      font-size: clamp(0.82rem, 2vw, 0.95rem);
+      font-weight: 700;
+      background: transparent;
+      color: #fff;
+      border: 2px solid rgba(255,255,255,0.7);
+      border-radius: 50px;
+      cursor: pointer;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      transition: transform 0.2s, border-color 0.2s, background 0.2s;
+      white-space: nowrap;
+    }
+    .btn-learn:hover {
+      transform: translateY(-3px);
+      background: rgba(255,255,255,0.12);
+      border-color: #fff;
+    }
+
+    /* ========== FOOTER SOCIAL ========== */
+    .footer-social {
+      text-align: center;
+      padding: 1.4rem 1rem;
+      font-size: clamp(0.75rem, 2.5vw, 0.88rem);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      letter-spacing: 0.03em;
+    }
+    .footer-social span {
+      opacity: 0.55;
+      font-size: 0.78rem;
+    }
+    .social-link {
+      text-decoration: none;
+      font-weight: 600;
+      transition: opacity 0.2s;
+    }
+    .social-link:hover { opacity: 0.75; }
+    .social-link.instagram { color: #E1306C; }
+    .social-link.tiktok    { color: #69C9D0; }
+    .social-link.facebook  { color: #1877F2; }
+
+    /* ========== INNER PAGES COMMON ========== */
+    .inner-page {
+      padding-top: 72px;
+      min-height: 100vh;
+    }
+    .page-hero {
+      text-align: center;
+      padding: clamp(3rem, 8vw, 5.5rem) 1.5rem clamp(2rem, 5vw, 3.5rem);
+      background: linear-gradient(160deg, #0d2a0d 0%, #0a1a0a 60%, #050f05 100%);
+    }
+    .page-eyebrow {
+      font-size: clamp(0.6rem, 1.8vw, 0.72rem);
+      text-transform: uppercase;
+      letter-spacing: 0.22em;
+      color: #a3d977;
+      margin-bottom: 0.75rem;
+    }
+    .page-title {
+      font-size: clamp(1.7rem, 5vw, 3rem);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 0.9rem;
+      word-break: break-word;
+    }
+    .page-divider {
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(90deg, #4caf50, #a3d977);
+      border-radius: 2px;
+      margin: 0.9rem auto;
+    }
+    .page-subtitle {
+      font-size: clamp(0.82rem, 2.2vw, 0.98rem);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .inner-content {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: clamp(2rem, 5vw, 3.5rem) 1.25rem;
+    }
+
+    /* ========== HOME / EXPLORE MAIN ========== */
+    #page-main {
+      padding-top: 72px;
+    }
+    .stats-section {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.2rem;
+      max-width: 1000px;
+      margin: 2.5rem auto;
+      padding: 0 1.25rem;
+    }
+    .stat-card {
+      text-align: center;
+      padding: 1.5rem 1rem;
+      border-radius: 14px;
+      backdrop-filter: blur(6px);
+      animation: fadeInUp 0.5s ease both;
+    }
+    .stat-card:nth-child(1){ animation-delay:0.05s; }
+    .stat-card:nth-child(2){ animation-delay:0.15s; }
+    .stat-card:nth-child(3){ animation-delay:0.25s; }
+    .stat-card:nth-child(4){ animation-delay:0.35s; }
+    @keyframes fadeInUp {
+      from { opacity:0; transform: translateY(20px); }
+      to   { opacity:1; transform: translateY(0); }
+    }
+    .stat-num {
+      font-size: clamp(1.7rem, 4vw, 2.5rem);
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 0.4rem;
+    }
+    .stat-label {
+      font-size: clamp(0.62rem, 1.6vw, 0.75rem);
+      text-transform: uppercase;
+      letter-spacing: 0.13em;
+      opacity: 0.7;
+    }
+    .main-cover-bg {
+      position: relative;
+      min-height: 50vh;
+      background-image: url('sampul1.jpg');
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .main-cover-bg .overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(160deg, rgba(0,0,0,0.6) 0%, rgba(10,40,10,0.7) 100%);
+    }
+    .main-cover-text {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 4rem 1.5rem;
+      color: #fff;
+    }
+    .main-cover-text h1 {
+      font-size: clamp(1.6rem, 5vw, 3rem);
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 0.75rem;
+    }
+    .main-cover-text p {
+      font-size: clamp(0.88rem, 2.2vw, 1.05rem);
+      color: rgba(255,255,255,0.8);
+      max-width: 520px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    /* ========== OUR JOURNEY ========== */
+    #page-journey .page-hero {
+      color: #fff;
+    }
+    #page-journey .page-title { color: #fff; }
+    #page-journey .page-subtitle { color: #a3d977; }
+
+    .by-numbers-section {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: clamp(2rem, 5vw, 3.5rem) 1.25rem;
+    }
+    .section-label-small {
+      font-size: clamp(0.62rem, 1.8vw, 0.72rem);
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: #a3d977;
+      text-align: center;
+      margin-bottom: 0.5rem;
+    }
+    .section-title-big {
+      font-size: clamp(1.4rem, 4vw, 2.2rem);
+      font-weight: 800;
+      text-align: center;
+      margin-bottom: 2rem;
+      word-break: break-word;
+    }
+    .by-numbers-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.2rem;
+    }
+    .by-numbers-card {
+      border-radius: 16px;
+      padding: 2rem 1rem;
+      text-align: center;
+      animation: fadeInUp 0.5s ease both;
+    }
+    .by-numbers-card:nth-child(1){ animation-delay:0.05s; }
+    .by-numbers-card:nth-child(2){ animation-delay:0.15s; }
+    .by-numbers-card:nth-child(3){ animation-delay:0.25s; }
+    .by-numbers-card:nth-child(4){ animation-delay:0.35s; }
+    .big-num {
+      font-size: clamp(2.2rem, 6vw, 3.5rem);
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+    .small-label {
+      font-size: clamp(0.68rem, 1.8vw, 0.8rem);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    /* Mountain Cards Scroll */
+    .mountains-section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: clamp(2rem, 5vw, 3rem) 1.25rem;
+    }
+    .swipe-hint {
+      text-align: center;
+      font-size: clamp(0.7rem, 2vw, 0.8rem);
+      opacity: 0.55;
+      margin-bottom: 1.2rem;
+      letter-spacing: 0.06em;
+    }
+    .mountains-scroll-wrap {
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      display: flex;
+      gap: 1.25rem;
+      padding-bottom: 1rem;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(139,195,74,0.4) transparent;
+    }
+    .mountains-scroll-wrap::-webkit-scrollbar {
+      height: 4px;
+    }
+    .mountains-scroll-wrap::-webkit-scrollbar-thumb {
+      background: rgba(139,195,74,0.4);
+      border-radius: 4px;
+    }
+    .mountain-card {
+      scroll-snap-align: start;
+      flex: 0 0 clamp(260px, 80vw, 300px);
+      border-radius: 18px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.25s, box-shadow 0.25s;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+    }
+    .mountain-card:hover {
+      transform: translateY(-5px) scale(1.01);
+      box-shadow: 0 10px 36px rgba(0,0,0,0.2);
+    }
+    .mountain-card-img {
+      width: 100%;
+      aspect-ratio: 16/9;
+      object-fit: cover;
+      display: block;
+      background: #1a2e1a;
+    }
+    .mountain-card-body {
+      padding: 1.1rem 1.2rem;
+    }
+    .mountain-card h3 {
+      font-size: clamp(1rem, 2.5vw, 1.15rem);
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+    }
+    .mountain-card p {
+      font-size: clamp(0.78rem, 2vw, 0.85rem);
+      margin-bottom: 0.2rem;
+    }
+    .mountain-badge {
+      display: inline-block;
+      margin-top: 0.5rem;
+      padding: 0.2rem 0.65rem;
+      background: rgba(139,195,74,0.18);
+      color: #8BC34A;
+      border-radius: 50px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+    }
+
+    /* Detail Section */
+    .detail-section {
+      display: none;
+      max-width: 960px;
+      margin: 0 auto 3rem;
+      padding: 2rem 1.25rem;
+      border-radius: 20px;
+      animation: fadeInUp 0.45s ease;
+    }
+    .detail-section.visible {
+      display: block;
+    }
+    .detail-header {
+      margin-bottom: 1.5rem;
+    }
+    .detail-header h2 {
+      font-size: clamp(1.4rem, 4vw, 2rem);
+      font-weight: 800;
+      margin-bottom: 0.4rem;
+    }
+    .detail-meta {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      font-size: 0.85rem;
+      margin-bottom: 1.25rem;
+    }
+    .detail-meta span {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    /* Gallery Slider */
+    .gallery-slider {
+      position: relative;
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 1.5rem;
+      background: #1a2e1a;
+    }
+    .gallery-slide {
+      display: none;
+      width: 100%;
+      aspect-ratio: 16/9;
+    }
+    .gallery-slide.active {
+      display: block;
+    }
+    .gallery-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .gallery-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 0.5rem;
+    }
+    .gallery-btn {
+      background: rgba(139,195,74,0.2);
+      border: 1px solid rgba(139,195,74,0.4);
+      color: #8BC34A;
+      border-radius: 50px;
+      padding: 0.4rem 1.1rem;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .gallery-btn:hover {
+      background: rgba(139,195,74,0.35);
+    }
+    .gallery-caption {
+      font-size: 0.75rem;
+      text-align: center;
+      margin-bottom: 1.25rem;
+    }
+    .detail-story h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.65rem;
+    }
+    .detail-story p {
+      font-size: 0.9rem;
+      line-height: 1.8;
+      margin-bottom: 0.75rem;
+    }
+    .highlight-list {
+      list-style: none;
+      margin-top: 0.5rem;
+    }
+    .highlight-list li {
+      font-size: 0.85rem;
+      padding: 0.4rem 0;
+      border-bottom: 1px solid rgba(139,195,74,0.12);
+      display: flex;
+      gap: 0.5rem;
+    }
+    .highlight-list li::before {
+      content: '✦';
+      color: #8BC34A;
+      flex-shrink: 0;
+    }
+
+    /* ========== ABOUT US ========== */
+    #page-about .inner-content {
+      text-align: center;
+    }
+    #page-about .page-hero {
+      color: #fff;
+    }
+    #page-about .page-title { color: #fff; }
+    .about-desc {
+      font-size: clamp(0.88rem, 2.2vw, 1.05rem);
+      line-height: 1.85;
+      max-width: 700px;
+      margin: 0 auto 2.5rem;
+    }
+    .values-label {
+      font-size: clamp(0.62rem, 1.8vw, 0.72rem);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: #8BC34A;
+      margin-bottom: 0.5rem;
+    }
+    .values-title {
+      font-size: clamp(1.3rem, 3.5vw, 1.9rem);
+      font-weight: 800;
+      margin-bottom: 2rem;
+    }
+    .values-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.2rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .value-card {
+      border-radius: 16px;
+      padding: 1.8rem 1.1rem;
+      transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+    }
+    .value-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 28px rgba(139,195,74,0.15);
+    }
+    .value-icon {
+      font-size: 1.8rem;
+      margin-bottom: 0.7rem;
+    }
+    .value-title {
+      font-size: clamp(0.9rem, 2vw, 1rem);
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+    }
+    .value-desc {
+      font-size: clamp(0.75rem, 1.8vw, 0.82rem);
+      opacity: 0.7;
+      line-height: 1.6;
+    }
+
+    /* ========== CONTACT US ========== */
+    #page-contact .page-hero {
+      color: #fff;
+    }
+    #page-contact .page-title { color: #fff; }
+    #page-contact .page-subtitle { color: #a3d977; }
+    .contact-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5rem;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: clamp(2rem, 5vw, 3.5rem) 1.25rem;
+      align-items: start;
+    }
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+    .form-label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+      color: #8BC34A;
+    }
+    .input-field {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      font-family: inherit;
+      resize: vertical;
+    }
+    .input-field:focus {
+      box-shadow: 0 0 0 3px rgba(139,195,74,0.2);
+    }
+    textarea.input-field {
+      min-height: 130px;
+    }
+    .contact-btn-row {
+      display: flex;
+      gap: 0.9rem;
+      flex-wrap: wrap;
+    }
+    .btn-contact {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.8rem 1.4rem;
+      border-radius: 50px;
+      border: none;
+      font-size: clamp(0.78rem, 2vw, 0.88rem);
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      color: #fff;
+      background: linear-gradient(135deg, #3a7d44, #2d5a1b);
+      box-shadow: 0 4px 16px rgba(45,90,27,0.35);
+      transition: transform 0.2s, box-shadow 0.2s;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+    .btn-contact:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 8px 24px rgba(45,90,27,0.45);
+    }
+    .btn-contact img {
+      width: 20px;
+      height: 20px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+    .contact-info-box {
+      border-radius: 18px;
+      padding: 1.8rem;
+    }
+    .contact-info-box h3 {
+      font-size: clamp(1rem, 2.5vw, 1.15rem);
+      font-weight: 700;
+      margin-bottom: 1.2rem;
+      color: #8BC34A;
+    }
+    .info-row {
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+      font-size: 0.88rem;
+      line-height: 1.6;
+    }
+    .info-row .info-icon {
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+    .map-placeholder {
+      width: 100%;
+      height: 130px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.82rem;
+      margin-top: 1.25rem;
+      letter-spacing: 0.04em;
+    }
+    .contact-quote {
+      text-align: center;
+      font-style: italic;
+      opacity: 0.6;
+      font-size: clamp(0.8rem, 2vw, 0.9rem);
+      padding: 2rem 1.5rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* ========== INFORMATION ========== */
+    #page-info .page-hero {
+      color: #fff;
+    }
+    #page-info .page-title { color: #fff; }
+    #page-info .page-subtitle { color: #a3d977; }
+    .info-card-big {
+      border-radius: 20px;
+      padding: 2.2rem;
+      max-width: 680px;
+      margin: 0 auto 2.5rem;
+      text-align: center;
+    }
+    .info-card-big p {
+      font-size: clamp(0.88rem, 2.2vw, 1rem);
+      line-height: 1.8;
+      margin-bottom: 2rem;
+    }
+    .info-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      align-items: center;
+    }
+    .btn-channel {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.9rem 2rem;
+      border-radius: 50px;
+      border: none;
+      font-size: clamp(0.82rem, 2vw, 0.92rem);
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      color: #fff;
+      letter-spacing: 0.04em;
+      width: 100%;
+      max-width: 340px;
+      justify-content: center;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .btn-channel:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 28px rgba(0,0,0,0.3);
+    }
+    .btn-channel img {
+      width: 22px;
+      height: 22px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+    .btn-wa-channel {
+      background: linear-gradient(135deg, #25D366, #128C7E);
+      box-shadow: 0 4px 18px rgba(37,211,102,0.3);
+    }
+    .btn-wa-group {
+      background: linear-gradient(135deg, #128C7E, #075E54);
+      box-shadow: 0 4px 18px rgba(18,140,126,0.3);
+    }
+    .btn-ig-broadcast {
+      background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+      box-shadow: 0 4px 18px rgba(220,39,67,0.3);
+    }
+
+    /* ========== LEARN ABOUT US ========== */
+    #page-learn {
+      background: linear-gradient(160deg, #0d2a0d 0%, #0a1a0a 60%, #050f05 100%);
+      min-height: 100vh;
+      color: #f0f0f0;
+    }
+    .learn-hero {
+      text-align: center;
+      padding: clamp(5rem, 12vw, 8rem) 1.5rem clamp(2.5rem, 6vw, 4rem);
+    }
+    .learn-eyebrow {
+      font-size: clamp(0.6rem, 1.8vw, 0.72rem);
+      text-transform: uppercase;
+      letter-spacing: 0.22em;
+      color: #a3d977;
+      margin-bottom: 0.75rem;
+    }
+    .learn-title {
+      font-size: clamp(1.8rem, 6vw, 3.5rem);
+      font-weight: 900;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      line-height: 1.1;
+      margin-bottom: 0.75rem;
+      word-break: break-word;
+    }
+    .learn-subtitle {
+      font-size: clamp(0.9rem, 2.5vw, 1.15rem);
+      color: #a3d977;
+      margin-bottom: 0;
+    }
+    .learn-content {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 1.25rem clamp(3rem, 7vw, 5rem);
+    }
+    .learn-para {
+      font-size: clamp(0.9rem, 2.3vw, 1.05rem);
+      line-height: 2;
+      color: rgba(255,255,255,0.82);
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    .learn-values-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: #a3d977;
+      text-align: center;
+      margin-bottom: 0.5rem;
+    }
+    .learn-values-title {
+      font-size: clamp(1.2rem, 3vw, 1.6rem);
+      font-weight: 800;
+      color: #fff;
+      text-align: center;
+      margin-bottom: 1.75rem;
+    }
+    .learn-values-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.2rem;
+      margin-bottom: 3rem;
+    }
+    .learn-val-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(139,195,74,0.18);
+      border-radius: 16px;
+      padding: 1.6rem 1.1rem;
+      text-align: center;
+      transition: transform 0.25s, border-color 0.25s;
+    }
+    .learn-val-card:hover {
+      transform: scale(1.03);
+      border-color: #a3d977;
+    }
+    .learn-val-card h3 {
+      font-size: clamp(0.9rem, 2vw, 1rem);
+      font-weight: 700;
+      color: #a3d977;
+      margin-bottom: 0.5rem;
+    }
+    .learn-val-card p {
+      font-size: clamp(0.75rem, 1.8vw, 0.82rem);
+      color: rgba(255,255,255,0.65);
+      line-height: 1.65;
+    }
+    .learn-cta-wrap {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .btn-cta-learn {
+      display: inline-block;
+      padding: 0.9rem 2.5rem;
+      border-radius: 50px;
+      border: none;
+      background: linear-gradient(135deg, #7a9a30, #4caf50);
+      color: #fff;
+      font-size: clamp(0.82rem, 2vw, 0.95rem);
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      box-shadow: 0 4px 20px rgba(76,175,80,0.35);
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+    .btn-cta-learn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(76,175,80,0.45);
+    }
+    .btn-back-home {
+      display: inline-block;
+      padding: 0.75rem 2rem;
+      border-radius: 50px;
+      border: 1.5px solid rgba(255,255,255,0.35);
+      background: transparent;
+      color: rgba(255,255,255,0.7);
+      font-size: clamp(0.78rem, 2vw, 0.88rem);
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      transition: border-color 0.25s, color 0.25s, background 0.25s;
+    }
+    .btn-back-home:hover {
+      border-color: #a3d977;
+      color: #a3d977;
+      background: rgba(163,217,119,0.07);
+    }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 900px) {
+      .stats-section,
+      .by-numbers-grid,
+      .values-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .learn-values-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .contact-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+    @media (max-width: 600px) {
+      .stats-section,
+      .by-numbers-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .values-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .learn-values-grid {
+        grid-template-columns: 1fr;
+      }
+      .cover-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+      .btn-explore, .btn-learn {
+        width: 100%;
+        max-width: 260px;
+      }
+      .contact-btn-row {
+        flex-direction: column;
+      }
+      .detail-meta {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+    }
+    @media (max-width: 400px) {
+      .stats-section,
+      .by-numbers-grid,
+      .values-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .topbar {
+        padding: 0.5rem 0.85rem;
+      }
+      .logo-img {
+        height: 36px;
+      }
+    }
+  </style>
 </head>
-<body class="dark-mode">
-    <!-- Header -->
-    <header>
-        <div class="logo">
-            <img src="logo.png" alt="CLEAR.ADV Logo">
+<body class="light" id="bodyEl">
+
+  <!-- ===== BACKGROUND MUSIC ===== -->
+  <audio id="bgMusic" src="musik1.mp3" loop preload="none"></audio>
+
+  <!-- ===== MENU OVERLAY ===== -->
+  <div class="menu-overlay" id="menuOverlay" onclick="closeMenu()"></div>
+
+  <!-- ===== SLIDE MENU PANEL ===== -->
+  <nav class="menu-panel" id="menuPanel" aria-label="Navigation Menu">
+    <div class="menu-item" onclick="goTo('page-cover'); closeMenu();">
+      <img src="iconhome.png" alt="Home" onerror="this.style.display='none'"> Home
+    </div>
+    <div class="menu-item" onclick="goTo('page-journey'); closeMenu();">
+      <img src="iconourjourney.png" alt="Journey" onerror="this.style.display='none'"> Our Journey
+    </div>
+    <div class="menu-item" onclick="goTo('page-about'); closeMenu();">
+      <img src="iconaboutus.png" alt="About" onerror="this.style.display='none'"> About Us
+    </div>
+    <div class="menu-item" onclick="goTo('page-contact'); closeMenu();">
+      <img src="iconcontactus.png" alt="Contact" onerror="this.style.display='none'"> Contact Us
+    </div>
+    <div class="menu-item" onclick="goTo('page-info'); closeMenu();">
+      <img src="iconinformation.png" alt="Info" onerror="this.style.display='none'"> Information
+    </div>
+  </nav>
+
+  <!-- ===== TOP BAR (permanent) ===== -->
+  <header class="topbar" id="topbar">
+    <div class="topbar-left">
+      <img src="logo.png" alt="CLEAR.ADV Logo" class="logo-img" onerror="this.alt='CLEAR.ADV'" />
+      <!-- Hamburger: hidden until Explore pressed -->
+      <button class="menu-toggle" id="menuToggle" aria-label="Open menu" onclick="toggleMenu()" aria-expanded="false">
+        <div class="hamburger-icon">
+          <span></span><span></span><span></span>
         </div>
-        <button class="theme-toggle" id="themeToggle" title="Toggle Dark/Light Mode">🌙</button>
-    </header>
+      </button>
+    </div>
+    <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" aria-label="Toggle dark mode">
+      🌙 Dark Mode
+    </button>
+  </header>
 
-    <!-- Main Container -->
-    <div class="container">
-        <!-- COVER PAGE -->
-        <section id="coverPage" class="page-section active">
-            <div class="cover-section">
-                <div class="cover-content">
-                    <h1>Explore the Wild. Climb Higher. Connect Deeper.</h1>
-                    <p>Journey into pristine mountain landscapes where every expedition tells a story of courage, unity, and environmental stewardship.</p>
-                    <div class="cover-buttons">
-                        <button class="btn btn-primary" onclick="goToExploration()">Explore Our Journey</button>
-                        <button class="btn btn-secondary" onclick="goToLearn()">Learn About Us</button>
-                    </div>
-                </div>
-                <div class="menu-toggle" id="menuToggle">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-            </div>
-        </section>
-
-        <!-- SIDE MENU -->
-        <div class="side-menu" id="sideMenu">
-            <div class="menu-items">
-                <div class="menu-item" onclick="goToHome()">
-                    <img src="iconhome.png" alt="Home">
-                    <span>HOME</span>
-                </div>
-                <div class="menu-item" onclick="goToJourney()">
-                    <img src="iconourjourney.png" alt="Journey">
-                    <span>OUR JOURNEY</span>
-                </div>
-                <div class="menu-item" onclick="goToAbout()">
-                    <img src="iconaboutus.png" alt="About">
-                    <span>ABOUT US</span>
-                </div>
-                <div class="menu-item" onclick="goToContact()">
-                    <img src="iconcontactus.png" alt="Contact">
-                    <span>CONTACT US</span>
-                </div>
-                <div class="menu-item" onclick="goToInformation()">
-                    <img src="iconinformation.png" alt="Info">
-                    <span>INFORMATION</span>
-                </div>
-            </div>
+  <!-- ============================================================
+       PAGE: COVER
+  ============================================================ -->
+  <section class="page active" id="page-cover">
+    <div style="position:relative; min-height:100vh; display:flex; flex-direction:column; justify-content:space-between;">
+      <div id="coverMain" style="position:relative; flex:1; display:flex; align-items:center; justify-content:center; min-height:100vh;">
+        <div class="cover-bg"></div>
+        <div class="cover-overlay"></div>
+        <div class="cover-content">
+          <p class="cover-eyebrow">Where the Summit Awaits</p>
+          <h1 class="cover-title">
+            Rooted in <span>Nature</span>,<br/>Bound by Adventure
+          </h1>
+          <p class="cover-desc">
+            We walk where few dare to tread — through dense forest, over ancient stone, and beneath open skies. 
+            Every step is a conversation with the wild, and every summit is a promise kept.
+          </p>
+          <div class="cover-buttons">
+            <button class="btn-explore" onclick="startExploration()">
+              ▶ Explore Our Journey
+            </button>
+            <button class="btn-learn" onclick="goTo('page-learn')">
+              Learn About Us
+            </button>
+          </div>
         </div>
-        <div class="menu-overlay" id="menuOverlay"></div>
+      </div>
 
-        <!-- EXPLORATION PAGE -->
-        <section id="explorationPage" class="page-section exploration-section">
-            <div style="padding: 2rem;">
-                <div style="text-align: center; margin-bottom: 3rem;">
-                    <h2 style="font-size: clamp(2.5rem, 5vw, 3.5rem); margin-bottom: 1rem;">CLEAR.ADV Expeditions</h2>
-                    <p style="font-size: 1.1rem; color: rgba(250, 250, 250, 0.8);">Discover our mountain conquests</p>
-                </div>
+      <!-- Footer Social on Cover -->
+      <footer class="footer-social">
+        <span>Follow us —</span>
+        <a href="https://instagram.com/clearadv" target="_blank" rel="noopener" class="social-link instagram">Instagram</a>
+        <a href="https://tiktok.com/@clearadv" target="_blank" rel="noopener" class="social-link tiktok">TikTok</a>
+        <a href="https://facebook.com/clearadv" target="_blank" rel="noopener" class="social-link facebook">Facebook</a>
+      </footer>
+    </div>
+  </section>
 
-                <!-- Stats -->
-                <div class="stats-container">
-                    <div class="stat-card">
-                        <div class="stat-number">4</div>
-                        <div class="stat-label">Summits Reached</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">20</div>
-                        <div class="stat-label">Active Members</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">48km</div>
-                        <div class="stat-label">Total Distance</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-number">2024</div>
-                        <div class="stat-label">Year Founded</div>
-                    </div>
-                </div>
-            </div>
-        </section>
+  <!-- ============================================================
+       PAGE: MAIN (after Explore pressed)
+  ============================================================ -->
+  <section class="page" id="page-main">
+    <div id="mainPageContent">
+      <!-- Stat Banner -->
+      <div class="main-cover-bg">
+        <div class="overlay"></div>
+        <div class="main-cover-text">
+          <h1>CLEAR.ADV</h1>
+          <p>Every mountain we climb teaches us something new about the world — and about ourselves.</p>
+        </div>
+      </div>
 
-        <!-- OUR JOURNEY PAGE -->
-        <section id="journeyPage" class="page-section exploration-section">
-            <div style="padding: 2rem;">
-                <div class="journey-header">
-                    <div class="small-label">Expedition Log</div>
-                    <h2>Our Journey</h2>
-                    <div class="divider"></div>
-                    <div class="subtitle">Every Step Tells a Story</div>
-                </div>
-
-                <!-- By the Numbers -->
-                <div class="by-numbers">
-                    <h3>By the Numbers</h3>
-                    <div class="numbers-grid">
-                        <div class="number-card">
-                            <div class="number-card-value">4</div>
-                            <div class="number-card-text">Mountains Explored</div>
-                        </div>
-                        <div class="number-card">
-                            <div class="number-card-value">12</div>
-                            <div class="number-card-text">Expedition Days</div>
-                        </div>
-                        <div class="number-card">
-                            <div class="number-card-value">48</div>
-                            <div class="number-card-text">KM Traveled</div>
-                        </div>
-                        <div class="number-card">
-                            <div class="number-card-value">20</div>
-                            <div class="number-card-text">Members Involved</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Mountains Section -->
-                <div style="padding: 2rem;">
-                    <div class="mountains-header">
-                        <h3>Expeditions</h3>
-                        <h2>Mountains We've Conquered</h2>
-                        <div class="divider"></div>
-                        <p class="swipe-hint">← Swipe to explore →</p>
-                    </div>
-
-                    <!-- Mountain Carousel -->
-                    <div class="mountains-carousel" id="mountainsCarousel">
-                        <div class="mountain-card" onclick="showMountainDetail('latimojong')">
-                            <img src="latimojong01.jpg" alt="Latimojong" class="mountain-image">
-                            <div class="mountain-info">
-                                <div class="mountain-name">Latimojong</div>
-                                <div class="mountain-location">Sulawesi Selatan</div>
-                                <div class="mountain-details">
-                                    <span>2024</span>
-                                    <span>3,478m</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mountain-card" onclick="showMountainDetail('lompobattang')">
-                            <img src="lompobattang01.jpg" alt="Lompobattang" class="mountain-image">
-                            <div class="mountain-info">
-                                <div class="mountain-name">Lompobattang</div>
-                                <div class="mountain-location">Sulawesi Selatan</div>
-                                <div class="mountain-details">
-                                    <span>2024</span>
-                                    <span>2,914m</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mountain-card" onclick="showMountainDetail('baria')">
-                            <img src="baria01.jpg" alt="Bulu Baria" class="mountain-image">
-                            <div class="mountain-info">
-                                <div class="mountain-name">Bulu Baria</div>
-                                <div class="mountain-location">Sulawesi Selatan</div>
-                                <div class="mountain-details">
-                                    <span>2024</span>
-                                    <span>2,450m</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mountain-card" onclick="showMountainDetail('bawakaraeng')">
-                            <img src="bawakaraeng01.jpg" alt="Bawakaraeng" class="mountain-image">
-                            <div class="mountain-info">
-                                <div class="mountain-name">Bawakaraeng</div>
-                                <div class="mountain-location">Sulawesi Selatan</div>
-                                <div class="mountain-details">
-                                    <span>2024</span>
-                                    <span>2,833m</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Mountain Details -->
-                    <div id="mountainDetails"></div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ABOUT US PAGE -->
-        <section id="aboutPage" class="page-section about-section">
-            <div style="max-width: 1000px; margin: 0 auto;">
-                <div class="about-header">
-                    <h1>About CLEAR.ADV</h1>
-                </div>
-
-                <div class="about-description">
-                    CLEAR.ADV is a community driven by a shared love for mountains, forests, and wild landscapes.
-                    We are explorers who value responsibility as much as adventure.
-                    Every expedition we organize is built on teamwork, preparation, and environmental awareness.
-                </div>
-
-                <h3 style="text-align: center; font-size: 1.3rem; margin-bottom: 2rem; color: var(--accent-green);">Our Values</h3>
-
-                <div class="values-grid">
-                    <div class="value-card">
-                        <h3>Integrity</h3>
-                        <p>We honor our commitments with honesty and transparency in every expedition and interaction.</p>
-                    </div>
-                    <div class="value-card">
-                        <h3>Responsibility</h3>
-                        <p>We protect the mountains and communities we visit through sustainable and ethical practices.</p>
-                    </div>
-                    <div class="value-card">
-                        <h3>Brotherhood</h3>
-                        <p>We unite adventurers from diverse backgrounds in a supportive community built on trust.</p>
-                    </div>
-                    <div class="value-card">
-                        <h3>Sustainability</h3>
-                        <p>We leave no trace and promote conservation for future generations of explorers.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- CONTACT US PAGE -->
-        <section id="contactPage" class="page-section contact-section">
-            <div style="max-width: 1200px; margin: 0 auto;">
-                <div class="contact-header">
-                    <h1>Let's Connect & Explore Together</h1>
-                    <p>We'd love to hear from you. Reach out anytime!</p>
-                </div>
-
-                <div class="contact-content">
-                    <!-- Form -->
-                    <div class="contact-form">
-                        <form id="contactForm">
-                            <div class="form-group">
-                                <label for="name">Name</label>
-                                <input type="text" id="name" name="name" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="subject">Subject</label>
-                                <input type="text" id="subject" name="subject" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="message">Message</label>
-                                <textarea id="message" name="message" rows="5" required></textarea>
-                            </div>
-                            <div class="form-buttons">
-                                <button type="button" class="btn-email" onclick="sendEmail()">
-                                    <img src="iconemail.png" alt="Email">
-                                    Send via Email
-                                </button>
-                                <button type="button" class="btn-whatsapp" onclick="sendWhatsApp()">
-                                    <img src="iconwhatsapp.png" alt="WhatsApp">
-                                    Chat via WhatsApp
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <!-- Contact Info -->
-                    <div class="contact-info">
-                        <div class="contact-info-item">
-                            <div class="contact-info-content">
-                                <h4>Location</h4>
-                                <p>Sulawesi Selatan, Indonesia</p>
-                            </div>
-                        </div>
-                        <div class="contact-info-item">
-                            <div class="contact-info-content">
-                                <h4>Email</h4>
-                                <p><a href="mailto:adventureclear@gmail.com" style="color: var(--accent-green); text-decoration: none;">adventureclear@gmail.com</a></p>
-                            </div>
-                        </div>
-                        <div class="contact-info-item">
-                            <div class="contact-info-content">
-                                <h4>Phone</h4>
-                                <p><a href="tel:08567890207" style="color: var(--accent-green); text-decoration: none;">+62 856 789 0207</a></p>
-                            </div>
-                        </div>
-                        <div class="map-placeholder">Map Location – Indonesia</div>
-                        <div class="contact-quote">"Every great journey begins with a single message."</div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- INFORMATION PAGE -->
-        <section id="informationPage" class="page-section information-section">
-            <div style="max-width: 1000px; margin: 0 auto;">
-                <div class="information-header">
-                    <h1>Stay Connected With CLEAR.ADV</h1>
-                    <p>Join our official channels for real-time updates, expedition schedules, and exclusive community insights.</p>
-                </div>
-
-                <div class="information-card">
-                    <p>Get real-time updates, expedition schedules, and exclusive community insights by joining our official channels.</p>
-                </div>
-
-                <div class="info-buttons">
-                    <button class="info-btn btn-wa-channel" onclick="openWhatsAppChannel()">
-                        <img src="iconsaluranwhatsapp.png" alt="WhatsApp Channel">
-                        Join WhatsApp Channel
-                    </button>
-                    <button class="info-btn btn-wa-group" onclick="openWhatsAppGroup()">
-                        <img src="icongrupwhatsapp.png" alt="WhatsApp Group">
-                        Join WhatsApp Group
-                    </button>
-                    <button class="info-btn btn-instagram" onclick="openInstagramBroadcast()">
-                        <img src="iconsaluraninstagram.png" alt="Instagram">
-                        Follow Instagram Broadcast
-                    </button>
-                </div>
-            </div>
-        </section>
-
-        <!-- LEARN ABOUT US PAGE -->
-        <section id="learnPage" class="page-section learn-section">
-            <div style="max-width: 900px; margin: 0 auto; flex: 1; display: flex; flex-direction: column;">
-                <div class="learn-header">
-                    <h1>LEARN ABOUT US</h1>
-                    <p>More than just exploration.</p>
-                </div>
-
-                <div class="learn-description">
-                    CLEAR.ADV represents a community committed to responsible exploration, where every member contributes to a shared mission: to climb higher, explore deeper, and protect the natural world we cherish.
-                </div>
-
-                <div class="learn-values">
-                    <div class="learn-value-card">
-                        <h3>Responsibility</h3>
-                        <p>Every expedition is planned with care for the environment and respect for local communities.</p>
-                    </div>
-                    <div class="learn-value-card">
-                        <h3>Integrity</h3>
-                        <p>We lead with honesty, transparency, and commitment to our values in every endeavor.</p>
-                    </div>
-                    <div class="learn-value-card">
-                        <h3>Unity</h3>
-                        <p>Together, we are stronger—united by passion for mountains and conservation.</p>
-                    </div>
-                </div>
-
-                <div class="learn-cta">
-                    <button class="btn-cta" onclick="alert('Thank you for your interest!')">Be Part of CLEAR.ADV</button>
-                </div>
-
-                <button class="btn-back-home" onclick="goToHome()" style="align-self: center;">← Back to Home</button>
-            </div>
-        </section>
+      <!-- Stats -->
+      <div class="stats-section">
+        <div class="stat-card">
+          <div class="stat-num">4</div>
+          <div class="stat-label">Summits Reached</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">20</div>
+          <div class="stat-label">Active Members</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">48km</div>
+          <div class="stat-label">Total Distance</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">2024</div>
+          <div class="stat-label">Year Founded</div>
+        </div>
+      </div>
     </div>
 
-    <!-- Footer -->
-    <footer>
-        <div class="social-links">
-            <a class="social-link instagram" onclick="openInstagram()" href="javascript:void(0);">Instagram</a>
-            <a class="social-link tiktok" onclick="openTikTok()" href="javascript:void(0);">TikTok</a>
-            <a class="social-link facebook" onclick="openFacebook()" href="javascript:void(0);">Facebook</a>
-        </div>
-        <p style="margin-top: 1rem; font-size: 0.85rem; color: rgba(250, 250, 250, 0.6);">© 2024 CLEAR.ADV. All rights reserved.</p>
+    <footer class="footer-social">
+      <span>Follow us —</span>
+      <a href="https://instagram.com/clearadv" target="_blank" rel="noopener" class="social-link instagram">Instagram</a>
+      <a href="https://tiktok.com/@clearadv" target="_blank" rel="noopener" class="social-link tiktok">TikTok</a>
+      <a href="https://facebook.com/clearadv" target="_blank" rel="noopener" class="social-link facebook">Facebook</a>
     </footer>
+  </section>
 
-    <script>
-        // Mountain Data
-        const mountainsData = {
-            latimojong: {
-                name: 'Latimojong',
-                location: 'Sulawesi Selatan',
-                elevation: '3,478m',
-                year: '2024',
-                images: ['latimojong01.jpg', 'latimojong02.jpg', 'latimojong03.jpg'],
-                story: 'Latimojong, the highest peak in South Sulawesi, was our gateway to understanding the raw power of nature. The journey tested our endurance and bonded us as explorers.',
-                highlight: 'Standing at 3,478 meters, the summit offered views that spanned across entire valleys—a humbling reminder of why we climb.'
-            },
-            lompobattang: {
-                name: 'Lompobattang',
-                location: 'Sulawesi Selatan',
-                elevation: '2,914m',
-                year: '2024',
-                images: ['lompobattang01.jpg', 'lompobattang02.jpg'],
-                story: 'Lompobattang is a sacred mountain that holds deep cultural significance for local communities. We climbed with respect and gratitude.',
-                highlight: 'The misty summit and pristine forests showcased why environmental protection is central to our mission.'
-            },
-            baria: {
-                name: 'Bulu Baria',
-                location: 'Sulawesi Selatan',
-                elevation: '2,450m',
-                year: '2024',
-                images: ['baria01.jpg', 'baria02.jpg'],
-                story: 'Bulu Baria offered challenging terrain that pushed our technical climbing skills and strengthened our brotherhood.',
-                highlight: 'Navigating rocky ridges and dense vegetation, we discovered why teamwork is essential in any expedition.'
-            },
-            bawakaraeng: {
-                name: 'Bawakaraeng',
-                location: 'Sulawesi Selatan',
-                elevation: '2,833m',
-                year: '2024',
-                images: ['bawakaraeng01.jpg', 'bawakaraeng02.jpg'],
-                story: 'Our final summit of the season was Bawakaraeng, where we celebrated our collective achievements and planned future expeditions.',
-                highlight: 'As the sun set behind distant peaks, we reflected on how far we've come as a community.'
-            }
+  <!-- ============================================================
+       PAGE: OUR JOURNEY
+  ============================================================ -->
+  <section class="page inner-page" id="page-journey">
+    <div class="page-hero">
+      <p class="page-eyebrow">Expedition Log</p>
+      <h1 class="page-title" style="color:#fff;">Our Journey</h1>
+      <div class="page-divider"></div>
+      <p class="page-subtitle" style="color:#a3d977;">Every Step Tells a Story</p>
+    </div>
+
+    <!-- By the Numbers -->
+    <div class="by-numbers-section">
+      <p class="section-label-small">By the Numbers</p>
+      <h2 class="section-title-big">What We've Achieved</h2>
+      <div class="by-numbers-grid">
+        <div class="by-numbers-card">
+          <div class="big-num">4</div>
+          <div class="small-label">Mountains Explored</div>
+        </div>
+        <div class="by-numbers-card">
+          <div class="big-num">12</div>
+          <div class="small-label">Expedition Days</div>
+        </div>
+        <div class="by-numbers-card">
+          <div class="big-num">48</div>
+          <div class="small-label">KM Traveled</div>
+        </div>
+        <div class="by-numbers-card">
+          <div class="big-num">20</div>
+          <div class="small-label">Members Involved</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mountains -->
+    <div class="mountains-section">
+      <p class="section-label-small">Expeditions</p>
+      <h2 class="section-title-big">Mountains We've Conquered</h2>
+      <p class="swipe-hint">← Swipe to explore →</p>
+
+      <div class="mountains-scroll-wrap" id="mountainsScroll">
+        <!-- Cards generated by JS -->
+      </div>
+    </div>
+
+    <!-- Detail Section -->
+    <div class="detail-section" id="detailSection">
+      <div class="detail-header">
+        <h2 id="detailName">Mountain Name</h2>
+        <div class="detail-meta">
+          <span>📍 <span id="detailLocation">Location</span></span>
+          <span>⛰️ <span id="detailElevation">Elevation</span></span>
+          <span>📅 <span id="detailYear">Year</span></span>
+        </div>
+        <div class="page-divider" style="margin:0 0 1.25rem;"></div>
+      </div>
+
+      <!-- Gallery Slider -->
+      <div class="gallery-slider" id="gallerySlider"></div>
+      <div class="gallery-controls">
+        <button class="gallery-btn" onclick="prevSlide()">← Prev</button>
+        <span id="slideCounter" style="font-size:0.8rem; opacity:0.6;">1 / 1</span>
+        <button class="gallery-btn" onclick="nextSlide()">Next →</button>
+      </div>
+      <p class="gallery-caption" id="galleryCaption">Photo gallery</p>
+
+      <div class="detail-story">
+        <h3>Story</h3>
+        <p id="detailStory">Story text</p>
+        <h3 style="margin-top:1.25rem;">Highlight Moments</h3>
+        <ul class="highlight-list" id="detailHighlights"></ul>
+      </div>
+    </div>
+
+    <footer class="footer-social">
+      <span>Follow us —</span>
+      <a href="https://instagram.com/clearadv" target="_blank" rel="noopener" class="social-link instagram">Instagram</a>
+      <a href="https://tiktok.com/@clearadv" target="_blank" rel="noopener" class="social-link tiktok">TikTok</a>
+      <a href="https://facebook.com/clearadv" target="_blank" rel="noopener" class="social-link facebook">Facebook</a>
+    </footer>
+  </section>
+
+  <!-- ============================================================
+       PAGE: ABOUT US
+  ============================================================ -->
+  <section class="page inner-page" id="page-about">
+    <div class="page-hero">
+      <p class="page-eyebrow">Who We Are</p>
+      <h1 class="page-title" style="color:#fff;">About CLEAR.ADV</h1>
+      <div class="page-divider"></div>
+    </div>
+
+    <div class="inner-content">
+      <p class="about-desc">
+        CLEAR.ADV is a community driven by a shared love for mountains, forests, and wild landscapes.
+        We are explorers who value responsibility as much as adventure.
+        Every expedition we organize is built on teamwork, preparation, and environmental awareness.
+      </p>
+
+      <p class="values-label">Our Foundation</p>
+      <h2 class="values-title">Our Values</h2>
+
+      <div class="values-grid">
+        <div class="value-card">
+          <div class="value-icon">🌿</div>
+          <div class="value-title">Integrity</div>
+          <p class="value-desc">We act with honesty and transparency in every expedition and decision we make.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon">🛡️</div>
+          <div class="value-title">Responsibility</div>
+          <p class="value-desc">We carry full responsibility for our team, our environment, and the communities we encounter.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon">🤝</div>
+          <div class="value-title">Brotherhood</div>
+          <p class="value-desc">We support each other through every challenge — no one is left behind on the mountain.</p>
+        </div>
+        <div class="value-card">
+          <div class="value-icon">♻️</div>
+          <div class="value-title">Sustainability</div>
+          <p class="value-desc">We explore with care, leaving every trail cleaner than we found it.</p>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer-social">
+      <span>Follow us —</span>
+      <a href="https://instagram.com/clearadv" target="_blank" rel="noopener" class="social-link instagram">Instagram</a>
+      <a href="https://tiktok.com/@clearadv" target="_blank" rel="noopener" class="social-link tiktok">TikTok</a>
+      <a href="https://facebook.com/clearadv" target="_blank" rel="noopener" class="social-link facebook">Facebook</a>
+    </footer>
+  </section>
+
+  <!-- ============================================================
+       PAGE: CONTACT US
+  ============================================================ -->
+  <section class="page inner-page" id="page-contact">
+    <div class="page-hero">
+      <p class="page-eyebrow">Reach Out</p>
+      <h1 class="page-title" style="color:#fff;">Let's Connect &amp; Explore Together</h1>
+      <div class="page-divider"></div>
+      <p class="page-subtitle" style="color:#a3d977;">We're always open for collaboration, questions, and new adventures.</p>
+    </div>
+
+    <div class="contact-layout">
+      <!-- Form Column -->
+      <div>
+        <div class="form-group">
+          <label class="form-label" for="contactName">Name</label>
+          <input id="contactName" type="text" class="input-field" placeholder="Your name" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="contactSubject">Subject</label>
+          <input id="contactSubject" type="text" class="input-field" placeholder="What's it about?" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="contactMsg">Message</label>
+          <textarea id="contactMsg" class="input-field" placeholder="Write your message here..."></textarea>
+        </div>
+        <div class="contact-btn-row">
+          <a id="btnEmail" href="#" class="btn-contact" onclick="sendEmail(event)">
+            <img src="iconemail.png" alt="Email" onerror="this.outerHTML='✉️'">
+            Send via Email
+          </a>
+          <a id="btnWA" href="#" class="btn-contact" onclick="sendWhatsApp(event)">
+            <img src="iconwhatsapp.png" alt="WhatsApp" onerror="this.outerHTML='💬'">
+            Chat via WhatsApp
+          </a>
+        </div>
+      </div>
+
+      <!-- Info Column -->
+      <div>
+        <div class="contact-info-box">
+          <h3>Contact Information</h3>
+          <div class="info-row">
+            <span class="info-icon">📍</span>
+            <span>Sulawesi Selatan, Indonesia</span>
+          </div>
+          <div class="info-row">
+            <span class="info-icon">✉️</span>
+            <span>adventureclear@gmail.com</span>
+          </div>
+          <div class="info-row">
+            <span class="info-icon">📞</span>
+            <span>08567890207</span>
+          </div>
+
+          <div class="map-placeholder">
+            🗺️ &nbsp;Map Location – Indonesia
+          </div>
+        </div>
+
+        <p style="font-size:clamp(0.62rem,1.6vw,0.72rem); text-transform:uppercase; letter-spacing:0.15em; color:#8BC34A; margin-top:1.5rem; margin-bottom:0.4rem; font-weight:600;">
+          Follow us
+        </p>
+        <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+          <a href="https://instagram.com/clearadv" target="_blank" rel="noopener" class="social-link instagram" style="font-size:0.9rem; font-weight:700;">Instagram</a>
+          <a href="https://tiktok.com/@clearadv" target="_blank" rel="noopener" class="social-link tiktok" style="font-size:0.9rem; font-weight:700;">TikTok</a>
+          <a href="https://facebook.com/clearadv" target="_blank" rel="noopener" class="social-link facebook" style="font-size:0.9rem; font-weight:700;">Facebook</a>
+        </div>
+      </div>
+    </div>
+
+    <p class="contact-quote">"Every great journey begins with a single message."</p>
+
+    <footer class="footer-social">
+      <span>Follow us —</span>
+      <a href="https://instagram.com/clearadv" target="_blank" rel="noopener" class="social-link instagram">Instagram</a>
+      <a href="https://tiktok.com/@clearadv" target="_blank" rel="noopener" class="social-link tiktok">TikTok</a>
+      <a href="https://facebook.com/clearadv" target="_blank" rel="noopener" class="social-link facebook">Facebook</a>
+    </footer>
+  </section>
+
+  <!-- ============================================================
+       PAGE: INFORMATION
+  ============================================================ -->
+  <section class="page inner-page" id="page-info">
+    <div class="page-hero">
+      <p class="page-eyebrow">Stay in the Loop</p>
+      <h1 class="page-title" style="color:#fff;">Stay Connected With CLEAR.ADV</h1>
+      <div class="page-divider"></div>
+      <p class="page-subtitle" style="color:#a3d977; max-width:520px; margin:0 auto;">
+        Join our official channels to receive expedition updates, announcements, and exclusive community insights.
+      </p>
+    </div>
+
+    <div class="inner-content" style="text-align:center;">
+      <div class="info-card-big">
+        <p>
+          Get real-time updates, expedition schedules, and exclusive community insights 
+          by joining our official channels. Be part of the conversation and never miss a summit announcement.
+        </p>
+        <div class="info-buttons">
+          <a href="https://whatsapp.com/channel/REPLACE_CHANNEL_LINK" target="_blank" rel="noopener" class="btn-channel btn-wa-channel">
+            <img src="iconsaluranwhatsapp.png" alt="WhatsApp Channel" onerror="this.outerHTML='📢'">
+            Join WhatsApp Channel
+          </a>
+          <a href="https://chat.whatsapp.com/REPLACE_GROUP_LINK" target="_blank" rel="noopener" class="btn-channel btn-wa-group">
+            <img src="icongrupwhatsapp.png" alt="WhatsApp Group" onerror="this.outerHTML='👥'">
+            Join WhatsApp Group
+          </a>
+          <a href="https://www.instagram.com/clearadv" target="_blank" rel="noopener" class="btn-channel btn-ig-broadcast">
+            <img src="iconsaluraninstagram.png" alt="Instagram Broadcast" onerror="this.outerHTML='📸'">
+            Follow Instagram Broadcast
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer-social">
+      <span>Follow us —</span>
+      <a href="https://instagram.com/clearadv" target="_blank" rel="noopener" class="social-link instagram">Instagram</a>
+      <a href="https://tiktok.com/@clearadv" target="_blank" rel="noopener" class="social-link tiktok">TikTok</a>
+      <a href="https://facebook.com/clearadv" target="_blank" rel="noopener" class="social-link facebook">Facebook</a>
+    </footer>
+  </section>
+
+  <!-- ============================================================
+       PAGE: LEARN ABOUT US
+  ============================================================ -->
+  <section class="page" id="page-learn">
+    <div style="padding-top:72px;">
+      <div class="learn-hero">
+        <p class="learn-eyebrow">Who We Are</p>
+        <h1 class="learn-title">Learn About Us</h1>
+        <p class="learn-subtitle">More than just exploration.</p>
+      </div>
+
+      <div class="learn-content">
+        <p class="learn-para">
+          CLEAR.ADV is a community of responsible explorers — united by our love for mountains and wild nature, 
+          guided by values that transcend the summit, and driven by the belief that every journey shared 
+          is a life made richer.
+        </p>
+
+        <p class="learn-values-label">Core Values</p>
+        <h2 class="learn-values-title">What We Stand For</h2>
+        <div class="learn-values-grid">
+          <div class="learn-val-card">
+            <h3>Responsibility</h3>
+            <p>We protect the environment and our team with the same dedication we bring to every summit.</p>
+          </div>
+          <div class="learn-val-card">
+            <h3>Integrity</h3>
+            <p>We are honest, transparent, and consistent — in our missions and in our community.</p>
+          </div>
+          <div class="learn-val-card">
+            <h3>Unity</h3>
+            <p>We rise together. Our strength comes from every member who dares to take the next step forward.</p>
+          </div>
+        </div>
+
+        <div class="learn-cta-wrap">
+          <button class="btn-cta-learn" onclick="goTo('page-contact')">
+            Be Part of CLEAR.ADV
+          </button>
+        </div>
+
+        <div style="text-align:center;">
+          <button class="btn-back-home" onclick="goToHome()">
+            ← Back to Home
+          </button>
+        </div>
+      </div>
+
+      <footer class="footer-social" style="border-top: 1px solid rgba(255,255,255,0.06);">
+        <span style="color:rgba(255,255,255,0.3);">Follow us —</span>
+        <a href="https://instagram.com/clearadv" target="_blank" rel="noopener" class="social-link instagram">Instagram</a>
+        <a href="https://tiktok.com/@clearadv" target="_blank" rel="noopener" class="social-link tiktok">TikTok</a>
+        <a href="https://facebook.com/clearadv" target="_blank" rel="noopener" class="social-link facebook">Facebook</a>
+      </footer>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       JAVASCRIPT
+  ============================================================ -->
+  <script>
+    /* ===== MOUNTAIN DATA (modular, scalable) ===== */
+    const mountainData = [
+      {
+        id: 'latimojong',
+        name: 'Latimojong',
+        location: 'Sulawesi Selatan',
+        elevation: '3,478 mdpl',
+        year: '2024',
+        photos: ['latimojong01.jpg', 'latimojong02.jpg', 'latimojong03.jpg'],
+        story: 'Latimojong stands as the highest peak in Sulawesi. Our team traversed its challenging ridgelines across three grueling days, navigating dense montane forests before breaking through to the alpine summit. The silence at the top was something none of us will ever forget.',
+        highlights: [
+          'Reached the summit at sunrise on Day 3',
+          'Crossed 3 major ridgelines with full pack loads',
+          'Encountered rare Sulawesi endemic flora on the ascent',
+          'Camp 2 at 2,900 m — stargazing above the clouds'
+        ]
+      },
+      {
+        id: 'lompobattang',
+        name: 'Lompobattang',
+        location: 'Sulawesi Selatan',
+        elevation: '2,874 mdpl',
+        year: '2024',
+        photos: ['lompobattang01.jpg', 'lompobattang02.jpg'],
+        story: 'Lompobattang holds deep cultural significance for the Makassarese people. We climbed through pine forests and open savannas, with the city of Makassar visible from the top. A journey that blended history, culture, and raw nature.',
+        highlights: [
+          'Summit with panoramic view of Makassar Bay',
+          'Hiked through protected Lompobattang Nature Reserve',
+          'Encountered morning mist shrouding the pine belt',
+          'Team bonding campfire at the base camp'
+        ]
+      },
+      {
+        id: 'baria',
+        name: 'Bulu Baria',
+        location: 'Sulawesi Selatan',
+        elevation: '2,430 mdpl',
+        year: '2024',
+        photos: ['baria01.jpg', 'baria02.jpg'],
+        story: 'Bulu Baria is a hidden gem — less-traveled, rugged, and rewarding. Our team pushed through steep jungle trails and emerged to sweeping views across the southern highlands. A reminder that the quieter peaks often speak the loudest.',
+        highlights: [
+          'First-time expedition for 3 team members',
+          'Navigated dense primary forest for 6 hours',
+          'Discovered a hidden freshwater spring at 1,800 m',
+          'Reached summit in challenging foggy conditions'
+        ]
+      },
+      {
+        id: 'bawakaraeng',
+        name: 'Bawakaraeng',
+        location: 'Sulawesi Selatan',
+        elevation: '2,833 mdpl',
+        year: '2024',
+        photos: ['bawakaraeng01.jpg', 'bawakaraeng02.jpg'],
+        story: 'Sacred and storied, Bawakaraeng is one of the most iconic mountains in South Sulawesi. The trail is pilgrimage-like — demanding yet deeply spiritual. Our team felt the weight of every step, and the lightness of reaching the top.',
+        highlights: [
+          'Completed the iconic Bawakaraeng trail end-to-end',
+          'Shared the summit with local pilgrims and hikers',
+          'Descent through Lembanna valley in golden afternoon light',
+          'All 20 members completed the expedition'
+        ]
+      }
+    ];
+
+    /* ===== GALLERY STATE ===== */
+    let currentSlides = [];
+    let currentSlideIndex = 0;
+
+    /* ===== THEME ===== */
+    const body = document.getElementById('bodyEl');
+    const themeBtn = document.getElementById('themeBtn');
+    let isDark = false;
+
+    function toggleTheme() {
+      isDark = !isDark;
+      body.className = isDark ? 'dark' : 'light';
+      themeBtn.textContent = isDark ? '☀️ Light Mode' : '🌙 Dark Mode';
+    }
+
+    /* ===== NAVIGATION ===== */
+    const pages = document.querySelectorAll('.page');
+    const bgMusic = document.getElementById('bgMusic');
+    const menuToggle = document.getElementById('menuToggle');
+    let musicStarted = false;
+
+    function goTo(pageId) {
+      pages.forEach(p => p.classList.remove('active'));
+      const target = document.getElementById(pageId);
+      if (target) {
+        target.classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      // Show/hide hamburger: hide on cover, show on inner pages
+      if (pageId === 'page-cover') {
+        menuToggle.classList.remove('visible');
+        // Stop music on home/cover
+        bgMusic.pause();
+        bgMusic.currentTime = 0;
+        musicStarted = false;
+      } else if (pageId === 'page-learn') {
+        // learn about us also hides hamburger (separate from main flow)
+        menuToggle.classList.remove('visible');
+      } else {
+        menuToggle.classList.add('visible');
+      }
+    }
+
+    function startExploration() {
+      goTo('page-main');
+      menuToggle.classList.add('visible');
+      // Play music
+      if (!musicStarted) {
+        bgMusic.play().catch(() => {});
+        musicStarted = true;
+      }
+    }
+
+    function goToHome() {
+      goTo('page-cover');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /* ===== MENU ===== */
+    const menuPanel = document.getElementById('menuPanel');
+    const menuOverlay = document.getElementById('menuOverlay');
+
+    function toggleMenu() {
+      const isOpen = menuPanel.classList.toggle('open');
+      menuOverlay.classList.toggle('active', isOpen);
+      menuToggle.setAttribute('aria-expanded', isOpen);
+    }
+    function closeMenu() {
+      menuPanel.classList.remove('open');
+      menuOverlay.classList.remove('active');
+      menuToggle.setAttribute('aria-expanded', 'false');
+    }
+
+    /* ===== HOME MENU ITEM special handling ===== */
+    // When "Home" is clicked from menu, go back to cover (no music)
+    // This is already handled inside goTo('page-cover')
+
+    /* ===== MOUNTAIN CARDS ===== */
+    function buildMountainCards() {
+      const wrap = document.getElementById('mountainsScroll');
+      if (!wrap) return;
+      wrap.innerHTML = '';
+      mountainData.forEach((m, idx) => {
+        const card = document.createElement('div');
+        card.className = 'mountain-card';
+        card.setAttribute('role', 'button');
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('aria-label', 'View details for ' + m.name);
+        card.innerHTML = `
+          <img class="mountain-card-img"
+               src="${m.photos[0]}"
+               alt="${m.name}"
+               onerror="this.style.background='#1a2e1a'; this.alt='${m.name}'; this.removeAttribute('src');" />
+          <div class="mountain-card-body">
+            <h3>${m.name}</h3>
+            <p>${m.location}</p>
+            <p>${m.elevation}</p>
+            <span class="mountain-badge">${m.year}</span>
+          </div>
+        `;
+        card.addEventListener('click', () => openDetail(idx));
+        card.addEventListener('keydown', (e) => { if(e.key==='Enter'||e.key===' ') openDetail(idx); });
+        wrap.appendChild(card);
+      });
+    }
+
+    /* ===== DETAIL SECTION ===== */
+    function openDetail(idx) {
+      const m = mountainData[idx];
+      const section = document.getElementById('detailSection');
+
+      document.getElementById('detailName').textContent = m.name;
+      document.getElementById('detailLocation').textContent = m.location;
+      document.getElementById('detailElevation').textContent = m.elevation;
+      document.getElementById('detailYear').textContent = m.year;
+      document.getElementById('detailStory').textContent = m.story;
+
+      // Highlights
+      const hl = document.getElementById('detailHighlights');
+      hl.innerHTML = '';
+      m.highlights.forEach(h => {
+        const li = document.createElement('li');
+        li.textContent = h;
+        hl.appendChild(li);
+      });
+
+      // Gallery slides
+      currentSlides = m.photos;
+      currentSlideIndex = 0;
+      renderSlides();
+
+      section.classList.add('visible');
+      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function renderSlides() {
+      const slider = document.getElementById('gallerySlider');
+      slider.innerHTML = '';
+      currentSlides.forEach((src, i) => {
+        const slide = document.createElement('div');
+        slide.className = 'gallery-slide' + (i === currentSlideIndex ? ' active' : '');
+        const img = document.createElement('img');
+        img.src = src;
+        img.alt = 'Gallery photo ' + (i+1);
+        img.onerror = function() {
+          this.parentElement.style.background = '#1a2e1a';
+          this.style.display = 'none';
         };
+        slide.appendChild(img);
+        slider.appendChild(slide);
+      });
+      document.getElementById('slideCounter').textContent =
+        (currentSlideIndex + 1) + ' / ' + currentSlides.length;
+      document.getElementById('galleryCaption').textContent =
+        'Photo ' + (currentSlideIndex + 1) + ' of ' + currentSlides.length;
+    }
 
-        // Theme Toggle
-        const themeToggle = document.getElementById('themeToggle');
-        const body = document.body;
+    function prevSlide() {
+      if (currentSlides.length === 0) return;
+      currentSlideIndex = (currentSlideIndex - 1 + currentSlides.length) % currentSlides.length;
+      const slides = document.querySelectorAll('.gallery-slide');
+      slides.forEach((s, i) => s.classList.toggle('active', i === currentSlideIndex));
+      document.getElementById('slideCounter').textContent =
+        (currentSlideIndex + 1) + ' / ' + currentSlides.length;
+      document.getElementById('galleryCaption').textContent =
+        'Photo ' + (currentSlideIndex + 1) + ' of ' + currentSlides.length;
+    }
 
-        themeToggle.addEventListener('click', () => {
-            body.classList.toggle('dark-mode');
-            body.classList.toggle('light-mode');
-            themeToggle.textContent = body.classList.contains('dark-mode') ? '🌙' : '☀️';
-            localStorage.setItem('theme', body.classList.contains('dark-mode') ? 'dark' : 'light');
-        });
+    function nextSlide() {
+      if (currentSlides.length === 0) return;
+      currentSlideIndex = (currentSlideIndex + 1) % currentSlides.length;
+      const slides = document.querySelectorAll('.gallery-slide');
+      slides.forEach((s, i) => s.classList.toggle('active', i === currentSlideIndex));
+      document.getElementById('slideCounter').textContent =
+        (currentSlideIndex + 1) + ' / ' + currentSlides.length;
+      document.getElementById('galleryCaption').textContent =
+        'Photo ' + (currentSlideIndex + 1) + ' of ' + currentSlides.length;
+    }
 
-        // Load saved theme
-        const savedTheme = localStorage.getItem('theme') || 'dark';
-        if (savedTheme === 'light') {
-            body.classList.remove('dark-mode');
-            body.classList.add('light-mode');
-            themeToggle.textContent = '☀️';
-        }
+    /* ===== CONTACT ACTIONS ===== */
+    function sendEmail(e) {
+      e.preventDefault();
+      const name    = document.getElementById('contactName').value.trim() || 'Visitor';
+      const subject = document.getElementById('contactSubject').value.trim() || 'Inquiry from CLEAR.ADV Website';
+      const message = document.getElementById('contactMsg').value.trim() || '';
+      const body = encodeURIComponent(
+        'Hello CLEAR.ADV Team,\n\nMy name is ' + name + '.\n\n' + message + '\n\nBest regards,\n' + name
+      );
+      window.location.href =
+        'mailto:adventureclear@gmail.com?subject=' + encodeURIComponent(subject) + '&body=' + body;
+    }
 
-        // Menu Toggle
-        const menuToggle = document.getElementById('menuToggle');
-        const sideMenu = document.getElementById('sideMenu');
-        const menuOverlay = document.getElementById('menuOverlay');
+    function sendWhatsApp(e) {
+      e.preventDefault();
+      const name = document.getElementById('contactName').value.trim() || '';
+      const intro = name
+        ? 'Hello CLEAR.ADV Team, my name is ' + name + '. I\'m interested in your expedition.'
+        : 'Hello CLEAR.ADV Team, I\'m interested in your expedition.';
+      const url = 'https://wa.me/6208567890207?text=' + encodeURIComponent(intro);
+      window.open(url, '_blank', 'noopener,noreferrer');
+    }
 
-        menuToggle.addEventListener('click', () => {
-            menuToggle.classList.toggle('active');
-            sideMenu.classList.toggle('active');
-            menuOverlay.classList.toggle('active');
-        });
-
-        menuOverlay.addEventListener('click', () => {
-            menuToggle.classList.remove('active');
-            sideMenu.classList.remove('active');
-            menuOverlay.classList.remove('active');
-        });
-
-        // Navigation Functions
-        function showPage(pageId) {
-            document.querySelectorAll('.page-section').forEach(page => {
-                page.classList.remove('active');
-            });
-            document.getElementById(pageId).classList.add('active');
-            window.scrollTo(0, 0);
-            closeMenu();
-        }
-
-        function closeMenu() {
-            menuToggle.classList.remove('active');
-            sideMenu.classList.remove('active');
-            menuOverlay.classList.remove('active');
-        }
-
-        function goToHome() {
-            showPage('coverPage');
-            document.getElementById('menuToggle').style.display = 'none';
-        }
-
-        function goToExploration() {
-            showPage('explorationPage');
-            document.getElementById('menuToggle').style.display = 'flex';
-            playBackgroundMusic();
-        }
-
-        function goToJourney() {
-            showPage('journeyPage');
-            playBackgroundMusic();
-        }
-
-        function goToAbout() {
-            showPage('aboutPage');
-        }
-
-        function goToContact() {
-            showPage('contactPage');
-        }
-
-        function goToInformation() {
-            showPage('informationPage');
-        }
-
-        function goToLearn() {
-            showPage('learnPage');
-        }
-
-        // Background Music
-        let audioPlayer;
-
-        function playBackgroundMusic() {
-            if (!audioPlayer) {
-                audioPlayer = new Audio('musik1.mp3');
-                audioPlayer.loop = true;
-                audioPlayer.volume = 0.3;
-            }
-            if (audioPlayer.paused) {
-                audioPlayer.play().catch(e => console.log('Audio play failed:', e));
-            }
-        }
-
-        // Mountain Details
-        function showMountainDetail(mountainId) {
-            const mountain = mountainsData[mountainId];
-            const detailsContainer = document.getElementById('mountainDetails');
-
-            let imagesHTML = mountain.images.map((img, idx) => 
-                `<img src="${img}" alt="Mountain view ${idx + 1}" class="gallery-image" style="display: ${idx === 0 ? 'block' : 'none'};" id="galleryImg_${idx}">`
-            ).join('');
-
-            let html = `
-                <div class="mountain-detail active" id="detail_${mountainId}">
-                    <div class="detail-header">
-                        <h3>${mountain.name}</h3>
-                    </div>
-                    
-                    <div class="detail-info">
-                        <div class="detail-info-item">
-                            <div class="detail-info-label">Location</div>
-                            <div class="detail-info-value">${mountain.location}</div>
-                        </div>
-                        <div class="detail-info-item">
-                            <div class="detail-info-label">Elevation</div>
-                            <div class="detail-info-value">${mountain.elevation}</div>
-                        </div>
-                        <div class="detail-info-item">
-                            <div class="detail-info-label">Year Explored</div>
-                            <div class="detail-info-value">${mountain.year}</div>
-                        </div>
-                    </div>
-
-                    <div class="gallery-container">
-                        ${imagesHTML}
-                        <div class="gallery-controls">
-                            <button class="gallery-btn" onclick="previousGalleryImage('${mountainId}')" id="prevBtn_${mountainId}">← Prev</button>
-                            <span class="gallery-counter"><span id="currentImg_${mountainId}">1</span> / ${mountain.images.length}</span>
-                            <button class="gallery-btn" onclick="nextGalleryImage('${mountainId}')" id="nextBtn_${mountainId}">Next →</button>
-                        </div>
-                    </div>
-
-                    <div class="detail-story">
-                        <h4>Expedition Story</h4>
-                        <p>${mountain.story}</p>
-                    </div>
-
-                    <div class="detail-story">
-                        <h4>Highlight Moment</h4>
-                        <p>${mountain.highlight}</p>
-                    </div>
-                </div>
-            `;
-
-            detailsContainer.innerHTML = html;
-            detailsContainer.scrollIntoView({ behavior: 'smooth' });
-            updateGalleryButtons(mountainId);
-        }
-
-        let galleryIndex = {};
-
-        function nextGalleryImage(mountainId) {
-            const mountain = mountainsData[mountainId];
-            if (!galleryIndex[mountainId]) galleryIndex[mountainId] = 0;
-            
-            galleryIndex[mountainId]++;
-            if (galleryIndex[mountainId] >= mountain.images.length) {
-                galleryIndex[mountainId] = mountain.images.length - 1;
-            }
-            updateGalleryDisplay(mountainId);
-        }
-
-        function previousGalleryImage(mountainId) {
-            if (!galleryIndex[mountainId]) galleryIndex[mountainId] = 0;
-            
-            galleryIndex[mountainId]--;
-            if (galleryIndex[mountainId] < 0) {
-                galleryIndex[mountainId] = 0;
-            }
-            updateGalleryDisplay(mountainId);
-        }
-
-        function updateGalleryDisplay(mountainId) {
-            const mountain = mountainsData[mountainId];
-            const currentIdx = galleryIndex[mountainId];
-
-            mountain.images.forEach((_, idx) => {
-                const img = document.getElementById(`galleryImg_${idx}`);
-                if (img) img.style.display = idx === currentIdx ? 'block' : 'none';
-            });
-
-            document.getElementById(`currentImg_${mountainId}`).textContent = currentIdx + 1;
-            updateGalleryButtons(mountainId);
-        }
-
-        function updateGalleryButtons(mountainId) {
-            const mountain = mountainsData[mountainId];
-            const currentIdx = galleryIndex[mountainId] || 0;
-
-            document.getElementById(`prevBtn_${mountainId}`).disabled = currentIdx === 0;
-            document.getElementById(`nextBtn_${mountainId}`).disabled = currentIdx === mountain.images.length - 1;
-        }
-
-        // Contact Form Functions
-        function sendEmail() {
-            const name = document.getElementById('name').value;
-            const subject = document.getElementById('subject').value;
-            const message = document.getElementById('message').value;
-
-            if (!name || !subject || !message) {
-                alert('Please fill in all fields');
-                return;
-            }
-
-            const mailtoLink = `mailto:adventureclear@gmail.com?subject=${encodeURIComponent('Inquiry from CLEAR.ADV Website - ' + subject)}&body=${encodeURIComponent(`Name: ${name}\n\nMessage:\n${message}`)}`;
-            window.location.href = mailtoLink;
-        }
-
-        function sendWhatsApp() {
-            const name = document.getElementById('name').value;
-            const subject = document.getElementById('subject').value;
-            const message = document.getElementById('message').value;
-
-            if (!name || !subject || !message) {
-                alert('Please fill in all fields');
-                return;
-            }
-
-            const whatsappMessage = `Hello CLEAR.ADV Team, I'm interested in your expedition.\n\nName: ${name}\nSubject: ${subject}\n\nMessage: ${message}`;
-            const whatsappLink = `https://wa.me/628567890207?text=${encodeURIComponent(whatsappMessage)}`;
-            window.open(whatsappLink, '_blank');
-        }
-
-        // Information Page Functions
-        function openWhatsAppChannel() {
-            window.open('https://www.whatsapp.com/channel/YOUR_CHANNEL_ID', '_blank');
-        }
-
-        function openWhatsAppGroup() {
-            window.open('https://chat.whatsapp.com/YOUR_GROUP_LINK', '_blank');
-        }
-
-        function openInstagramBroadcast() {
-            window.open('https://instagram.com/clear.adv', '_blank');
-        }
-
-        // Footer Social Links
-        function openInstagram() {
-            window.open('https://instagram.com/clear.adv', '_blank');
-        }
-
-        function openTikTok() {
-            window.open('https://tiktok.com/@clear.adv', '_blank');
-        }
-
-        function openFacebook() {
-            window.open('https://facebook.com/clearadv', '_blank');
-        }
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            // Menu toggle only shows on exploration pages
-            document.getElementById('menuToggle').style.display = 'none';
-        });
-    </script>
+    /* ===== INIT ===== */
+    buildMountainCards();
+  </script>
 </body>
 </html>
+
