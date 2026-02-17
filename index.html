@@ -74,24 +74,31 @@ body {
 .page { display: none; min-height: 100vh; flex-direction: column; }
 .page.active { display: flex; }
 
+/* Landing page khusus pakai block agar position absolute bekerja dengan benar */
+#page-landing { display: none; }
+#page-landing.active { display: block; }
+
 /* ===================== LANDING PAGE ===================== */
 #page-landing {
   position: relative;
   min-height: 100vh;
   overflow: hidden;
+  isolation: isolate;
 }
 
 .landing-bg {
-  position: fixed;
+  position: absolute;
   inset: 0;
   background: url('sampul1.jpg') center/cover no-repeat;
   z-index: 0;
+  pointer-events: none;
 }
 .landing-bg::after {
   content: '';
   position: absolute;
   inset: 0;
   background: linear-gradient(160deg,rgba(0,0,0,0.75) 0%,rgba(10,20,14,0.65) 50%,rgba(0,0,0,0.8) 100%);
+  pointer-events: none;
 }
 
 /* Grain texture */
@@ -106,24 +113,35 @@ body {
 }
 
 .landing-header {
-  position: fixed;
+  position: absolute;
   top: 0; left: 0; right: 0;
-  z-index: 100;
+  z-index: 20;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 20px 48px;
   background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent);
-  backdrop-filter: blur(0px);
 }
 
 .logo-wrap img {
   height: 52px;
   width: auto;
+  max-width: 160px;
+  object-fit: contain;
   filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
   transition: transform var(--transition);
+  display: block;
 }
 .logo-wrap img:hover { transform: scale(1.04); }
+
+.nav-logo img {
+  height: 38px;
+  width: auto;
+  max-width: 130px;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 1px 4px rgba(0,0,0,0.4));
+}
 
 .btn-darkmode {
   display: flex;
@@ -161,6 +179,11 @@ body {
   min-height: 100vh;
   text-align: center;
   padding: 120px 24px 80px;
+  pointer-events: auto;
+}
+
+.landing-center * {
+  pointer-events: auto;
 }
 
 .landing-eyebrow {
@@ -1411,8 +1434,7 @@ footer {
 
   <header class="landing-header">
     <div class="logo-wrap">
-      <img src="logo.png" alt="CLEAR.ADV Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-      <span style="display:none; font-family:'Bebas Neue',sans-serif; font-size:28px; letter-spacing:0.1em; color:#f0ece4;">CLEAR.ADV</span>
+      <img src="logo.png" alt="CLEAR.ADV Logo">
     </div>
     <button class="btn-darkmode" id="darkmode-btn-landing" onclick="toggleDarkMode()">
       <span class="mode-icon">🌿</span>
@@ -1443,10 +1465,9 @@ footer {
 
 <!-- ===================== OUR MISSION PAGE ===================== -->
 <div id="page-mission" class="page">
-  <header class="landing-header" style="position:fixed; z-index:100;">
+  <header class="landing-header" style="position:sticky; top:0; z-index:100; background:rgba(10,12,11,0.88); backdrop-filter:blur(16px);">
     <div class="logo-wrap">
-      <img src="logo.png" alt="CLEAR.ADV" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-      <span style="display:none; font-family:'Bebas Neue',sans-serif; font-size:28px; letter-spacing:0.1em; color:#f0ece4;">CLEAR.ADV</span>
+      <img src="logo.png" alt="CLEAR.ADV Logo">
     </div>
     <button class="btn-darkmode" onclick="toggleDarkMode()">
       <span class="mode-icon">🌿</span>
@@ -1527,8 +1548,7 @@ footer {
   <!-- NAVBAR -->
   <nav class="navbar">
     <div class="nav-logo">
-      <img src="logo.png" alt="CLEAR.ADV" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-      <span style="display:none; font-family:'Bebas Neue',sans-serif; font-size:24px; letter-spacing:0.1em; color:#f0ece4;">CLEAR.ADV</span>
+      <img src="logo.png" alt="CLEAR.ADV Logo">
     </div>
     <ul class="nav-links" id="nav-links">
       <li>
@@ -1783,7 +1803,7 @@ footer {
               <span class="contact-item-icon">📧</span>
               <div class="contact-item-body">
                 <h4>Email</h4>
-                <p>hello@clearadv.id</p>
+                <p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b5ddd0d9d9daf5d6d9d0d4c7d4d1c39bdcd1">[email&#160;protected]</a></p>
               </div>
             </div>
             <div class="contact-item">
@@ -1871,7 +1891,7 @@ footer {
 </div>
 
 <!-- ===================== JAVASCRIPT ===================== -->
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ===================== STATE =====================
 let currentSlide = 0;
 let selectedCard = null;
@@ -2141,11 +2161,4 @@ function sendMessage() {
     alert('Silakan lengkapi semua kolom terlebih dahulu.');
     return;
   }
-  alert('Pesan terkirim! Terima kasih, ' + name + '. Kami akan menghubungi kamu segera.');
-  document.getElementById('c-name').value = '';
-  document.getElementById('c-email').value = '';
-  document.getElementById('c-msg').value = '';
-}
-</script>
-</body>
-</html>
+  alert('Pesan terkirim! Terima kas
